@@ -1,6 +1,7 @@
 # Weaver
 ## A sprite editor for game developers
-### [Download on Itch](https://duckthing.itch.io/weaver)
+### [Download here](https://github.com/duckthing/weaver/releases)
+### [View on Itch](https://duckthing.itch.io/weaver)
 
 ### [View User Documentation](https://github.com/duckthing/weaver/wiki)
 
