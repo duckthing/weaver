@@ -46,7 +46,10 @@ function HomeWindow:showIntroduction()
 			:addX(Plan.center())
 			:addY(Plan.keep())
 			:addWidth(Plan.pixel(200))
-			:addHeight(Plan.content(Plan.pixel(0)))
+			:addHeight(Plan.content(Plan.pixel(0))),
+		function(_)
+			love.system.openURL("https://github.com/duckthing/weaver/wiki")
+		end
 	)
 	docButton:setLabel("Read Manual (Open Link)")
 
