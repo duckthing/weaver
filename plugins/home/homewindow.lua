@@ -61,7 +61,7 @@ function HomeWindow:showIntroduction()
 			:addWidth(Plan.pixel(200))
 			:addHeight(Plan.content(Plan.pixel(0))),
 		function(_)
-			Contexts.raiseAction("new_buffer")
+			Contexts.raiseAction("new_resource")
 		end
 	)
 	newButton:setLabel("Create Sprite")
@@ -103,7 +103,7 @@ function HomeWindow:showRecents(data)
 				:addWidth(Plan.pixel(160))
 				:addHeight(Plan.parent()),
 			function(_)
-				Contexts.raiseAction("new_buffer")
+				Contexts.raiseAction("new_resource")
 			end,
 			"Create New..."
 		)
@@ -116,7 +116,7 @@ function HomeWindow:showRecents(data)
 				:addWidth(Plan.pixel(160))
 				:addHeight(Plan.parent()),
 			function(_)
-				Contexts.raiseAction("open_buffer")
+				Contexts.raiseAction("open_resource")
 			end,
 			"Open File..."
 		)

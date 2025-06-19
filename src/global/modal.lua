@@ -12,7 +12,7 @@ local popupOnClose = function(menu)
 end
 
 local DEFAULT_WIDTH, DEFAULT_HEIGHT =
-	200, 270
+	270, 300
 
 ---Creates and pushes a PopupWindow
 ---@param window PopupWindow # As a class, not an instanced object

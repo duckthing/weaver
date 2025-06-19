@@ -1,7 +1,3 @@
-# Easy
-* Add scrolling to palette
-
-
 # Refactoring
 * Make more type definitions
 * Make UI use addChild/removeChild instead
@@ -25,4 +21,5 @@
 
 # Bugs
 * Some places expect a palette to exist and have 2 colors
-* Having palette sidebar open big can make buttons on the inspector unclickable
+* Having a large palette sidebar can make buttons on the inspector unclickable
+* Exporting data doesn't take into account scale
