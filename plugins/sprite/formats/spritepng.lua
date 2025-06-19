@@ -150,7 +150,8 @@ function SpritePngFormat:export(sprite, options)
 				(currCol - 1) * width,
 				(currRow - 1) * height
 
-			for _, layer in ipairs(sprite.layers) do
+			for j = #sprite.layers, 1, -1 do
+				local layer = sprite.layers[j]
 				if layer.visible then
 					local celIndex = layer.celIndices[i]
 					if celIndex ~= 0 then
