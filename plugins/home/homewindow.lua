@@ -38,7 +38,7 @@ function HomeWindow:showIntroduction()
 			:addHeight(Plan.content(Plan.pixel(0)))
 	)
 	title:setFont(Fonts.getDefaultFont(32))
-	title:setText("Welcome to Weaver v2025.6a")
+	title:setText("Welcome to Weaver v2025.6.1a")
 
 	---@type LabelButton
 	local docButton = LabelButton(

@@ -11,7 +11,7 @@ function HomeStatus:new()
 	---@type Label
 	self.label = Label(
 		Plan.RuleFactory.full(),
-		"v2025.6a"
+		"v2025.6.1a"
 	)
 	self.label:setPadding(8)
 	self:addChild(self.label)
