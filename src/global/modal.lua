@@ -156,7 +156,7 @@ local function pushFileBrowser(pathProperty, w, h)
 	return fb
 end
 
-Modal.DEFAULT_COLOR_WIDTH = DEFAULT_WIDTH
+Modal.DEFAULT_COLOR_WIDTH = 200
 Modal.DEFAULT_COLOR_HEIGHT = 310
 
 ---@param colorProperty ColorSelectionProperty
