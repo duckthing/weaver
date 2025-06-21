@@ -751,7 +751,7 @@ local actions = {
 				sprite.undoStack:pushGroup()
 				SpriteTool.applyFromSelection()
 				if newW > 0 and newH > 0 then
-					sprite:resize(newW, newH, left + selectionX, top + selectionY)
+					sprite:resize(newW, newH, -(left + selectionX), -(top + selectionY))
 				end
 				-- SpriteTool.liftIntoSelection()
 				sprite.undoStack:popGroup()
