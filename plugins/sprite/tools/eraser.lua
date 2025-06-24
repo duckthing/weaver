@@ -75,6 +75,13 @@ function Eraser:startPress(imageX, imageY)
 	sprite.spriteState.includeDrawBuffer = true
 end
 
+local function callback(imageP, brushP, imageIndex, brushIndex, curX, curY, alphaValue)
+	imageP[imageIndex    ] = 0
+	imageP[imageIndex + 1] = 0
+	imageP[imageIndex + 2] = 0
+	imageP[imageIndex + 3] = 0
+end
+
 ---@param imageX integer
 ---@param imageY integer
 function Eraser:pressing(imageX, imageY)
@@ -86,14 +93,18 @@ function Eraser:pressing(imageX, imageY)
 	---@type Brush
 	local brush = SpriteTool.brush:get()
 
-	brush:forEachPixel(
-		function(imageP, brushP, imageIndex, brushIndex, curX, curY, alphaValue)
-			imageP[imageIndex    ] = 0
-			imageP[imageIndex + 1] = 0
-			imageP[imageIndex + 2] = 0
-			imageP[imageIndex + 3] = 0
+	local lastX, lastY = SpriteTool.lastX, SpriteTool.lastY
+
+	SpriteTool:transformToCanvas(
+		lastX, lastY, imageX, imageY,
+		function(ax, ay, bx, by, ...)
+			brush:forEachPixel(
+				callback,
+				drawCel.data, ax, ay, bx, by, bitmask, command,
+				...
+			)
 		end,
-		drawCel.data, SpriteTool.lastX, SpriteTool.lastY, imageX, imageY, bitmask, command
+		drawCel.data, lastX, lastY, imageX, imageY, bitmask, command
 	)
 
 	drawCel:update()

@@ -2,14 +2,17 @@ local ffi = require "ffi"
 local Blend = require "plugins.sprite.common.blend"
 local Inspectable = require "src.properties.inspectable"
 local Luvent = require "lib.luvent"
-local BrushProperty = require "plugins.sprite.properties.brushp"
-local LiftCommand = require "plugins.sprite.commands.liftcommand"
-local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
 local Status = require "src.global.status"
-local RemapCelCommand = require "plugins.sprite.commands.remapcelcommand"
-local BucketFillCommand = require "plugins.sprite.commands.bucketfillcommand"
 local Bitmask = require "plugins.sprite.data.bitmask"
 local Context = require "src.global.contexts"
+
+local LiftCommand = require "plugins.sprite.commands.liftcommand"
+local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
+local RemapCelCommand = require "plugins.sprite.commands.remapcelcommand"
+local BucketFillCommand = require "plugins.sprite.commands.bucketfillcommand"
+
+local BrushProperty = require "plugins.sprite.properties.brushp"
+local BoolProperty = require "src.properties.bool"
 
 ---@class SpriteTool: Inspectable
 local SpriteTool = Inspectable:extend()
@@ -38,6 +41,12 @@ SpriteTool.drawing = false
 SpriteTool.lastX, SpriteTool.lastY = 0, 0
 ---@type boolean # Whether the draw buffer should be drawn
 SpriteTool.includeDrawBuffer = false
+
+---@type BoolProperty
+SpriteTool.mirrorX = BoolProperty(SpriteTool, "Mirror X", false)
+---@type BoolProperty
+SpriteTool.mirrorY = BoolProperty(SpriteTool, "Mirror Y", false)
+
 
 SpriteTool.toolSelected = Luvent.newEvent()
 
@@ -86,6 +95,61 @@ function SpriteTool:canDraw()
 	end
 
 	return SpriteTool.sprite ~= nil and layer ~= nil and not locked and visible
+end
+
+---Transforms two points to the desired points, such as mirroring a point
+---@param ax integer
+---@param ay integer
+---@param bx integer
+---@param by integer
+---@param callback fun(ax: integer, ay: integer, bx: integer, by: integer, ...)
+---@param ... unknown
+function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
+	local sprite = SpriteTool.sprite
+	if not sprite then return end
+
+	local mirrorX, mirrorY = SpriteTool.mirrorX:get(), SpriteTool.mirrorY:get()
+	local width, height = sprite.width, sprite.height
+	local halfW, halfH =
+		math.floor(width * 0.5),
+		math.floor(height * 0.5)
+
+	-- TODO: Make mirroring smarter
+	if mirrorX and mirrorY then
+		for xMult = -1, 1, 2 do
+			for yMult = -1, 1, 2 do
+				callback(
+					math.floor(ax - halfW) * xMult + halfW,
+					math.floor(ay - halfH) * yMult + halfH,
+					math.floor(bx - halfW) * xMult + halfW,
+					math.floor(by - halfH) * yMult + halfH,
+					...
+				)
+			end
+		end
+	elseif mirrorX then
+		for xMult = -1, 1, 2 do
+			callback(
+				math.floor(ax - halfW) * xMult + halfW,
+				ay,
+				math.floor(bx - halfW) * xMult + halfW,
+				by,
+				...
+			)
+		end
+	elseif mirrorY then
+		for yMult = -1, 1, 2 do
+			callback(
+				ax,
+				math.floor(ay - halfH) * yMult + halfH,
+				bx,
+				math.floor(by - halfH) * yMult + halfH,
+				...
+			)
+		end
+	else
+		callback(ax, ay, bx, by, ...)
+	end
 end
 
 ---Draws the tool
@@ -525,7 +589,9 @@ end
 
 function SpriteTool:getProperties()
 	return {
-		SpriteTool.brush
+		SpriteTool.brush,
+		SpriteTool.mirrorX,
+		SpriteTool.mirrorY,
 	}
 end
 

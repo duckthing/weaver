@@ -83,10 +83,17 @@ function Pencil:pressing(imageX, imageY)
 
 	local callback = (brush.type:getValue() == "mask" and maskForEachPixel) or colorForEachPixel
 
-	brush:forEachPixel(
-		callback,
-		drawCel.data, SpriteTool.lastX, SpriteTool.lastY, imageX, imageY, bitmask, command,
-		cr, cg, cb
+	local lastX, lastY = SpriteTool.lastX, SpriteTool.lastY
+
+	SpriteTool:transformToCanvas(
+		lastX, lastY, imageX, imageY,
+		function(ax, ay, bx, by)
+			brush:forEachPixel(
+				callback,
+				drawCel.data, ax, ay, bx, by, bitmask, command,
+				cr, cg, cb
+			)
+		end
 	)
 
 	drawCel:update()
@@ -128,6 +135,8 @@ Pencil.name = LabelProperty(Pencil, "Name", "Pencil")
 local properties = {
 	Pencil.name,
 	SpriteTool.brush,
+	SpriteTool.mirrorX,
+	SpriteTool.mirrorY,
 }
 
 function Pencil:getProperties()

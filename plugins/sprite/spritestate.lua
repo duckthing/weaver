@@ -1,15 +1,10 @@
-local Object = require "lib.classic"
-local Palettes = require "src.global.palettes"
-local Palette = require "src.data.palette"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Bitmask = require "plugins.sprite.data.bitmask"
 
 local Inspectable = require "src.properties.inspectable"
 local IntegerProperty = require "src.properties.integer"
 local ColorSelectionProperty = require "src.properties.colorselection"
-local PaletteProperty = require "src.properties.palette"
 local EnumProperty = require "src.properties.enum"
-
 
 ---@class SpriteState: Inspectable
 local SpriteState = Inspectable:extend()
