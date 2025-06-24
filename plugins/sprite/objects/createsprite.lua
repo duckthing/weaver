@@ -3,9 +3,13 @@ local SpriteResource = require "plugins.sprite.spriteresource"
 local Inspectable = require "src.properties.inspectable"
 local IntegerProperty = require "src.properties.integer"
 local Action = require "src.data.action"
+local Palettes = require "src.global.palettes"
 
 ---@class CreateSprite: Inspectable
 local CreateSprite = Inspectable:extend()
+
+---@type SpriteEditor
+local SpriteEditor = nil
 
 function CreateSprite:new()
 	CreateSprite.super.new(self)
@@ -43,7 +47,23 @@ local actions = {
 			local width, height =
 				createSprite.width:get(),
 				createSprite.height:get()
-			local resource = SpriteResource(width, height)
+
+			local paletteName = SpriteEditor.defaultPalette:get()
+
+			---@type Palette
+			local palette
+			if paletteName ~= "" then
+				for _, p in ipairs(Palettes.globalPalettes) do
+					if p.name == paletteName then
+						palette = p:clone()
+					end
+				end
+			end
+			if not palette then
+				palette = Palettes.globalPalettes[love.math.random(1, #Palettes.globalPalettes)]:clone()
+			end
+
+			local resource = SpriteResource(width, height, nil, palette)
 			local id = Resources.addResource(resource)
 			Resources.selectResourceId(id)
 			return true
@@ -53,6 +73,12 @@ local actions = {
 
 function CreateSprite:getActions()
 	return actions
+end
+
+---Adds the SpriteEditor for referencing
+---@param editor SpriteEditor
+function CreateSprite.addSpriteEditor(editor)
+	SpriteEditor = editor
 end
 
 return CreateSprite

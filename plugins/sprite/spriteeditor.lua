@@ -9,13 +9,17 @@ local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
 local Handler = require "src.global.handler"
 local SpriteFormats = require "plugins.sprite.formats.spriteformats"
+
 local IntegerProperty = require "src.properties.integer"
+local StringProperty = require "src.properties.string"
 
 Handler.addFormat(SpriteFormats)
 
 ---@class SpriteEditor: Plugin
 local SpriteEditor = Plugin:extend()
 SpriteEditor.TYPE = "sprite"
+
+CreateSprite.addSpriteEditor(SpriteEditor)
 
 ---@type SpriteEditor.Context
 local parentContext = SpriteEditorContext()
@@ -185,9 +189,12 @@ end
 SpriteEditor.maxUndo = IntegerProperty(SpriteEditor, "Undo History Limit", 30)
 SpriteEditor.maxUndo:getRange()
 	:setMin(0)
+---@type StringProperty
+SpriteEditor.defaultPalette = StringProperty(SpriteEditor, "Default Palette Name", "")
 
 local settings = {
 	SpriteEditor.maxUndo,
+	SpriteEditor.defaultPalette,
 }
 
 function SpriteEditor:getSettings()

@@ -22,6 +22,9 @@ local DurationProperty = require "plugins.sprite.properties.durationp"
 
 local spritesCreated = 0
 
+---@type SpriteEditor
+local SpriteEditor = nil
+
 ---@class Sprite.Cel: Object
 local SpriteCel = Object:extend()
 
@@ -238,7 +241,8 @@ end
 ---@param width integer # The size of the image on the X axis
 ---@param height integer # The size of the image on the Y axis
 ---@param name string? # The name of the resource
-function Sprite:new(width, height, name)
+---@param palette Palette? # The palette to use
+function Sprite:new(width, height, name, palette)
 	spritesCreated = spritesCreated + 1
 	local spriteName = name or (("sprite-%03d"):format(spritesCreated))
 
@@ -258,7 +262,7 @@ function Sprite:new(width, height, name)
 	---@type Sprite.Cel[]
 	self.cels = {}
 	---@type PaletteProperty
-	self.palette = PaletteProperty(self, "Palette", Palettes.globalPalettes[love.math.random(1, #Palettes.globalPalettes)]:clone())
+	self.palette = PaletteProperty(self, "Palette", palette)
 	---@type ExportSprite
 	self.exporter = ExportSprite(self)
 	---@type SaveSprite
