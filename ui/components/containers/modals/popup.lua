@@ -2,6 +2,7 @@ local Plan = require "lib.plan"
 
 ---@class Popup: Plan.Container
 local Popup = Plan.Container:extend()
+Popup.CLASS_NAME = "Popup"
 
 function Popup:new(rules)
 	Popup.super.new(self, rules)

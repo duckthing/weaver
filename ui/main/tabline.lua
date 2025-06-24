@@ -22,6 +22,7 @@ closeButtonIcon:setFilter("nearest", "nearest")
 
 ---@class TabButton.CloseTab: BaseButton
 local CloseTabButton = BaseButton:extend()
+CloseTabButton.CLASS_NAME = "CloseTabButton"
 
 ---@param self TabButton.CloseTab
 local function onCloseTabButtonPressed(self)
@@ -56,6 +57,7 @@ local closeTabRules = Plan.Rules.new()
 
 ---@class TabButton: BaseButton
 local TabButton = BaseButton:extend()
+TabButton.CLASS_NAME = "TabButton"
 
 ---@param self TabButton
 local function onTabButtonClicked(self)

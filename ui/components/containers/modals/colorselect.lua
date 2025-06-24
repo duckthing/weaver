@@ -1,30 +1,27 @@
 local ffi = require "ffi"
 local bit = require "bit"
 local HSX = require "lib.hsx"
-local SpriteSheet = require "src.spritesheet"
 local Plan = require "lib.plan"
 local PopupWindow = require "ui.components.containers.modals.popupwindow"
 local VScroll = require "ui.components.containers.box.vscroll"
 local Slidebox = require "ui.components.range.slidebox"
 local Range = require "src.data.range"
 local LineEdit = require "ui.components.text.lineedit"
-local IconButton = require "ui.components.button.iconbutton"
 local VBox = require "ui.components.containers.box.vbox"
 local HBox = require "ui.components.containers.box.hbox"
 local Label = require "ui.components.text.label"
 
-local iconsTexture = love.graphics.newImage("assets/layer_buttons.png")
-iconsTexture:setFilter("nearest", "nearest")
-local iconSpriteSheet = SpriteSheet.new(iconsTexture, 22, 1)
-
 ---@class ColorSelect: PopupWindow
 local ColorSelect = PopupWindow:extend()
+ColorSelect.CLASS_NAME = "ColorSelect"
 
 ---@class ColorSelect.Wheel: Plan.Container
 local ColorWheel = Plan.Container:extend()
+ColorWheel.CLASS_NAME = "ColorWheel"
 
 ---@class ColorSelect.HueSlider: Slidebox
 local HueSlider = Slidebox:extend()
+HueSlider.CLASS_NAME = "HueSlider"
 
 local wheelShaderCode = [[
 extern float hue;

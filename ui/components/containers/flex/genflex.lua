@@ -1,4 +1,3 @@
-local Plan = require "lib.plan"
 local Sorter = require "ui.components.containers.sorter"
 
 -- TODO: Implement GenFlex
@@ -13,6 +12,7 @@ local Sorter = require "ui.components.containers.sorter"
 
 ---@class GenFlex: SorterContainer
 local GenFlex = Sorter:extend()
+GenFlex.CLASS_NAME = "GenFlex"
 GenFlex._position = "x"
 GenFlex._size = "w"
 

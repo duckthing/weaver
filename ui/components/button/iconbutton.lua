@@ -1,8 +1,8 @@
-local Plan = require "lib.plan"
 local Button = require "ui.components.button.button"
 
 ---@class IconButton: Button
 local IconButton = Button:extend()
+IconButton.CLASS_NAME = "IconButton"
 
 ---@param rules Plan.Rules
 ---@param onClick fun(self: self): nil

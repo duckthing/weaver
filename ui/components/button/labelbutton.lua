@@ -1,4 +1,3 @@
-local Plan = require "lib.plan"
 local Button = require "ui.components.button.button"
 local Fonts = require "src.global.fonts"
 
@@ -6,6 +5,7 @@ local defaultFont = Fonts.getDefaultFont()
 
 ---@class LabelButton: Button
 local LabelButton = Button:extend()
+LabelButton.CLASS_NAME = "LabelButton"
 
 ---@param rules Plan.Rules
 ---@param onClick fun(self: self): nil

@@ -2,6 +2,7 @@ local Plan = require "lib.plan"
 
 ---@class Viewport: Plan.Container
 local Viewport = Plan.Container:extend()
+Viewport.CLASS_NAME = "Viewport"
 
 function Viewport:new(rules)
 	Viewport.super.new(self, rules)

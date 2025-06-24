@@ -8,6 +8,7 @@ local ibeamCursor = love.mouse.getSystemCursor("ibeam")
 
 ---@class LineEdit: Plan.Container
 local LineEdit = Plan.Container:extend()
+LineEdit.CLASS_NAME = "LineEdit"
 
 ---@enum LineEdit.HAlign
 ---| "left"

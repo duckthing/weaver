@@ -4,6 +4,7 @@ local Container = Plan.Container
 
 ---@class BaseButton: Plan.Container
 local BaseButton = Container:extend()
+BaseButton.CLASS_NAME = "BaseButton"
 
 function BaseButton:new(rules, onClick)
 	BaseButton.super.new(self, rules)
@@ -21,7 +22,7 @@ function BaseButton:pointerexited()
 	self.hovering = false
 end
 
-function BaseButton:mousepressed(x, y, button)
+function BaseButton:mousepressed(_, _, button)
 	if button == 1 then
 		self.pressing = true
 		self:getFocus()

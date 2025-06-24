@@ -3,6 +3,7 @@ local SplitHandle = require "ui.components.containers.split.splithandle"
 
 ---@class VSplit: Plan.Container
 local VSplit = Plan.Container:extend()
+VSplit.CLASS_NAME = "VSplit"
 
 ---Creates an VSplit container, which has two elements
 ---that are above/below each other.

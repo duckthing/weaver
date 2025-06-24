@@ -3,6 +3,7 @@ local SplitHandle = require "ui.components.containers.split.splithandle"
 
 ---@class HSplit: Plan.Container
 local HSplit = Plan.Container:extend()
+HSplit.CLASS_NAME = "HSplit"
 
 ---@alias ResizeMode
 ---| "keepfirst"

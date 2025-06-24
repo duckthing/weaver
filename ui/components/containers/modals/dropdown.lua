@@ -12,6 +12,7 @@ local defaultFont = Fonts.getDefaultFont()
 
 ---@class Dropdown: Popup
 local Dropdown = Popup:extend()
+Dropdown.CLASS_NAME = "Dropdown"
 
 local padding = 10
 local margin = 8

@@ -1,10 +1,8 @@
 local Plan = require "lib.plan"
-local Luvent = require "lib.luvent"
 local Popup = require "ui.components.containers.modals.popup"
 local LabelButton = require "ui.components.button.labelbutton"
 local NinePatch = require "src.ninepatch"
 local VBox = require "ui.components.containers.box.vbox"
-local HBox = require "ui.components.containers.box.hbox"
 local HFlex = require "ui.components.containers.flex.hflex"
 local Label = require "ui.components.text.label"
 local Contexts = require "src.global.contexts"
@@ -21,6 +19,7 @@ local contentNP = NinePatch.new(2, 1, 2, 1, 1, 2, contentTexture)
 
 ---@class PopupWindow: Popup
 local PopupWindow = Popup:extend()
+PopupWindow.CLASS_NAME = "PopupWindow"
 
 ---@type Keybinds.ActionsMap
 local keybindActions = {

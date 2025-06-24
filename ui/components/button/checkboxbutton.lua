@@ -1,4 +1,3 @@
-local Plan = require "lib.plan"
 local Fonts = require "src.global.fonts"
 local Luvent = require "lib.luvent"
 local BaseButton = require "ui.components.button.basebutton"
@@ -12,6 +11,7 @@ local checkboxSheet = SpriteSheet.new(checkboxImage, 2, 1)
 
 ---@class CheckboxButton: BaseButton
 local CheckboxButton = BaseButton:extend()
+CheckboxButton.CLASS_NAME = "CheckboxButton"
 
 ---@param self CheckboxButton
 local function toggleCheckbox(self)

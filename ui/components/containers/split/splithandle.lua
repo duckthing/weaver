@@ -2,6 +2,7 @@ local Plan = require "lib.plan"
 
 ---@class SplitHandle: Plan.Container
 local SplitHandle = Plan.Container:extend()
+SplitHandle.CLASS_NAME = "SplitHandle"
 
 local hDragCursor = love.mouse.getSystemCursor("sizens")
 local vDragCursor = love.mouse.getSystemCursor("sizewe")

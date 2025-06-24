@@ -3,6 +3,7 @@ local Modal = require "src.global.modal"
 
 ---@class DropdownButton: LabelButton
 local DropdownButton = LabelButton:extend()
+DropdownButton.CLASS_NAME = "DropdownButton"
 
 local FORMAT_STRING = "%s: %s"
 

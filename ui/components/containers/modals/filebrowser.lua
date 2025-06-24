@@ -13,12 +13,11 @@ local Action = require "src.data.action"
 local isWindows = love.system.getOS() == "Windows"
 local pathSeparator = (isWindows and "\\") or "/"
 local pathSeparatorByte = pathSeparator:byte(1)
-local getDirOrParentPattern = (isWindows and "(.*[/\\])") or "(.*[/\\])"
-local getParentDirPattern = (isWindows and "(.*[/\\]).*[/\\]") or "(.*/).*/"
 local folderIcon = love.graphics.newImage("assets/folder.png")
 
 ---@class FileBrowser.Button: LabelButton
 local FBButton = LabelButton:extend()
+FBButton.CLASS_NAME = "FBButton"
 
 ---@param self FileBrowser.Button
 local function onFBButtonClicked(self)
@@ -91,6 +90,7 @@ end
 
 ---@class FileBrowser: PopupWindow
 local FileBrowser = PopupWindow:extend()
+FileBrowser.CLASS_NAME = "FileBrowser"
 
 function FileBrowser:new(rules)
 	FileBrowser.super.new(self, rules, nil, "File Browser")
@@ -258,7 +258,7 @@ function FileBrowser:updatePreview()
 		local directories = {
 			-- parent directory
 			"../",
-			cwd:match(getParentDirPattern)
+			Path.parentdirsep(cwd)
 		}
 
 		local shouldFilter = self.shouldApplyFilter
@@ -308,7 +308,7 @@ function FileBrowser:updatePreview()
 		end
 	else
 		-- Current directory is invalid
-		local b = FBButton(buttonRules, "Invalid directory", cwd:match(getParentDirPattern), false)
+		local b = FBButton(buttonRules, "Invalid directory", Path.parentdirsep(cwd), false)
 		container:addChild(b)
 	end
 end

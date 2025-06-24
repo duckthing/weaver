@@ -1,4 +1,3 @@
-local Plan = require "lib.plan"
 local Sorter = require "ui.components.containers.sorter"
 
 ---@class GenBox: SorterContainer

@@ -4,6 +4,7 @@ local Tabline = require "ui.main.tabline"
 local Toolbar = require "ui.main.toolbar"
 local StatusBar = require "ui.main.statusbar"
 
+-- These are required so that they are loaded
 local Plugin = require "src.data.plugin"
 local HomeEditor = require "plugins.home.homeeditor"
 local SpriteEditor = require "plugins.sprite.spriteeditor"
@@ -12,6 +13,7 @@ local KeyEditor = require "plugins.keys.keyeditor"
 
 ---@class Previewer: Plan.Container
 local Previewer = Plan.Container:extend()
+Previewer.CLASS_NAME = "Previewer"
 
 function Previewer:new(r)
 	Previewer.super.new(self, r)

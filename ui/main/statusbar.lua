@@ -1,10 +1,10 @@
-local Plan = require "lib.plan"
 local Status = require "src.global.status"
 local VBox = require "ui.components.containers.box.vbox"
 local Flux = require "lib.flux"
 
 ---@class StatusBar: VBox
 local StatusBar = VBox:extend()
+StatusBar.CLASS_NAME = "StatusBar"
 
 function StatusBar:new(rules)
 	StatusBar.super.new(self, rules)

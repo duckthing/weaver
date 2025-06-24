@@ -5,9 +5,11 @@ local PopupMenu = require "ui.components.containers.modals.popupmenu"
 
 ---@class Toolbar: HScroll
 local Toolbar = HScroll:extend()
+Toolbar.CLASS_NAME = "Toolbar"
 
 ---@class Toolbar.Button: LabelButton
 local ToolbarButton = LabelButton:extend()
+ToolbarButton.CLASS_NAME = "ToolbarButton"
 
 ---@param self Toolbar.Button
 local function toggleButton(self)

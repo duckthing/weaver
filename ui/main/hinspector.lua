@@ -1,14 +1,14 @@
-local Plan = require "lib.plan"
 local HScroll = require "ui.components.containers.box.hscroll"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 
----@class Inspector: HScroll
-local Inspector = HScroll:extend()
+---@class HInspector: HScroll
+local HInspector = HScroll:extend()
+HInspector.CLASS_NAME = "HInspector"
 
-Inspector.minH = 40
+HInspector.minH = 40
 
-function Inspector:new(rules)
-	Inspector.super.new(self, rules)
+function HInspector:new(rules)
+	HInspector.super.new(self, rules)
 	---@type Inspectable?
 	self.selected = nil
 	self.padding = 12
@@ -20,7 +20,7 @@ function Inspector:new(rules)
 	if SpriteTool.currentTool then self:selectInspectable(SpriteTool.currentTool) end
 end
 
-function Inspector:updateProperties(inspectable)
+function HInspector:updateProperties(inspectable)
 	self:clearChildren(true)
 	self.selected = inspectable
 	-- If it's nil, do nothing else
@@ -38,7 +38,7 @@ end
 
 ---Selects a new Inspectable
 ---@param other Inspectable?
-function Inspector:selectInspectable(other)
+function HInspector:selectInspectable(other)
 	local currSelection = self.selected
 	-- If it's the same, do nothing
 	if currSelection == other then return end
@@ -61,10 +61,10 @@ function Inspector:selectInspectable(other)
 	self:updateProperties(other)
 end
 
-function Inspector:draw()
+function HInspector:draw()
 	love.graphics.setColor(0.23, 0.23, 0.46)
 	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
-	Inspector.super.draw(self)
+	HInspector.super.draw(self)
 end
 
-return Inspector
+return HInspector

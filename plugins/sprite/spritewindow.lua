@@ -39,7 +39,7 @@ function SpriteWindow:new(rules, editor, context)
 	local drawer = ToolDrawer(
 		Plan.RuleFactory.full()
 	)
-	---@type Inspector
+	---@type HInspector
 	local inspector = Inspector(
 		Plan.RuleFactory.full()
 	)

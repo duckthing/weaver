@@ -1,6 +1,4 @@
-local Plan = require "lib.plan"
 local NinePatch = require "src.ninepatch"
-
 local BaseButton = require "ui.components.button.basebutton"
 
 ---@type love.Image
@@ -12,6 +10,7 @@ local pressedButtonNP = NinePatch.new(3, 1, 3, 3, 1, 3, buttonTexture, 2, 2)
 
 ---@class Button: BaseButton
 local Button = BaseButton:extend()
+Button.CLASS_NAME = "Button"
 
 function Button:new(rules, onClick)
 	Button.super.new(self, rules, onClick)

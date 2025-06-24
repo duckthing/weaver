@@ -4,6 +4,7 @@ local VScroll = require "ui.components.containers.box.vscroll"
 
 ---@class InspectorPopup: PopupWindow
 local InspectorPopup = PopupWindow:extend()
+InspectorPopup.CLASS_NAME = "InspectorPopup"
 
 function InspectorPopup:new(rules, inspectable)
 	InspectorPopup.super.new(self, rules, nil, "Inspector")

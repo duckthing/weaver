@@ -1,4 +1,3 @@
-local Plan = require "lib.plan"
 local Popup = require "ui.components.containers.modals.popup"
 local Fonts = require "src.global.fonts"
 local Luvent = require "lib.luvent"
@@ -10,6 +9,7 @@ local defaultFont = Fonts.getDefaultFont()
 
 ---@class PopupMenu: Popup
 local PopupMenu = Popup:extend()
+PopupMenu.CLASS_NAME = "PopupMenu"
 
 local padding = 10
 local margin = 8

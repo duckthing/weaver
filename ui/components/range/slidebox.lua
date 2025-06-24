@@ -1,6 +1,5 @@
 local Plan = require "lib.plan"
 local Range = require "src.data.range"
-local Luvent = require "lib.luvent"
 local Label = require "ui.components.text.label"
 local exp = function(n)
 	return math.abs(n) * n
@@ -10,6 +9,7 @@ local hdragCursor = love.mouse.getSystemCursor("sizewe")
 
 ---@class Slidebox: Plan.Container
 local Slidebox = Plan.Container:extend()
+Slidebox.CLASS_NAME = "Slidebox"
 
 local FULL_RULES = Plan.RuleFactory.full()
 ---@type string
@@ -27,7 +27,7 @@ function Slidebox:new(rules, range)
 	self.pressing = false
 	---@type boolean # If the Slidebox updates the Range immediately instead of previewing it on the display
 	self.updateLive = false
-	---@type string
+	---@type string # What appears as the label
 	self.name = "Range"
 	---@type boolean # If the Slidebox dragging/display should be exponential
 	self.exponential = false
