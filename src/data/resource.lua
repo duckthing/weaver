@@ -16,7 +16,7 @@ Resource.TYPE = "none"
 
 function Resource:new()
 	---@type StringProperty
-	self.name = StringProperty(self, "Name", "Buffer")
+	self.name = StringProperty(self, "Name", "Resource")
 	---@type integer
 	self.id = 0
 	---@type table
@@ -55,7 +55,7 @@ end
 function Resource:prepareHeaderWGF(headerTable)
 end
 
----Serializes this Buffer into the WGF format.
+---Serializes this Resource into the WGF format.
 ---This function also needs to serialize the headerTable
 ---@param headerTable table
 ---@param strbuf string.buffer
@@ -65,7 +65,7 @@ function Resource:serializeWGF(headerTable, strbuf)
 	return false, 0
 end
 
----Deserializes this string.buffer into a Buffer
+---Deserializes this string.buffer into a Resource
 ---@param headerTable table
 ---@param strbuf string.buffer
 ---@param path string

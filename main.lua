@@ -119,12 +119,13 @@ function love.draw()
 				if name == "quit" then
 					shouldQuit = true
 					timeWaited = waitLimit
-					break
+					goto breakLoop
 				end
 				---@diagnostic disable-next-line: undefined-field
 				love.handlers[name](a,b,c,d,e,f)
 			end
 		end
+		::breakLoop::
 
 		-- Quit if needed
 		if shouldQuit then
