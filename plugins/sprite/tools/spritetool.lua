@@ -114,15 +114,31 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 		math.floor(width * 0.5),
 		math.floor(height * 0.5)
 
+	local offsetX, offsetY =
+		(width + 1) % 2,
+		(height + 1) % 2
+
+	ax, ay, bx, by =
+		ax + offsetX,
+		ay + offsetY,
+		bx + offsetX,
+		by + offsetY
+
+	local relAX, relAY, relBX, relBY =
+		math.floor(ax - halfW),
+		math.floor(ay - halfH),
+		math.floor(bx - halfW),
+		math.floor(by - halfH)
+
 	-- TODO: Make mirroring smarter
 	if mirrorX and mirrorY then
 		for xMult = -1, 1, 2 do
 			for yMult = -1, 1, 2 do
 				callback(
-					math.floor(ax - halfW) * xMult + halfW,
-					math.floor(ay - halfH) * yMult + halfH,
-					math.floor(bx - halfW) * xMult + halfW,
-					math.floor(by - halfH) * yMult + halfH,
+					relAX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
+					relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
+					relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
+					relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 					...
 				)
 			end
@@ -130,9 +146,9 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 	elseif mirrorX then
 		for xMult = -1, 1, 2 do
 			callback(
-				math.floor(ax - halfW) * xMult + halfW,
+				relAX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 				ay,
-				math.floor(bx - halfW) * xMult + halfW,
+				relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 				by,
 				...
 			)
@@ -141,9 +157,9 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 		for yMult = -1, 1, 2 do
 			callback(
 				ax,
-				math.floor(ay - halfH) * yMult + halfH,
+				relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 				bx,
-				math.floor(by - halfH) * yMult + halfH,
+				relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 				...
 			)
 		end
