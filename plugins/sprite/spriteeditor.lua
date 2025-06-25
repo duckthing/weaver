@@ -5,6 +5,7 @@ local Status = require "src.global.status"
 local Resources = require "src.global.resources"
 local CreateSprite = require "plugins.sprite.objects.createsprite"
 local ImportSprite = require "plugins.sprite.objects.importsprite"
+local ExportSprite = require "plugins.sprite.objects.exportsprite"
 local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
 local Handler = require "src.global.handler"
@@ -12,6 +13,7 @@ local SpriteFormats = require "plugins.sprite.formats.spriteformats"
 
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
+local EnumProperty = require "src.properties.enum"
 
 Handler.addFormat(SpriteFormats)
 
@@ -20,6 +22,7 @@ local SpriteEditor = Plugin:extend()
 SpriteEditor.TYPE = "sprite"
 
 CreateSprite.addSpriteEditor(SpriteEditor)
+ExportSprite.addSpriteEditor(SpriteEditor)
 
 ---@type SpriteEditor.Context
 local parentContext = SpriteEditorContext()
@@ -191,10 +194,23 @@ SpriteEditor.maxUndo:getRange()
 	:setMin(0)
 ---@type StringProperty
 SpriteEditor.defaultPalette = StringProperty(SpriteEditor, "Default Palette Name", "")
+---@type EnumProperty
+SpriteEditor.defaultDataExtension = EnumProperty(SpriteEditor, "Default Data Extension", ".lua")
+SpriteEditor.defaultDataExtension:setOptions({
+	{
+		name = "*.lua",
+		value = "lua",
+	},
+	{
+		name = "*.json",
+		value = "json",
+	}
+})
 
 local settings = {
 	SpriteEditor.maxUndo,
 	SpriteEditor.defaultPalette,
+	SpriteEditor.defaultDataExtension,
 }
 
 function SpriteEditor:getSettings()

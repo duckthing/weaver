@@ -12,6 +12,9 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 ---@class ExportSprite: ExporterTemplate
 local ExportSprite = ExporterTemplate:extend()
 
+---@type SpriteEditor
+local SpriteEditor = nil
+
 ---@param sprite Sprite
 function ExportSprite:new(sprite)
 	ExportSprite.super.new(self)
@@ -34,6 +37,7 @@ function ExportSprite:new(sprite)
 	---@type FilePathProperty
 	self.dataPath = FilePathProperty(self, "Data Path", love.filesystem.getUserDirectory().."Desktop/"..sprite.name:get())
 	self.dataPath:setPathMode("write")
+	self.dataPath:addFilter(SpriteEditor.defaultDataExtension:getValue(), true)
 	self.dataPath:addFilter("lua")
 	self.dataPath:addFilter("json")
 
@@ -104,6 +108,11 @@ function ExportSprite:getProperties()
 	end
 
 	return properties
+end
+
+---@param editor SpriteEditor
+function ExportSprite.addSpriteEditor(editor)
+	SpriteEditor = editor
 end
 
 return ExportSprite

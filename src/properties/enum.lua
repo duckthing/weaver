@@ -62,6 +62,11 @@ end
 ---@param value any
 function EnumProperty:setValue(value)
 	if self.value == value then return end
+	if #self.options == 0 then
+		-- No options yet
+		self._defaultValue = value
+		return
+	end
 
 	for i = 1, #self.options do
 		local option = self.options[i]
@@ -86,6 +91,16 @@ function EnumProperty:getValue()
 	return self.value.value
 end
 
+function EnumProperty:getVElement()
+	return DropdownButton(Plan.Rules.new()
+		:addX(Plan.pixel(0))
+		:addY(Plan.keep())
+		:addWidth(Plan.parent())
+		:addHeight(Plan.content(Plan.pixel(0))),
+		self
+	)
+end
+
 function EnumProperty:getHElement()
 	return DropdownButton(Plan.Rules.new()
 		:addX(Plan.keep())
@@ -94,6 +109,14 @@ function EnumProperty:getHElement()
 		:addHeight(Plan.max(8)),
 		self
 	)
+end
+
+function EnumProperty:serialize()
+	return (self.value and self.value.value) or self._defaultValue
+end
+
+function EnumProperty:deserialize(data)
+	self:setValue(data)
 end
 
 function EnumProperty:__tostring()

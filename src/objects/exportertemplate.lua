@@ -30,5 +30,4 @@ function ExporterTemplate:getActions()
 	return actions
 end
 
-
 return ExporterTemplate

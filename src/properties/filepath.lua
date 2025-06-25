@@ -16,13 +16,6 @@ iconsTexture:setFilter("nearest", "nearest")
 local iconSpriteSheet = SpriteSheet.new(iconsTexture, 22, 1)
 
 local isWindows = love.system.getOS() == "Windows"
-local pathSeparator = (isWindows and "\\") or "/"
-local pathSeparatorByte = pathSeparator:byte(1)
--- /path/file.png => /path/
--- /path/to/folder/ => /path/to/folder/
--- local getDirOrParentPattern = (isWindows and "(.*[/\\])") or "(.*[/\\])"
-local getFileParentDirPattern = (isWindows and "(.*[/\\])") or "(.*/)"
-local getDirParentDirPattern = (isWindows and "(.*[/\\]).*[/\\]") or "(.*/).*/"
 
 ---@class FilePathProperty: Property
 local FilePathProperty = Property:extend()
