@@ -84,7 +84,6 @@ end
 ---@param file love.File
 function GplFormat:export(palette, path, file)
 	palette.name = Path.nameext(path)
-	print("here")
 
 	file:write(MAGIC_NUMBER)
 	file:write(("\nName: %s"):format(palette.name))

@@ -88,7 +88,7 @@ end
 ---Returns the value of the current Option
 ---@return any
 function EnumProperty:getValue()
-	return self.value.value
+	return (self.value and self.value.value)
 end
 
 function EnumProperty:getVElement()

@@ -3,16 +3,13 @@ local Object = require "lib.classic"
 ---@class Project: Object
 local Project = Object:extend()
 
----@class Project.Item: Object
-local Item = Object:extend()
-
 function Project:new()
 	---@type string
 	self.name = "Project"
-	---@type Project.Item[]
-	self.items = {}
-	---@type string
+	---@type string # Local only; do not save
 	self.root = ""
+	---@type string # Default relative directory to make assets in
+	self.assetDirectory = ""
 end
 
 return Project

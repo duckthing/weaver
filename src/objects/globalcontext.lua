@@ -8,6 +8,7 @@ local SettingsResource = require "plugins.settings.settingsbuffer"
 local HomeBuffer = require "plugins.home.homebuffer"
 local OpenFileObject = require "src.objects.openfileobject"
 local LicenseWindow = require "ui.main.licensewindow"
+local CreateResource = require "src.objects.createresource"
 
 ---@class GlobalContext: Context
 local GlobalContext = Context:extend()
@@ -52,17 +53,8 @@ local actions = {
 	new_resource = Action(
 		"New...",
 		function()
-			local creator
-			for _, plugin in ipairs(Plugin.plugins) do
-				local c = plugin:getCreateInspectable()
-				if c then
-					creator = c
-				end
-			end
-
-			if creator then
-				Modal.pushInspector(creator)
-			end
+			local createResource = CreateResource()
+			Modal.pushInspector(createResource)
 		end
 	),
 	open_resource = Action(

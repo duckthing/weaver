@@ -5,6 +5,7 @@ local LabelProperty = require "src.properties.label"
 
 ---@class Inspectable: Object
 local Inspectable = Object:extend()
+Inspectable.CLASS_NAME = "Inspectable"
 
 function Inspectable:new()
 	Inspectable.super.new(self)
@@ -84,6 +85,10 @@ end
 
 ---Destroys all Properties in this Inspectable
 function Inspectable:destroy()
+end
+
+function Inspectable:__tostring()
+	return self.CLASS_NAME
 end
 
 return Inspectable

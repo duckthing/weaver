@@ -7,6 +7,7 @@ local Palettes = require "src.global.palettes"
 
 ---@class CreateSprite: Inspectable
 local CreateSprite = Inspectable:extend()
+CreateSprite.CLASS_NAME = "CreateSprite"
 
 ---@type SpriteEditor
 local SpriteEditor = nil
@@ -42,7 +43,7 @@ end
 local actions = {
 	Action(
 		"Create",
-		function (action, createSprite)
+		function (action, createSprite, ...)
 			---@cast createSprite CreateSprite
 			local width, height =
 				createSprite.width:get(),

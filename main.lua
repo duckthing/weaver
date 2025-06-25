@@ -31,6 +31,7 @@ local Modal = require "src.global.modal"
 local Resources = require "src.global.resources"
 local Palettes = require "src.global.palettes"
 local SpriteResource = require "plugins.sprite.spriteresource"
+local ProjectFormat = require "src.formats.projectformat"
 local Contexts = require "src.global.contexts"
 local Plugin = require "src.data.plugin"
 local Flux = require "lib.flux"
@@ -42,6 +43,7 @@ local WgfFormat = require "src.formats.wgf"
 
 Handler.addFormat(GplFormat)
 Handler.addFormat(WgfFormat)
+Handler.addFormat(ProjectFormat)
 
 ---@type Plan.Root
 local uiRoot = nil
