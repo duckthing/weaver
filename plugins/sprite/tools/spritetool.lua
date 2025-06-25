@@ -118,17 +118,11 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 		(width + 1) % 2,
 		(height + 1) % 2
 
-	ax, ay, bx, by =
-		ax + offsetX,
-		ay + offsetY,
-		bx + offsetX,
-		by + offsetY
-
 	local relAX, relAY, relBX, relBY =
-		math.floor(ax - halfW),
-		math.floor(ay - halfH),
-		math.floor(bx - halfW),
-		math.floor(by - halfH)
+		math.floor(ax - halfW + offsetX),
+		math.floor(ay - halfH + offsetY),
+		math.floor(bx - halfW + offsetX),
+		math.floor(by - halfH + offsetY)
 
 	-- TODO: Make mirroring smarter
 	if mirrorX and mirrorY then
