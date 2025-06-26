@@ -1,6 +1,7 @@
 local Inspectable = require "src.properties.inspectable"
 local Action = require "src.data.action"
 local Plugin = require "src.data.plugin"
+local GlobalConfig
 
 local EnumProperty = require "src.properties.enum"
 
@@ -8,13 +9,13 @@ local EnumProperty = require "src.properties.enum"
 local CreateResource = Inspectable:extend()
 CreateResource.CLASS_NAME = "CreateResource"
 
----@type Inspectable[]
+---@type EnumProperty.Option[]
 local createTemplates = {}
 for _, plugin in ipairs(Plugin.plugins) do
 	local c = plugin:getCreateInspectable()
 	if c then
 		createTemplates[#createTemplates+1] = {
-			name = plugin.TYPE,
+			name = c.OBJECT_NAME or plugin.TYPE,
 			value = c,
 		}
 	end
@@ -25,22 +26,35 @@ Plugin.pluginInitialized:addAction(function(newPlugin)
 	local c = newPlugin:getCreateInspectable()
 	if c then
 		createTemplates[#createTemplates+1] = {
-			name = newPlugin.TYPE,
+			name = c.OBJECT_NAME or newPlugin.TYPE,
 			value = c,
 		}
 	end
 end)
 
+local lastSelected
+
 function CreateResource:new()
 	CreateResource.super.new(self)
 
-	---@type EnumProperty
-	self.resource = EnumProperty(self, "Resource", nil)
+	if not GlobalConfig then
+		GlobalConfig = require "src.global.config"
+		local default = GlobalConfig.defaultResource:get()
+		for _, c in ipairs(createTemplates) do
+			if c.name == default then
+				lastSelected = c.value
+				break
+			end
+		end
+	end
 
+	---@type EnumProperty
+	self.resource = EnumProperty(self, "Resource", lastSelected)
 	self.resource:setOptions(createTemplates)
 
 	self.resource.valueChanged:addAction(function()
 		self.inspectablesChanged:trigger()
+		lastSelected = self.resource:getValue()
 	end)
 end
 

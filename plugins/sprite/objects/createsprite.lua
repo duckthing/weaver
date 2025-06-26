@@ -8,6 +8,7 @@ local Palettes = require "src.global.palettes"
 ---@class CreateSprite: Inspectable
 local CreateSprite = Inspectable:extend()
 CreateSprite.CLASS_NAME = "CreateSprite"
+CreateSprite.OBJECT_NAME = "Sprite"
 
 ---@type SpriteEditor
 local SpriteEditor = nil

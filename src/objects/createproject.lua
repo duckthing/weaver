@@ -11,6 +11,7 @@ local FilePathProperty = require "src.properties.filepath"
 ---@class CreateProject: Inspectable
 local CreateProject = Inspectable:extend()
 CreateProject.CLASS_NAME = "CreateProject"
+CreateProject.OBJECT_NAME = "Project"
 
 function CreateProject:new()
 	CreateProject.super.new(self)

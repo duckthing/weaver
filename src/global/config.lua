@@ -2,12 +2,16 @@ local Resources = require "src.global.resources"
 local KeyResource = require "plugins.keys.keybuffer"
 local Plugin = require "src.data.plugin"
 local GlobalContext = require "src.objects.globalcontext"
+local Contexts = require "src.global.contexts"
+
 local LabelProperty = require "src.properties.label"
 local ButtonProperty = require "src.properties.button"
 local BoolProperty = require "src.properties.bool"
 local NumberProperty = require "src.properties.number"
 local IntegerProperty = require "src.properties.integer"
-local Contexts = require "src.global.contexts"
+local StringProperty = require "src.properties.string"
+
+local CreateProject = require "src.objects.createproject"
 
 ---@class GlobalConfig: Plugin
 local GlobalConfig = Plugin:extend()
@@ -22,7 +26,10 @@ GlobalConfig.appScale:getRange()
 	:setStep(0.05)
 ---@type IntegerProperty
 GlobalConfig.maxRecentItems = IntegerProperty(GlobalConfig, "Max Recent Items", 30)
+---@type BoolProperty
 GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", true)
+---@type StringProperty
+GlobalConfig.defaultResource = StringProperty(GlobalConfig, "Default Resource to Create", "Sprite")
 --[[GlobalConfig.editKeybinds = ButtonProperty(GlobalConfig, "Edit Keybinds",
 	function(button)
 		Resources.selectResourceId(Resources.addResource(KeyResource()))
@@ -98,10 +105,15 @@ function GlobalConfig:getSettings()
 		GlobalConfig.appScale,
 		GlobalConfig.maxRecentItems,
 		GlobalConfig.pixelFont,
+		GlobalConfig.defaultResource,
 		-- GlobalConfig.editKeybinds,
 		GlobalConfig.viewThirdPartyLicenses,
 		GlobalConfig.viewAppLicense,
 	}
+end
+
+function GlobalConfig:getCreateInspectable()
+	return CreateProject()
 end
 
 GlobalConfig:assignAsDefault()
