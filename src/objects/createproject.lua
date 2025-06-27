@@ -2,6 +2,7 @@ local nativefs = require "lib.nativefs"
 local Inspectable = require "src.properties.inspectable"
 local Action = require "src.data.action"
 local Project = require "src.data.project"
+local Resources = require "src.global.resources"
 local Status = require "src.global.status"
 
 local IntegerProperty = require "src.properties.integer"
@@ -58,8 +59,9 @@ local actions = {
 
 			---@type Project
 			local project = Project()
-			project.name = name
+			project.name:set(name)
 			project.root = path
+			Resources.selectResourceId(Resources.addResource(project))
 			return true
 		end
 	):setType("accept")
@@ -67,12 +69,6 @@ local actions = {
 
 function CreateProject:getActions()
 	return actions
-end
-
----Adds the SpriteEditor for referencing
----@param editor SpriteEditor
-function CreateProject.addSpriteEditor(editor)
-	SpriteEditor = editor
 end
 
 return CreateProject

@@ -25,7 +25,7 @@ function ProjectFormat:import(path, file)
 	local newProject = Project()
 
 	if data.name then
-		newProject.name = data.name
+		newProject.name:set(data.name)
 	end
 
 	if data.assetDirectory then
@@ -40,7 +40,7 @@ end
 ---@param file love.File
 function ProjectFormat:export(project, path, file)
 	local data = {
-		name = project.name,
+		name = project.name:get(),
 		assetDirectory = project.assetDirectory,
 	}
 
