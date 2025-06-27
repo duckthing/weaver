@@ -52,13 +52,12 @@ GlobalConfig.recentItems = {}
 ---@type string[]
 GlobalConfig.recentProjects = {}
 
----Adds a file to the recent history
----@param path string
-function GlobalConfig.addFileToRecents(path)
-	local arr = GlobalConfig.recentItems
-
+---@param arr any[]
+---@param item any
+---@param maxItems integer
+local function bumpRecents(arr, item, maxItems)
 	for i = 1, #arr do
-		if arr[i] == path then
+		if arr[i] == item then
 			-- Bump this to be more recent
 			arr[i], arr[1] = arr[1], arr[i]
 			return
@@ -66,12 +65,28 @@ function GlobalConfig.addFileToRecents(path)
 	end
 
 	-- Add this to the front
-	table.insert(arr, 1, path)
+	table.insert(arr, 1, item)
 
 	-- Remove from the end of the array
-	for i = 1, #arr - GlobalConfig.maxRecentItems:get() do
+	for _ = 1, #arr - maxItems do
 		arr[#arr] = nil
 	end
+end
+
+---Adds a file to the recent history
+---@param path string
+function GlobalConfig.addFileToRecents(path)
+	local arr = GlobalConfig.recentItems
+	local maxItems = GlobalConfig.maxRecentItems:get()
+	bumpRecents(arr, path, maxItems)
+end
+
+---Adds a project to the recent history
+---@param path string
+function GlobalConfig.addProjectToRecents(path)
+	local arr = GlobalConfig.recentProjects
+	local maxItems = GlobalConfig.maxRecentItems:get()
+	bumpRecents(arr, path, maxItems)
 end
 
 function GlobalConfig:new()

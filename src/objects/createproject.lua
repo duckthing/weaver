@@ -3,7 +3,9 @@ local Inspectable = require "src.properties.inspectable"
 local Action = require "src.data.action"
 local Project = require "src.data.project"
 local Resources = require "src.global.resources"
+local Handler = require "src.global.handler"
 local Status = require "src.global.status"
+local ProjectFormat = require "src.formats.projectformat"
 
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
@@ -18,7 +20,7 @@ function CreateProject:new()
 	CreateProject.super.new(self)
 
 	---@type FilePathProperty
-	self.path = FilePathProperty(self, "Project Folder", love.filesystem.getUserDirectory())
+	self.path = FilePathProperty(self, "Project Folder", love.filesystem.getUserDirectory().."Projects/mycoolprojects/")
 	self.path:setPathMode("directory")
 
 	---@type StringProperty
@@ -61,7 +63,9 @@ local actions = {
 			local project = Project()
 			project.name:set(name)
 			project.root = path
-			Resources.selectResourceId(Resources.addResource(project))
+			local manifestPath = project.root.."weaver.wproj"
+			Handler.saveToPath(project, manifestPath, ProjectFormat)
+			ProjectFormat:handleImportSuccess(manifestPath, project)
 			return true
 		end
 	):setType("accept")

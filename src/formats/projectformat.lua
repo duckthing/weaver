@@ -3,6 +3,7 @@ local Path = require "lib.path"
 local Format = require "src.data.format"
 local Palette = require "src.data.palette"
 local Project = require "src.data.project"
+local Resources = require "src.global.resources"
 local State = require "src.global.state"
 
 ---@class ProjectFormat: Format
@@ -19,10 +20,11 @@ function ProjectFormat:import(path, file)
 	local dir = Path.parentdirsep(path)
 	if not dir then return false, "Path invalid" end
 
-	local data = json.decode(file:read("string"))
+	local data = json.decode(file:read("string", "all"))
 
 	---@type Project
 	local newProject = Project()
+	newProject.root = Path.parentdirsep(path)
 
 	if data.name then
 		newProject.name:set(data.name)
@@ -52,6 +54,11 @@ end
 ---@param project Project
 function ProjectFormat:handleImportSuccess(path, project)
 	State.loadProject(project)
+	if not GlobalConfig then
+		GlobalConfig = require "src.global.config"
+	end
+	GlobalConfig.addProjectToRecents(path)
+	Resources.selectResourceId(Resources.addResource(project))
 end
 
 return ProjectFormat
