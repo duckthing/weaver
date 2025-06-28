@@ -1,11 +1,13 @@
-local Object = require "lib.classic"
+local Resource = require "src.data.resource"
 
----@class Project: Object
-local Project = Object:extend()
+---@class Project: Resource
+local Project = Resource:extend()
+Project.TYPE = "Project"
 
 function Project:new()
-	---@type string
-	self.name = "Project"
+	Project.super.new(self)
+
+	self.name:set("Project")
 	---@type string # Local only; do not save
 	self.root = ""
 	---@type string # Default relative directory to make assets in

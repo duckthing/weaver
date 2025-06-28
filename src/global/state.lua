@@ -15,4 +15,13 @@ function State.loadProject(project)
 	end
 end
 
+function State.getAssetDirectory()
+	local project = State.project
+	if project then
+		return project.root..project.assetDirectory
+	else
+		return love.filesystem.getUserDirectory().."Documents/"
+	end
+end
+
 return State

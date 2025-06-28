@@ -8,6 +8,7 @@ local LabelProperty = require "src.properties.label"
 local BoolProperty = require "src.properties.bool"
 local PngFormat = require "plugins.sprite.formats.spritepng"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
+local State = require "src.global.state"
 
 ---@class ExportSprite: ExporterTemplate
 local ExportSprite = ExporterTemplate:extend()
@@ -28,14 +29,14 @@ function ExportSprite:new(sprite)
 	---@type IntegerProperty
 	self.rows = IntegerProperty(self, "Rows", 1)
 	---@type FilePathProperty
-	self.imagePath = FilePathProperty(self, "Image Path", love.filesystem.getUserDirectory().."Desktop/"..sprite.name:get())
+	self.imagePath = FilePathProperty(self, "Image Path", State.getAssetDirectory()..sprite.name:get())
 	self.imagePath:setPathMode("write")
 	self.imagePath:addFilter("png")
 
 	---@type BoolProperty
 	self.exportData = BoolProperty(self, "Export Data?", false)
 	---@type FilePathProperty
-	self.dataPath = FilePathProperty(self, "Data Path", love.filesystem.getUserDirectory().."Desktop/"..sprite.name:get())
+	self.dataPath = FilePathProperty(self, "Data Path", State.getAssetDirectory()..sprite.name:get())
 	self.dataPath:setPathMode("write")
 	self.dataPath:addFilter(SpriteEditor.defaultDataExtension:getValue(), true)
 	self.dataPath:addFilter("lua")

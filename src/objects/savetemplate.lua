@@ -4,6 +4,7 @@ local FilePathProperty = require "src.properties.filepath"
 local Status = require "src.global.status"
 local Resources = require "src.global.resources"
 local GlobalConfig = require "src.global.config"
+local State = require "src.global.state"
 
 ---@class SaveTemplate: Inspectable
 local SaveTemplate = Inspectable:extend()
@@ -17,7 +18,7 @@ function SaveTemplate:new(resource)
 	---@type boolean
 	self.alreadySaved = false
 	---@type FilePathProperty
-	self.path = FilePathProperty(self, "Path", love.filesystem.getUserDirectory().."Desktop/"..resource.name:get())
+	self.path = FilePathProperty(self, "Path", State.getAssetDirectory()..resource.name:get())
 	self.path:setPathMode("write")
 end
 

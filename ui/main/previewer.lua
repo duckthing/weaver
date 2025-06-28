@@ -79,7 +79,9 @@ function Previewer:new(r)
 				currentEditor:onExit()
 				self.currentEditor = nil
 			end
+
 			self.currentEditor = bestEditor
+
 			if bestEditor then
 				-- Add the new editor
 				self._toolbarActionsChanged = bestEditor.toolbarActionsChanged:addAction(function(editor, items, context)
