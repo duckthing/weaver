@@ -62,8 +62,11 @@ function SpriteState:new(sprite, context)
 	self.imageH = sprite.height
 	self.imageX = sprite.width * -0.5
 	self.imageY = sprite.height * -0.5
+
 	---@type integer, integer # For moving selections, added on top of other offsets
 	self.selectionX, self.selectionY = 0, 0
+	---@type number, number
+	self.selectionScaleX, self.selectionScaleY = 1, 1
 
 	---@type Bitmask
 	self.bitmask = Bitmask.new(sprite.width, sprite.height)

@@ -5,6 +5,7 @@ local Luvent = require "lib.luvent"
 local Status = require "src.global.status"
 local Bitmask = require "plugins.sprite.data.bitmask"
 local Context = require "src.global.contexts"
+local cleanedge = require "plugins.sprite.common.cleanedge"
 
 local LiftCommand = require "plugins.sprite.commands.liftcommand"
 local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
@@ -349,7 +350,7 @@ function SpriteTool:bindToProperties(
 	end
 end
 
-local imageResolution = {1, 1}
+local texPixelSize = {1, 1}
 function SpriteTool.updateCanvas()
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
@@ -362,6 +363,8 @@ function SpriteTool.updateCanvas()
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
 	local ox, oy = sprite.width * 0.5, sprite.height * 0.5
+	local width, height = sprite.width, sprite.height
+	-- spriteState.selectionCel:update()
 
 	-- Draw the canvas
 	love.graphics.push("all")
@@ -369,16 +372,20 @@ function SpriteTool.updateCanvas()
 	love.graphics.setScissor()
 	love.graphics.origin()
 	love.graphics.clear()
-	-- love.graphics.setShader(cleanedge)
-	-- imageResolution[1], imageResolution[2] = width, height
-	-- cleanedge:send("iResolution", imageResolution)
+	love.graphics.setShader(cleanedge)
+	-- In Godot, it's 1/dimension (1 / width, 1 / height)
+	texPixelSize[1], texPixelSize[2] =
+		1 / width,
+		1 / height
+	local scaleX, scaleY = spriteState.selectionScaleX, spriteState.selectionScaleY
+	cleanedge:send("TEXTURE_PIXEL_SIZE", texPixelSize)
 	if bitmask._active then
 		love.graphics.setColor(1, 1, 1)
 		love.graphics.draw(
 			spriteState.selectionCel.image,
 			selectionX + ox, selectionY + oy,
 			0,
-			1, 1,
+			scaleX, scaleY,
 			ox, oy
 		)
 	end
@@ -462,11 +469,15 @@ function SpriteTool.applyFromSelection()
 	liftCommand.transientUndo = true
 	liftCommand.transientRedo = true
 	liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
-	Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
+
+	local data = spriteState.mimicCanvas:newImageData()
+	-- Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
+	Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
 
 	local width = sprite.width
 	local selectP = ffi.cast("uint8_t*", selectCel.data:getFFIPointer())
 
+	-- Clear selection
 	for x = bx, bright do
 		for y = by, bbottom do
 			if bitmask:get(x, y) then
