@@ -91,14 +91,19 @@ function BaseSelectionTool:startPress(imageX, imageY)
 
 	tranformCommand = SelectionTransformCommand(sprite)
 
-	local bx, by, bright, bbottom = bitmask:getBounds()
+	-- Check if we're clicking directly on the bitmap
+	-- If it's untransformed and we are on it, move it
+	-- If it has a complex transform (not translated), move it anyways
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
-	do
-		local ix, iy = imageX - selectionX, imageY - selectionY
-		if not (ix >= bx and ix <= bright and iy >= by and iy <= bbottom) or not bitmask:get(ix, iy) then
-			-- Not inside or on an area
-			return false
+	if not SpriteTool.isSelectionTransformed() then
+		local bx, by, bright, bbottom = bitmask:getBounds()
+		do
+			local ix, iy = imageX - selectionX, imageY - selectionY
+			if not (ix >= bx and ix <= bright and iy >= by and iy <= bbottom) or not bitmask:get(ix, iy) then
+				-- Not inside or on an area
+				return false
+			end
 		end
 	end
 

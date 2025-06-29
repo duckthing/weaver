@@ -28,6 +28,8 @@ function SelectionTransformCommand:new(sprite)
 
 	self.oldIncludeMimic = state.includeMimic
 	self.newIncludeMimic = true
+	self.oldIncludeBitmask = state.includeBitmask
+	self.newIncludeBitmask = true
 
 	self.relevantLayer = state.layer:get()
 	self.relevantFrame = state.frame:get()
@@ -45,6 +47,9 @@ function SelectionTransformCommand:completeTransform()
 	self.newOriginY = state.selectionOriginY
 
 	self.newRotation = state.selectionRotation
+
+	self.newIncludeMimic = state.includeMimic
+	self.newIncludeBitmask = state.includeBitmask
 end
 
 function SelectionTransformCommand:perform()
@@ -59,6 +64,7 @@ function SelectionTransformCommand:perform()
 	state.selectionOriginY = self.newOriginY
 
 	state.includeMimic = self.newIncludeMimic
+	state.includeBitmask = self.newIncludeBitmask
 	SelectionTransformCommand.SpriteTool.updateCanvas()
 end
 
@@ -74,6 +80,7 @@ function SelectionTransformCommand:undo()
 	state.selectionOriginY = self.oldOriginY
 
 	state.includeMimic = self.oldIncludeMimic
+	state.includeBitmask = self.oldIncludeBitmask
 	SelectionTransformCommand.SpriteTool.updateCanvas()
 end
 

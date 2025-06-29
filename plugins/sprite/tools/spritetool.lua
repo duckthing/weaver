@@ -415,6 +415,19 @@ function SpriteTool.onBitmaskChanged()
 	sprite.undoStack:commitWithoutPerforming(command)
 end
 
+---Returns true if there's a complex transformation (ex. scaled, but not moved)
+---@return boolean transformed
+function SpriteTool.isSelectionTransformed()
+	local sprite = SpriteTool.sprite
+	if not sprite then return false end
+	local spriteState = sprite.spriteState
+
+	return
+		(spriteState.selectionScaleX ~= 1) or (spriteState.selectionScaleY ~= 1)
+		or
+		(spriteState.selectionRotation ~= 0)
+end
+
 ---@return LiftCommand?
 function SpriteTool.liftIntoSelection()
 	local sprite = SpriteTool.sprite
@@ -493,10 +506,7 @@ function SpriteTool.applyFromSelection()
 	liftCommand.transientRedo = true
 
 	-- If this transformation requires updating the selection image itself (ex. scaling and rotating, not moving)
-	local isDestructive =
-		spriteState.selectionScaleX ~= 1 or spriteState.selectionScaleY ~= 1
-		or
-		spriteState.selectionRotation ~= 0
+	local isDestructive = SpriteTool.isSelectionTransformed()
 
 	local data
 	if isDestructive then
@@ -547,6 +557,7 @@ function SpriteTool.applyFromSelection()
 
 		sprite.spriteState.includeBitmask = true
 		data:release()
+		SpriteTool.onBitmaskChanged()
 	end
 
 	spriteState.includeMimic = false
