@@ -14,11 +14,14 @@ function SelectionTransformCommand:new(sprite)
 
 	self.oldX, self.oldY = state.selectionX, state.selectionY
 	self.oldScaleX, self.oldScaleY = state.selectionScaleX, state.selectionScaleY
+	self.oldRotation = state.selectionRotation
 
 	---@type integer, integer
 	self.newX, self.newY = nil, nil
 	---@type number, number
 	self.newScaleX, self.newScaleY = nil, nil
+	---@type number
+	self.newRotation = state.selectionRotation
 
 	self.oldIncludeMimic = state.includeMimic
 	self.newIncludeMimic = true
@@ -34,6 +37,8 @@ function SelectionTransformCommand:completeTransform()
 
 	self.newScaleX = state.selectionScaleX
 	self.newScaleY = state.selectionScaleY
+
+	self.newRotation = state.selectionRotation
 end
 
 function SelectionTransformCommand:perform()
@@ -43,6 +48,7 @@ function SelectionTransformCommand:perform()
 	state.selectionY = self.newY
 	state.selectionScaleX = self.newScaleX
 	state.selectionScaleY = self.newScaleY
+	state.selectionRotation = self.newRotation
 
 	state.includeMimic = self.newIncludeMimic
 	SelectionTransformCommand.SpriteTool.updateCanvas()
@@ -55,6 +61,7 @@ function SelectionTransformCommand:undo()
 	state.selectionY = self.oldY
 	state.selectionScaleX = self.oldScaleX
 	state.selectionScaleY = self.oldScaleY
+	state.selectionRotation = self.oldRotation
 
 	state.includeMimic = self.oldIncludeMimic
 	SelectionTransformCommand.SpriteTool.updateCanvas()
@@ -69,6 +76,8 @@ function SelectionTransformCommand:hasChanges()
 		(self.oldX ~= self.newX) or (self.oldY ~= self.newY)
 		or
 		(self.oldScaleX ~= self.newScaleX) or (self.oldScaleY ~= self.newScaleY)
+		or
+		(self.oldRotation ~= self.newRotation)
 end
 
 return SelectionTransformCommand

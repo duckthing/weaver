@@ -362,6 +362,7 @@ function SpriteTool.updateCanvas()
 	local buff = sprite.spriteState.mimicCanvas
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
+	-- The center of the viewport's world
 	local ox, oy = sprite.width * 0.5, sprite.height * 0.5
 	local width, height = sprite.width, sprite.height
 	-- spriteState.selectionCel:update()
@@ -384,7 +385,7 @@ function SpriteTool.updateCanvas()
 		love.graphics.draw(
 			spriteState.selectionCel.image,
 			selectionX + ox, selectionY + oy,
-			0,
+			spriteState.selectionRotation,
 			scaleX, scaleY,
 			ox, oy
 		)
@@ -468,16 +469,29 @@ function SpriteTool.applyFromSelection()
 	local liftCommand = LiftCommand(sprite, cel)
 	liftCommand.transientUndo = true
 	liftCommand.transientRedo = true
-	liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
 
-	local data = spriteState.mimicCanvas:newImageData()
-	-- Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
-	Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
+	-- If this transformation requires updating the selection image itself (ex. scaling and rotating, not moving)
+	local isDestructive =
+		spriteState.selectionScaleX ~= 1 or spriteState.selectionScaleY ~= 1
+		or
+		spriteState.selectionRotation ~= 0
+
+	local data
+	if isDestructive then
+		data = spriteState.mimicCanvas:newImageData()
+		Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
+		liftCommand:markRegion(0, 0, data:getDimensions())
+		data:release()
+	else
+		local data = selectCel.data
+		Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
+		liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
+	end
 
 	local width = sprite.width
 	local selectP = ffi.cast("uint8_t*", selectCel.data:getFFIPointer())
 
-	-- Clear selection
+	-- Clear selection image
 	for x = bx, bright do
 		for y = by, bbottom do
 			if bitmask:get(x, y) then
@@ -490,6 +504,22 @@ function SpriteTool.applyFromSelection()
 		end
 	end
 
+	-- Update the selection if destructive
+	--[[ if isDestructive then
+		bitmask:reset()
+		local w, h = data:getDimensions()
+		local dataP = ffi.cast("uint8_t*", data:getFFIPointer())
+		for x = 0, w - 1 do
+			for y = 0, h - 1 do
+				local imageIndex = (x + y * w) * 4
+
+				if dataP[imageIndex + 3] ~= 0 then
+					bitmask:set(x, y, true)
+				end
+			end
+		end
+	end --]]
+
 	spriteState.includeMimic = false
 
 	liftCommand:completeMark()
@@ -497,6 +527,9 @@ function SpriteTool.applyFromSelection()
 
 	spriteState.selectionX = 0
 	spriteState.selectionY = 0
+	spriteState.selectionScaleX = 1
+	spriteState.selectionScaleY = 1
+	spriteState.selectionRotation = 0
 
 	cel:update()
 	selectCel:update()

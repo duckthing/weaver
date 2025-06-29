@@ -28,4 +28,11 @@ function AABBMath.intersect(ax, ay, aw, ah, bx, by, bw, bh)
 	return x, y, w, h
 end
 
+function AABBMath.inside(px, py, x, y, w, h)
+	return
+		(px >= x) and (px <= x + w)
+		and
+		(py >= y) and (py <= y + h)
+end
+
 return AABBMath

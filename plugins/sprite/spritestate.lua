@@ -67,6 +67,8 @@ function SpriteState:new(sprite, context)
 	self.selectionX, self.selectionY = 0, 0
 	---@type number, number
 	self.selectionScaleX, self.selectionScaleY = 1, 1
+	---@type number
+	self.selectionRotation = 0
 
 	---@type Bitmask
 	self.bitmask = Bitmask.new(sprite.width, sprite.height)

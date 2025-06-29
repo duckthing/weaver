@@ -48,16 +48,16 @@ function BaseSelectionTool:draw(imageX, imageY, currLayerIndex)
 		local bitmask = spriteState.bitmask
 		if not bitmask._active then return end
 
-		local buff = sprite.spriteState.mimicCanvas
+		-- local buff = sprite.spriteState.mimicCanvas
 
-		local bx, by, bright, bbottom = bitmask:getBounds()
+		-- local bx, by, bright, bbottom = bitmask:getBounds()
 		local offsetX, offsetY = canvas.imageX, canvas.imageY
 
-		local bw, bh =
+		--[[ local bw, bh =
 			bright - bx + 1,
-			bbottom - by + 1
+			bbottom - by + 1 --]]
 
-		local width, height = sprite.width, sprite.height
+		-- local width, height = sprite.width, sprite.height
 		local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
 		offsetX = offsetX + selectionX
 		offsetY = offsetY + selectionY
