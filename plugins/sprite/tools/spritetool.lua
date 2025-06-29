@@ -11,6 +11,7 @@ local LiftCommand = require "plugins.sprite.commands.liftcommand"
 local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
 local RemapCelCommand = require "plugins.sprite.commands.remapcelcommand"
 local BucketFillCommand = require "plugins.sprite.commands.bucketfillcommand"
+local SelectionTransformCommand = require "plugins.sprite.commands.selectiontransformcommand"
 
 local BrushProperty = require "plugins.sprite.properties.brushp"
 local BoolProperty = require "src.properties.bool"
@@ -362,8 +363,8 @@ function SpriteTool.updateCanvas()
 	local buff = sprite.spriteState.mimicCanvas
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
-	-- The center of the viewport's world
-	local ox, oy = sprite.width * 0.5, sprite.height * 0.5
+	-- The selection origin
+	local ox, oy = spriteState.selectionOriginX, spriteState.selectionOriginY
 	local width, height = sprite.width, sprite.height
 	-- spriteState.selectionCel:update()
 
@@ -391,6 +392,27 @@ function SpriteTool.updateCanvas()
 		)
 	end
 	love.graphics.pop()
+end
+
+function SpriteTool.onBitmaskChanged()
+	local sprite = SpriteTool.sprite
+	if not sprite then return end
+	local spriteState = sprite.spriteState
+
+	local bitmask = spriteState.bitmask
+	---@type SelectionTransformCommand
+	local command = SelectionTransformCommand(sprite)
+
+	do
+		local bleft, btop, _, _, bw, bh = sprite.spriteState.bitmask:getBounds()
+		local centerX = math.floor(bleft + bw * 0.5)
+		local centerY = math.floor(btop + bh * 0.5)
+		spriteState.selectionOriginX, spriteState.selectionOriginY =
+			centerX, centerY
+	end
+
+	command:completeTransform()
+	sprite.undoStack:commitWithoutPerforming(command)
 end
 
 ---@return LiftCommand?
@@ -479,13 +501,12 @@ function SpriteTool.applyFromSelection()
 	local data
 	if isDestructive then
 		data = spriteState.mimicCanvas:newImageData()
-		Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
 		liftCommand:markRegion(0, 0, data:getDimensions())
-		data:release()
+		Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
 	else
 		local data = selectCel.data
-		Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
 		liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
+		Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
 	end
 
 	local width = sprite.width
@@ -504,8 +525,12 @@ function SpriteTool.applyFromSelection()
 		end
 	end
 
+	---@type SelectionCommand
+	local selectionCommand = SelectionCommand(sprite, bitmask)
+	selectionCommand:markRegion(bx, by, bw, bh)
+
 	-- Update the selection if destructive
-	--[[ if isDestructive then
+	if isDestructive then
 		bitmask:reset()
 		local w, h = data:getDimensions()
 		local dataP = ffi.cast("uint8_t*", data:getFFIPointer())
@@ -515,10 +540,14 @@ function SpriteTool.applyFromSelection()
 
 				if dataP[imageIndex + 3] ~= 0 then
 					bitmask:set(x, y, true)
+					selectionCommand:markRegion(x, y, 1, 1)
 				end
 			end
 		end
-	end --]]
+
+		sprite.spriteState.includeBitmask = true
+		data:release()
+	end
 
 	spriteState.includeMimic = false
 
@@ -535,13 +564,14 @@ function SpriteTool.applyFromSelection()
 	selectCel:update()
 	SpriteTool.updateCanvas()
 
-	---@type SelectionCommand
-	local selectionCommand = SelectionCommand(sprite, bitmask)
 	selectionCommand.transientUndo = true
 	selectionCommand.transientRedo = true
-	selectionCommand:markRegion(bx, by, bw, bh)
-	selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
-	bitmask:shift(selectionX, selectionY)
+
+	if not isDestructive then
+		selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
+		bitmask:shift(selectionX, selectionY)
+	end
+
 	selectionCommand:completeMark()
 	sprite.undoStack:commit(selectionCommand)
 
@@ -616,7 +646,7 @@ function SpriteTool.pasteSelection()
 	bitmask:reset(false)
 	bitmask:paste(selection.bitmask, 0, 0, 0, 0, selection.bitmask.width, selection.bitmask.height)
 	bitmask._active = true
-	spriteState.includeSelection = true
+	-- spriteState.includeSelection = true
 	selectionCommand:completeMark()
 
 	---@type BucketFillCommand

@@ -124,10 +124,14 @@ function RectMarquee:stopPress(imageX, imageY)
 
 	do
 		-- Check if it's empty now
-		local _, _, bright, bbottom = bitmask:getBounds()
-		if bright == -1 or bbottom == -1 then
+		local _, _, _, _, bw, bh = bitmask:getBounds()
+		if bw == 0 or bh == 0 then
 			-- It is empty
 			bitmask:setActive(false)
+			sprite.spriteState.includeBitmask = false
+		else
+			SpriteTool.onBitmaskChanged()
+			sprite.spriteState.includeBitmask = true
 		end
 	end
 

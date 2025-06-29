@@ -41,8 +41,10 @@ function SpriteState:new(sprite, context)
 	self.selectionCel = sprite:createInternalCel()
 	---@type boolean # Whether the buffer should be drawn, too
 	self.includeDrawBuffer = false
-	---@type boolean # Whether the selection should be drawn, too
+	---@type boolean # Whether the selection contents should be drawn, too
 	self.includeSelection = false
+	---@type boolean # Whether the bitmask should be drawn, too
+	self.includeBitmask = false
 	---@type boolean # Whether the mimic canvas should be drawn, too
 	self.includeMimic = false
 
@@ -69,6 +71,9 @@ function SpriteState:new(sprite, context)
 	self.selectionScaleX, self.selectionScaleY = 1, 1
 	---@type number
 	self.selectionRotation = 0
+	---@type integer, integer # For moving selections, added on top of other offsets
+	self.selectionOriginX, self.selectionOriginY = 0, 0
+
 
 	---@type Bitmask
 	self.bitmask = Bitmask.new(sprite.width, sprite.height)

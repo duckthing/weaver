@@ -188,6 +188,10 @@ function MagicMarquee:startPress(imageX, imageY)
 		if bw == 0 or bh == 0 then
 			-- It is empty
 			bitmask:setActive(false)
+			sprite.spriteState.includeBitmask = false
+		else
+			SpriteTool.onBitmaskChanged()
+			sprite.spriteState.includeBitmask = true
 		end
 	end
 

@@ -331,7 +331,10 @@ function Canvas:draw()
 				love.graphics.setColor(1, 1, 1)
 			end
 		end
-		spriteState.bitmaskRenderer:draw(bx, by, self.scale)
+
+		if spriteState.includeBitmask then
+			spriteState.bitmaskRenderer:draw(bx, by, self.scale)
+		end
 	end
 
 	-- Exit viewport

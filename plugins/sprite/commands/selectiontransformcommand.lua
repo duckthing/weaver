@@ -15,6 +15,7 @@ function SelectionTransformCommand:new(sprite)
 	self.oldX, self.oldY = state.selectionX, state.selectionY
 	self.oldScaleX, self.oldScaleY = state.selectionScaleX, state.selectionScaleY
 	self.oldRotation = state.selectionRotation
+	self.oldOriginX, self.oldOriginY = state.selectionOriginX, state.selectionOriginY
 
 	---@type integer, integer
 	self.newX, self.newY = nil, nil
@@ -22,6 +23,8 @@ function SelectionTransformCommand:new(sprite)
 	self.newScaleX, self.newScaleY = nil, nil
 	---@type number
 	self.newRotation = state.selectionRotation
+	---@type number, number
+	self.newOriginX, self.newOriginY = nil, nil
 
 	self.oldIncludeMimic = state.includeMimic
 	self.newIncludeMimic = true
@@ -38,6 +41,9 @@ function SelectionTransformCommand:completeTransform()
 	self.newScaleX = state.selectionScaleX
 	self.newScaleY = state.selectionScaleY
 
+	self.newOriginX = state.selectionOriginX
+	self.newOriginY = state.selectionOriginY
+
 	self.newRotation = state.selectionRotation
 end
 
@@ -49,6 +55,8 @@ function SelectionTransformCommand:perform()
 	state.selectionScaleX = self.newScaleX
 	state.selectionScaleY = self.newScaleY
 	state.selectionRotation = self.newRotation
+	state.selectionOriginX = self.newOriginX
+	state.selectionOriginY = self.newOriginY
 
 	state.includeMimic = self.newIncludeMimic
 	SelectionTransformCommand.SpriteTool.updateCanvas()
@@ -62,6 +70,8 @@ function SelectionTransformCommand:undo()
 	state.selectionScaleX = self.oldScaleX
 	state.selectionScaleY = self.oldScaleY
 	state.selectionRotation = self.oldRotation
+	state.selectionOriginX = self.oldOriginX
+	state.selectionOriginY = self.oldOriginY
 
 	state.includeMimic = self.oldIncludeMimic
 	SelectionTransformCommand.SpriteTool.updateCanvas()
@@ -78,6 +88,8 @@ function SelectionTransformCommand:hasChanges()
 		(self.oldScaleX ~= self.newScaleX) or (self.oldScaleY ~= self.newScaleY)
 		or
 		(self.oldRotation ~= self.newRotation)
+		or
+		(self.oldOriginX ~= self.newOriginX) or (self.oldOriginY ~= self.newOriginY)
 end
 
 return SelectionTransformCommand

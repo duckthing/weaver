@@ -3,6 +3,7 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 local LabelProperty = require "src.properties.label"
 local DrawCommand = require "plugins.sprite.commands.drawcommand"
 local EnumProperty = require "src.properties.enum"
+local SelectionTransformCommand = require "plugins.sprite.commands.selectiontransformcommand"
 
 ---@class SelectionTransformTool: SpriteTool
 local Transform = SpriteTool:extend()
@@ -11,7 +12,7 @@ local Transform = SpriteTool:extend()
 ---| "scale"
 ---| "rotate"
 
----@type DrawCommand
+---@type SelectionTransformCommand
 local command = nil
 
 ---@param imageX integer
@@ -21,6 +22,7 @@ function Transform:draw(imageX, imageY, currLayerIndex)
 end
 
 local startX, startY = 0, 0
+local startRot = 0
 
 ---@param imageX integer
 ---@param imageY integer
@@ -29,8 +31,12 @@ function Transform:startPress(imageX, imageY)
 	if not sprite then return end
 
 	startX, startY = imageX, imageY
+	startRot = sprite.spriteState.selectionRotation
+	command = SelectionTransformCommand(sprite)
+
 	SpriteTool.lastX, SpriteTool.lastY = imageX, imageY
 	SpriteTool.drawing = true
+	sprite.spriteState.includeBitmask = false
 end
 
 ---@param imageX integer
@@ -44,16 +50,11 @@ function Transform:pressing(imageX, imageY)
 	local diffX, diffY = imageX - startX, imageY - startY
 
 	if mode == "rotate" then
-		local centerX, centerY
-		do
-			local bleft, btop, _, _, bw, bh = sprite.spriteState.bitmask:getBounds()
-			centerX = math.floor(bleft + bw * 0.5)
-			centerY = math.floor(btop + bh * 0.5)
-		end
+		local centerX, centerY = sprite.spriteState.selectionOriginX, sprite.spriteState.selectionOriginY
 
 		local originalAngle = math.atan2((startY - centerY), (startX - centerX))
 		local newAngle = math.atan2((imageY - centerY), (imageX - centerX))
-		sprite.spriteState.selectionRotation = newAngle - originalAngle
+		sprite.spriteState.selectionRotation = newAngle - originalAngle + startRot
 		SpriteTool.updateCanvas()
 	end
 
@@ -72,8 +73,13 @@ function Transform:stopPress(imageX, imageY)
 	local mode = Transform.mode:getValue()
 
 	if mode == "rotate" then
-		SpriteTool.applyFromSelection()
+		-- SpriteTool.applyFromSelection()
 	end
+
+	command:completeTransform()
+	sprite.undoStack:commitWithoutPerforming(command)
+	command = nil
+	sprite.spriteState.includeBitmask = true
 end
 
 ---@type LabelProperty
@@ -89,6 +95,10 @@ Transform.mode:setOptions(
 		{
 			name = "Rotate",
 			value = "rotate",
+		},
+		{
+			name = "Move",
+			value = "move",
 		},
 	}
 )
