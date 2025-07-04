@@ -33,6 +33,9 @@ function SelectionTransformCommand:new(sprite)
 
 	self.relevantLayer = state.layer:get()
 	self.relevantFrame = state.frame:get()
+
+	---@type boolean # Whether this can change the rendering, such as "includeMimic"
+	self.allowRenderState = true
 end
 
 function SelectionTransformCommand:completeTransform()
@@ -63,8 +66,10 @@ function SelectionTransformCommand:perform()
 	state.selectionOriginX = self.newOriginX
 	state.selectionOriginY = self.newOriginY
 
-	state.includeMimic = self.newIncludeMimic
-	state.includeBitmask = self.newIncludeBitmask
+	if self.allowRenderState then
+		state.includeMimic = self.newIncludeMimic
+		state.includeBitmask = self.newIncludeBitmask
+	end
 	SelectionTransformCommand.SpriteTool.updateCanvas()
 end
 
@@ -79,8 +84,10 @@ function SelectionTransformCommand:undo()
 	state.selectionOriginX = self.oldOriginX
 	state.selectionOriginY = self.oldOriginY
 
-	state.includeMimic = self.oldIncludeMimic
-	state.includeBitmask = self.oldIncludeBitmask
+	if self.allowRenderState then
+		state.includeMimic = self.oldIncludeMimic
+		state.includeBitmask = self.oldIncludeBitmask
+	end
 	SelectionTransformCommand.SpriteTool.updateCanvas()
 end
 

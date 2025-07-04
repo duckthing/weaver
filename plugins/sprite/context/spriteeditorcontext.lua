@@ -863,8 +863,10 @@ local actions = {
 				command:markRegion(0, 0, sprite.width - 1, sprite.height - 1)
 				spriteState.bitmask:reset(true)
 				spriteState.bitmask:setActive(true)
+				spriteState.includeBitmask = true
 				command:completeMark()
 				sprite.undoStack:commit(command)
+				SpriteTool.onBitmaskChanged()
 				SpriteTool.liftIntoSelection()
 				sprite.undoStack:popGroup()
 			end

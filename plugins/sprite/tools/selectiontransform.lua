@@ -79,7 +79,6 @@ function Transform:stopPress(imageX, imageY)
 	command:completeTransform()
 	sprite.undoStack:commitWithoutPerforming(command)
 	command = nil
-	-- sprite.spriteState.includeBitmask = true
 end
 
 ---@type LabelProperty

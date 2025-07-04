@@ -394,12 +394,12 @@ function SpriteTool.updateCanvas()
 	love.graphics.pop()
 end
 
+---@return SelectionTransformCommand?
 function SpriteTool.onBitmaskChanged()
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
 	local spriteState = sprite.spriteState
 
-	local bitmask = spriteState.bitmask
 	---@type SelectionTransformCommand
 	local command = SelectionTransformCommand(sprite)
 
@@ -409,10 +409,17 @@ function SpriteTool.onBitmaskChanged()
 		local centerY = math.floor(btop + bh * 0.5)
 		spriteState.selectionOriginX, spriteState.selectionOriginY =
 			centerX, centerY
+
+		spriteState.selectionX = 0
+		spriteState.selectionY = 0
+		spriteState.selectionScaleX = 1
+		spriteState.selectionScaleY = 1
+		spriteState.selectionRotation = 0
 	end
 
 	command:completeTransform()
 	sprite.undoStack:commitWithoutPerforming(command)
+	return command
 end
 
 ---Returns true if there's a complex transformation (ex. scaled, but not moved)
@@ -495,6 +502,8 @@ function SpriteTool.applyFromSelection()
 	local cel = SpriteTool.cel
 	if not cel then return end
 
+	sprite.undoStack:pushGroup()
+
 	-- Clear the region
 	local bx, by, bright, bbottom, bw, bh = bitmask:getBounds()
 	local selectCel = spriteState.selectionCel
@@ -514,7 +523,6 @@ function SpriteTool.applyFromSelection()
 		liftCommand:markRegion(0, 0, data:getDimensions())
 		Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
 	else
-		local data = selectCel.data
 		liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
 		Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
 	end
@@ -544,6 +552,8 @@ function SpriteTool.applyFromSelection()
 		bitmask:reset()
 		local w, h = data:getDimensions()
 		local dataP = ffi.cast("uint8_t*", data:getFFIPointer())
+
+		-- Set the bitmask for each new pixel
 		for x = 0, w - 1 do
 			for y = 0, h - 1 do
 				local imageIndex = (x + y * w) * 4
@@ -557,19 +567,21 @@ function SpriteTool.applyFromSelection()
 
 		sprite.spriteState.includeBitmask = true
 		data:release()
-		SpriteTool.onBitmaskChanged()
+
+		local selTransCommand = SpriteTool.onBitmaskChanged()
+		if selTransCommand then
+			selTransCommand.allowRenderState = false
+		end
+	else
+		-- Just shift it
+		selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
+		bitmask:shift(selectionX, selectionY)
 	end
 
 	spriteState.includeMimic = false
 
 	liftCommand:completeMark()
 	sprite.undoStack:commit(liftCommand)
-
-	spriteState.selectionX = 0
-	spriteState.selectionY = 0
-	spriteState.selectionScaleX = 1
-	spriteState.selectionScaleY = 1
-	spriteState.selectionRotation = 0
 
 	cel:update()
 	selectCel:update()
@@ -578,13 +590,9 @@ function SpriteTool.applyFromSelection()
 	selectionCommand.transientUndo = true
 	selectionCommand.transientRedo = true
 
-	if not isDestructive then
-		selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
-		bitmask:shift(selectionX, selectionY)
-	end
-
 	selectionCommand:completeMark()
 	sprite.undoStack:commit(selectionCommand)
+	sprite.undoStack:popGroup()
 
 	spriteState.bitmaskRenderer:update()
 
