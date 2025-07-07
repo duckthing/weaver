@@ -256,6 +256,37 @@ function Canvas:update(dt)
 	end
 end
 
+local outlineShader
+do
+	local outlineShaderCode =
+[[extern vec2 stepSize;
+extern float time;
+
+vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
+{
+	// get color of pixels:
+	float alpha = 4.0*Texel( texture, texturePos ).a;
+	alpha -= Texel( texture, texturePos + vec2( stepSize.x, 0.0f ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( -stepSize.x, 0.0f ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( 0.0f, stepSize.y ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( 0.0f, -stepSize.y ) ).a;
+
+	// calculate resulting color
+	float num = step(
+		mod(time +
+			0.05 * screenPos.x +
+			0.05 * screenPos.y,
+		1.f),
+	0.5f);
+
+	return vec4( num, num, num, min(alpha, 1.f) * 0.6 );
+}]]
+	outlineShader = love.graphics.newShader(outlineShaderCode)
+end
+
+-- For scaling the outline
+local vals = {0.1, 0.1}
+
 function Canvas:draw()
 	-- Don't render if canvas is too small
 	if self.w < 1 or self.h < 1 then
@@ -319,6 +350,17 @@ function Canvas:draw()
 
 				if spriteState.includeMimic then
 					love.graphics.draw(spriteState.mimicCanvas, ix, iy)
+
+					if spriteState.includeMimicOutline then
+						love.graphics.push("all")
+						love.graphics.setShader(outlineShader)
+						local scale = self.scale
+						vals[1], vals[2] = 3 / self.sprite.width / scale, 3 / self.sprite.height / scale
+						outlineShader:send("stepSize", vals)
+						outlineShader:send("time", (love.timer.getTime() * 0.3) % 1)
+						love.graphics.draw(spriteState.mimicCanvas, ix, iy)
+						love.graphics.pop()
+					end
 				end
 
 				if spriteState.includeDrawBuffer then

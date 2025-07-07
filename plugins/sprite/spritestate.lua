@@ -47,6 +47,8 @@ function SpriteState:new(sprite, context)
 	self.includeBitmask = false
 	---@type boolean # Whether the mimic canvas should be drawn, too
 	self.includeMimic = false
+	---@type boolean # Whether the mimic canvas should have a selection outline
+	self.includeMimicOutline = false
 
 	---@type string[] # For the ResizeCommand to know to modify these
 	self.internalCelNames = {

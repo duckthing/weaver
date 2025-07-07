@@ -565,7 +565,7 @@ function SpriteTool.applyFromSelection()
 			end
 		end
 
-		sprite.spriteState.includeBitmask = true
+		spriteState.includeBitmask = true
 		data:release()
 
 		local selTransCommand = SpriteTool.onBitmaskChanged()
@@ -579,6 +579,7 @@ function SpriteTool.applyFromSelection()
 	end
 
 	spriteState.includeMimic = false
+	spriteState.includeMimicOutline = false
 
 	liftCommand:completeMark()
 	sprite.undoStack:commit(liftCommand)

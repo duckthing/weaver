@@ -15,8 +15,10 @@ function Bitmask.newRenderer(...)
 	return BitmaskRenderer(...)
 end
 
-local bitmaskShaderCode = [[
-extern vec2 stepSize;
+local bitmaskShader
+do
+	local bitmaskShaderCode =
+[[extern vec2 stepSize;
 extern float time;
 
 vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
@@ -37,9 +39,9 @@ vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
 	0.5f);
 
 	return vec4( num, num, num, min(alpha, 1.f) * 0.6 );
-}
-]]
-local bitmaskShader = love.graphics.newShader(bitmaskShaderCode)
+}]]
+	bitmaskShader = love.graphics.newShader(bitmaskShaderCode)
+end
 
 ---@param bitmask Bitmask
 function BitmaskRenderer:new(bitmask)

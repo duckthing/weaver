@@ -37,6 +37,7 @@ function Transform:startPress(imageX, imageY)
 	SpriteTool.lastX, SpriteTool.lastY = imageX, imageY
 	SpriteTool.drawing = true
 	sprite.spriteState.includeBitmask = false
+	sprite.spriteState.includeMimicOutline = true
 end
 
 ---@param imageX integer
