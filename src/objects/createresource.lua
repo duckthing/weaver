@@ -52,10 +52,37 @@ function CreateResource:new()
 	self.resource = EnumProperty(self, "Resource", lastSelected)
 	self.resource:setOptions(createTemplates)
 
+	---@type Inspectable?
+	self.lastInspectable = nil
+
+	---@type string? # For the resource
+	self._selInspectablesChanged = nil
+
 	self.resource.valueChanged:addAction(function()
 		self.inspectablesChanged:trigger()
-		lastSelected = self.resource:getValue()
+
+		local newInspectable = self.resource:getValue()
+		self:bindToResource(newInspectable)
 	end)
+
+	self:bindToResource(self.resource:getValue())
+end
+
+---@param inspectable Inspectable
+function CreateResource:bindToResource(inspectable)
+	local lastInspectable = self.lastInspectable
+
+	if lastInspectable and self._selInspectablesChanged then
+		lastSelected.inspectablesChanged:removeAction(self._selInspectablesChanged)
+	end
+
+	if inspectable then
+		self._selInspectablesChanged = inspectable.inspectablesChanged:addAction(function()
+			self.inspectablesChanged:trigger()
+		end)
+
+		lastSelected = inspectable
+	end
 end
 
 function CreateResource:getProperties()
