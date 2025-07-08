@@ -255,8 +255,10 @@ local actions = {
 			if sprite then
 				if #sprite.layers <= 1 then return end
 				local _, removedLayer = sprite:removeLayer(sprite.spriteState.layer:get())
-				local insertCommand = InsertLayerCommand(sprite, false, removedLayer)
-				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				if removedLayer then
+					local insertCommand = InsertLayerCommand(sprite, false, removedLayer)
+					sprite.undoStack:commitWithoutPerforming(insertCommand)
+				end
 			end
 		end
 	),
