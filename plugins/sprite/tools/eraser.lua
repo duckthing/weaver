@@ -97,10 +97,12 @@ function Eraser:pressing(imageX, imageY)
 
 	SpriteTool:transformToCanvas(
 		lastX, lastY, imageX, imageY,
-		function(ax, ay, bx, by, ...)
+		function(ax, ay, bx, by, xMult, yMult, ...)
 			brush:forEachPixel(
 				callback,
-				drawCel.data, ax, ay, bx, by, bitmask, command,
+				drawCel.data, ax, ay, bx, by,
+				xMult, yMult,
+				bitmask, command,
 				...
 			)
 		end,

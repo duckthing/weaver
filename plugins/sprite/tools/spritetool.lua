@@ -104,7 +104,7 @@ end
 ---@param ay integer
 ---@param bx integer
 ---@param by integer
----@param callback fun(ax: integer, ay: integer, bx: integer, by: integer, ...)
+---@param callback fun(ax: integer, ay: integer, bx: integer, by: integer, xMult: 1 | -1, yMult: 1 | -1, ...)
 ---@param ... unknown
 function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 	local sprite = SpriteTool.sprite
@@ -135,6 +135,8 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 					relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 					relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 					relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
+					xMult,
+					yMult,
 					...
 				)
 			end
@@ -146,6 +148,8 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 				ay,
 				relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 				by,
+				xMult,
+				1,
 				...
 			)
 		end
@@ -156,11 +160,13 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 				relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 				bx,
 				relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
+				1,
+				yMult,
 				...
 			)
 		end
 	else
-		callback(ax, ay, bx, by, ...)
+		callback(ax, ay, bx, by, 1, 1, ...)
 	end
 end
 
