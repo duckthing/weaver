@@ -34,6 +34,7 @@ function SpriteState:new(sprite, context)
 
 	---@type love.Canvas # A canvas that can be rendered to temporarily, but is separate from the image
 	self.mimicCanvas = love.graphics.newCanvas(sprite.width, sprite.height)
+	self.mimicCanvas:setWrap("clampzero", "clampzero")
 
 	-- Used for drawing, before copying to the final cel
 	self.drawCel = sprite:createInternalCel()
