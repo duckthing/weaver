@@ -310,7 +310,6 @@ function Sprite:createLayer(insertAt)
 
 	-- Trigger the events
 	self.layerCreated:trigger(self, newLayer, newLayerIndex)
-
 	self:insertLayer(newLayerIndex, newLayer)
 	return newLayer, newLayerIndex
 end
@@ -392,6 +391,7 @@ function Sprite:cloneLayer(toCloneIndex, insertAt)
 
 		-- Trigger the events
 		self.layerCreated:trigger(self, clone, newIndex)
+		self:insertLayer(newIndex, clone)
 		return clone, newIndex
 	end
 	return nil, 0

@@ -239,9 +239,11 @@ local actions = {
 				local layerProperty = sprite.spriteState.layer
 				local toCloneIndex = layerProperty:get()
 				local clonedLayer = sprite:cloneLayer(toCloneIndex)
-				local insertCommand = InsertLayerCommand(sprite, true, clonedLayer)
-				sprite.undoStack:commitWithoutPerforming(insertCommand)
-				layerProperty:set(toCloneIndex + 1)
+				if clonedLayer then
+					local insertCommand = InsertLayerCommand(sprite, true, clonedLayer)
+					sprite.undoStack:commitWithoutPerforming(insertCommand)
+					layerProperty:set(clonedLayer.index)
+				end
 			end
 		end
 	),
