@@ -315,7 +315,7 @@ function Canvas:draw()
 						iw + 2 * borderSize, ih + 2 * borderSize)
 
 		-- The checkerboard background
-		drawCheckerboard(self.imageX, self.imageY, self.imageW, self.imageH)
+		drawCheckerboard(ix, iy, iw, ih)
 
 		-- TODO: Use events
 		local frameIndex = spriteState.frame:get()
@@ -371,6 +371,35 @@ function Canvas:draw()
 			if tool and self.hovering then
 				tool:draw(pointX, pointY, i)
 				love.graphics.setColor(1, 1, 1)
+			end
+
+		end
+
+		if spriteState.showGrid:get() then
+			-- Draw the grid
+			local scale = self.scale
+			local scaleFactor = 1 / scale
+			love.graphics.setColor(1, 1, 1, 0.5)
+			love.graphics.intersectScissor(
+				self.x - (self.cameraX - ix) * scale + self.w * 0.5,
+				self.y - (self.cameraY - iy) * scale + self.h * 0.5,
+				iw * scale, ih * scale
+			)
+			local lineSize = 2 * scaleFactor
+			local gridW, gridH =
+				spriteState.gridW:get(),
+				spriteState.gridH:get()
+
+			local gridX, gridY  =
+				spriteState.gridOffsetX:get() % gridW,
+				spriteState.gridOffsetY:get() % gridH
+
+			for i = -1, math.ceil(iw / gridW) do
+				love.graphics.rectangle("fill", ix + gridX + gridW * i - 1 - scaleFactor, iy, lineSize, ih)
+			end
+
+			for i = -1, math.ceil(iw / gridW) do
+				love.graphics.rectangle("fill", ix, iy + gridY + gridH * i - 1 - scaleFactor, iw, lineSize)
 			end
 		end
 

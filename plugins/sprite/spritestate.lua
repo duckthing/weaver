@@ -2,6 +2,7 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Bitmask = require "plugins.sprite.data.bitmask"
 
 local Inspectable = require "src.properties.inspectable"
+local BoolProperty = require "src.properties.bool"
 local IntegerProperty = require "src.properties.integer"
 local ColorSelectionProperty = require "src.properties.colorselection"
 local EnumProperty = require "src.properties.enum"
@@ -77,7 +78,6 @@ function SpriteState:new(sprite, context)
 	---@type integer, integer # For moving selections, added on top of other offsets
 	self.selectionOriginX, self.selectionOriginY = 0, 0
 
-
 	---@type Bitmask
 	self.bitmask = Bitmask.new(sprite.width, sprite.height)
 	---@type Bitmask.Renderer
@@ -97,6 +97,26 @@ function SpriteState:new(sprite, context)
 			name = "All",
 		},
 	})
+
+	-- The grid
+	---@type BoolProperty
+	self.showGrid = BoolProperty(self, "Show Grid", true)
+
+	---@type IntegerProperty
+	self.gridW = IntegerProperty(self, "Grid Width", 8)
+	self.gridW:getRange():setMin(1)
+
+	---@type IntegerProperty
+	self.gridH = IntegerProperty(self, "Grid Height", 8)
+	self.gridH:getRange():setMin(1)
+
+	---@type IntegerProperty
+	self.gridOffsetX = IntegerProperty(self, "Grid Offset X", 0)
+	self.gridOffsetX:getRange():setMin(1)
+
+	---@type IntegerProperty
+	self.gridOffsetY = IntegerProperty(self, "Grid Offset Y", 0)
+	self.gridOffsetY:getRange():setMin(1)
 
 	local function updateFrameBounds()
 		self.frame.range:setMax(#sprite.frames)
