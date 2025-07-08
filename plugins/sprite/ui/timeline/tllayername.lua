@@ -91,7 +91,7 @@ function LayerEdit:refresh()
 end
 
 function LayerEdit:mousepressed(x, y, button, isTouch, pressCount)
-	if pressCount > 1 and (button == 1 or button == 2) and not self.editingName then
+	if pressCount > 1 and (button == 1 or button == 2) and not self.editingName and self.selected then
 		-- Left clicked twice or more
 		self.editingName = true
 		-- self.lineEdit:getFocus()
