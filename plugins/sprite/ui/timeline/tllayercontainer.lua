@@ -43,8 +43,7 @@ function LayerContainer:onSpriteSelected(sprite)
 	end)
 
 	self._layerRemovedAction = sprite.layerRemoved:addAction(function(s, layer, oldI)
-		table.remove(self.children, oldI)
-		self:refresh()
+		self:removeChild(self.children[oldI])
 	end)
 
 	self.sprite = sprite

@@ -100,10 +100,20 @@ function SpriteState:new(sprite, context)
 
 	local function updateFrameBounds()
 		self.frame.range:setMax(#sprite.frames)
+		if SpriteTool.sprite == sprite then
+			SpriteTool:selectFrame(self.frame:get())
+		end
 	end
 
 	local function updateLayerBounds()
+		local oldValue = self.layer:get()
+		self.layer:getRange().value = -1
+
 		self.layer.range:setMax(#sprite.layers)
+		self.layer:set(oldValue)
+		if SpriteTool.sprite == sprite then
+			SpriteTool:selectLayer(self.layer:get())
+		end
 	end
 
 	updateFrameBounds()
