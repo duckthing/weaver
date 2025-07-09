@@ -381,9 +381,9 @@ function Canvas:draw()
 			local scaleFactor = 1 / scale
 			love.graphics.setColor(1, 1, 1, 0.5)
 			love.graphics.intersectScissor(
-				self.x - (self.cameraX - ix) * scale + self.w * 0.5,
-				self.y - (self.cameraY - iy) * scale + self.h * 0.5,
-				iw * scale, ih * scale
+				self.x - (self.cameraX - ix) * scale + self.w * 0.5 - 1,
+				self.y - (self.cameraY - iy) * scale + self.h * 0.5 - 1,
+				iw * scale + 1, ih * scale + 1
 			)
 			local lineSize = 2 * scaleFactor
 			local gridW, gridH =
