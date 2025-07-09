@@ -41,6 +41,7 @@ local spriteToolbarActions = {
 	{
 		name = "View",
 		items = {
+			actions.show_grid_options,
 			actions.fit_sprite,
 		}
 	},

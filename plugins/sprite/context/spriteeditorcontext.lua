@@ -1059,6 +1059,17 @@ local actions = {
 			end
 		end
 	),
+	show_grid_options = Action(
+		"Show Grid Options...",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+				local gridOptions = sprite.spriteState.gridOptions
+				Modal.pushInspector(gridOptions)
+			end
+		end
+	)
 }
 
 function SpriteEditorContext:new()

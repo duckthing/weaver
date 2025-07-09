@@ -375,31 +375,34 @@ function Canvas:draw()
 
 		end
 
-		if spriteState.showGrid:get() then
+		local gridOptions = spriteState.gridOptions
+		if gridOptions.showGrid:get() then
+			-- TODO: Add culling to grid
 			-- Draw the grid
 			local scale = self.scale
 			local scaleFactor = 1 / scale
-			love.graphics.setColor(1, 1, 1, 0.5)
+			local color = gridOptions.gridColor:getColor()
+			love.graphics.setColor(color[1], color[2], color[3], gridOptions.lineOpacity:get())
 			love.graphics.intersectScissor(
-				self.x - (self.cameraX - ix) * scale + self.w * 0.5 - 1,
-				self.y - (self.cameraY - iy) * scale + self.h * 0.5 - 1,
-				iw * scale + 1, ih * scale + 1
+				self.x - (self.cameraX - ix) * scale + self.w * 0.5 - 2,
+				self.y - (self.cameraY - iy) * scale + self.h * 0.5 - 2,
+				iw * scale + 4, ih * scale + 4
 			)
 			local lineSize = 2 * scaleFactor
 			local gridW, gridH =
-				spriteState.gridW:get(),
-				spriteState.gridH:get()
+				gridOptions.gridW:get(),
+				gridOptions.gridH:get()
 
 			local gridX, gridY  =
-				spriteState.gridOffsetX:get() % gridW,
-				spriteState.gridOffsetY:get() % gridH
+				gridOptions.gridOffsetX:get() % gridW,
+				gridOptions.gridOffsetY:get() % gridH
 
 			for i = -1, math.ceil(iw / gridW) do
-				love.graphics.rectangle("fill", ix + gridX + gridW * i - 1 - scaleFactor, iy, lineSize, ih)
+				love.graphics.rectangle("fill", ix + gridX + gridW * i - scaleFactor, iy, lineSize, ih)
 			end
 
-			for i = -1, math.ceil(iw / gridW) do
-				love.graphics.rectangle("fill", ix, iy + gridY + gridH * i - 1 - scaleFactor, iw, lineSize)
+			for i = -1, math.ceil(ih / gridH) do
+				love.graphics.rectangle("fill", ix, iy + gridY + gridH * i - scaleFactor, iw, lineSize)
 			end
 		end
 

@@ -6,6 +6,7 @@ local BoolProperty = require "src.properties.bool"
 local IntegerProperty = require "src.properties.integer"
 local ColorSelectionProperty = require "src.properties.colorselection"
 local EnumProperty = require "src.properties.enum"
+local GridOptions = require "plugins.sprite.objects.gridoptions"
 
 ---@class SpriteState: Inspectable
 local SpriteState = Inspectable:extend()
@@ -98,25 +99,8 @@ function SpriteState:new(sprite, context)
 		},
 	})
 
-	-- The grid
-	---@type BoolProperty
-	self.showGrid = BoolProperty(self, "Show Grid", true)
-
-	---@type IntegerProperty
-	self.gridW = IntegerProperty(self, "Grid Width", 8)
-	self.gridW:getRange():setMin(1)
-
-	---@type IntegerProperty
-	self.gridH = IntegerProperty(self, "Grid Height", 8)
-	self.gridH:getRange():setMin(1)
-
-	---@type IntegerProperty
-	self.gridOffsetX = IntegerProperty(self, "Grid Offset X", 0)
-	self.gridOffsetX:getRange():setMin(1)
-
-	---@type IntegerProperty
-	self.gridOffsetY = IntegerProperty(self, "Grid Offset Y", 0)
-	self.gridOffsetY:getRange():setMin(1)
+	---@type GridOptions
+	self.gridOptions = GridOptions()
 
 	local function updateFrameBounds()
 		self.frame.range:setMax(#sprite.frames)
