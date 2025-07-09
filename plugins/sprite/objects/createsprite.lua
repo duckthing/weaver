@@ -139,12 +139,12 @@ local actions = {
 				self.preset:getValue(),
 				self.tilemapType:getValue()
 
-			if preset == "tilemap" then
-				local rows, columns = 1, 1
-				local tileWidth, tileHeight =
-					self.tileWidth:get(),
-					self.tileHeight:get()
+			local rows, columns = 1, 1
+			local tileWidth, tileHeight =
+				self.tileWidth:get(),
+				self.tileHeight:get()
 
+			if preset == "tilemap" then
 				if tilemapType == "4-way" then
 					rows, columns = 4, 4
 				elseif tilemapType == "8-way" then
@@ -180,8 +180,19 @@ local actions = {
 			end
 
 			-- Create and select the new sprite
+			---@type Sprite
 			local resource = SpriteResource(width, height, nil, palette)
 			local id = Resources.addResource(resource)
+
+			-- Set the grid options from the preset
+			if preset == "tilemap" then
+				local gridOptions = resource.spriteState.gridOptions
+
+				gridOptions.showGrid:set(true)
+				gridOptions.gridW:set(tileWidth)
+				gridOptions.gridH:set(tileHeight)
+			end
+
 			Resources.selectResourceId(id)
 			return true
 		end

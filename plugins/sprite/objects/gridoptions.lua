@@ -14,7 +14,7 @@ function GridOptions:new()
 
 	-- The grid
 	---@type BoolProperty
-	self.showGrid = BoolProperty(self, "Show Grid", true)
+	self.showGrid = BoolProperty(self, "Show Grid", false)
 
 	---@type IntegerProperty
 	self.gridW = IntegerProperty(self, "Grid Width", 8)
