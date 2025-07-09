@@ -45,16 +45,18 @@ end
 function Transform:pressing(imageX, imageY)
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
+	local spriteState = sprite.spriteState
 
 	---@type SelectionTransformTool.Mode
 	local mode = Transform.mode:getValue()
 	local diffX, diffY = imageX - startX, imageY - startY
+	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
 
 	if mode == "rotate" then
 		local centerX, centerY = sprite.spriteState.selectionOriginX, sprite.spriteState.selectionOriginY
 
-		local originalAngle = math.atan2((startY - centerY), (startX - centerX))
-		local newAngle = math.atan2((imageY - centerY), (imageX - centerX))
+		local originalAngle = math.atan2((startY - centerY - selectionY), (startX - centerX - selectionX))
+		local newAngle = math.atan2((imageY - centerY - selectionY), (imageX - centerX - selectionX))
 		sprite.spriteState.selectionRotation = newAngle - originalAngle + startRot
 		SpriteTool.updateCanvas()
 	end
