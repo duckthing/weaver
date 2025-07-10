@@ -251,9 +251,16 @@ end
 ---@param startY integer
 ---@param endX integer
 ---@param endY integer
+---@param xMult 1 | -1
+---@param yMult 1 | -1
 ---@param bitmask Bitmask
 ---@param drawCommand DrawCommand?
-function Brush:forEachPixel(callback, imageData, startX, startY, endX, endY, bitmask, drawCommand, ...)
+function Brush:forEachPixel(
+	callback,
+	imageData, startX, startY, endX, endY,
+	xMult, yMult,
+	bitmask, drawCommand, ...
+)
 	local continuous = self.continuous:get()
 	local imageP = ffi.cast("uint8_t*", imageData:getFFIPointer())
 	local brushP = ffi.cast("uint8_t*", self.brushData:getFFIPointer())
@@ -265,6 +272,15 @@ function Brush:forEachPixel(callback, imageData, startX, startY, endX, endY, bit
 	-- Make the algorithm only run once
 	if not continuous then
 		startX, startY = endX, endY
+	end
+
+	-- This gets rid of the offset being off by 1 on even brush sizes
+	if xMult == -1 and brushWidth % 2 == 0 then
+		offsetX = offsetX - 1
+	end
+
+	if yMult == -1 and brushHeight % 2 == 0 then
+		offsetY = offsetY - 1
 	end
 
 	bline(

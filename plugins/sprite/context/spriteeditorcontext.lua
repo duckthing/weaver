@@ -239,9 +239,11 @@ local actions = {
 				local layerProperty = sprite.spriteState.layer
 				local toCloneIndex = layerProperty:get()
 				local clonedLayer = sprite:cloneLayer(toCloneIndex)
-				local insertCommand = InsertLayerCommand(sprite, true, clonedLayer)
-				sprite.undoStack:commitWithoutPerforming(insertCommand)
-				layerProperty:set(toCloneIndex + 1)
+				if clonedLayer then
+					local insertCommand = InsertLayerCommand(sprite, true, clonedLayer)
+					sprite.undoStack:commitWithoutPerforming(insertCommand)
+					layerProperty:set(clonedLayer.index)
+				end
 			end
 		end
 	),
@@ -253,8 +255,10 @@ local actions = {
 			if sprite then
 				if #sprite.layers <= 1 then return end
 				local _, removedLayer = sprite:removeLayer(sprite.spriteState.layer:get())
-				local insertCommand = InsertLayerCommand(sprite, false, removedLayer)
-				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				if removedLayer then
+					local insertCommand = InsertLayerCommand(sprite, false, removedLayer)
+					sprite.undoStack:commitWithoutPerforming(insertCommand)
+				end
 			end
 		end
 	),
@@ -863,8 +867,10 @@ local actions = {
 				command:markRegion(0, 0, sprite.width - 1, sprite.height - 1)
 				spriteState.bitmask:reset(true)
 				spriteState.bitmask:setActive(true)
+				spriteState.includeBitmask = true
 				command:completeMark()
 				sprite.undoStack:commit(command)
+				SpriteTool.onBitmaskChanged()
 				SpriteTool.liftIntoSelection()
 				sprite.undoStack:popGroup()
 			end
@@ -1053,6 +1059,17 @@ local actions = {
 			end
 		end
 	),
+	show_grid_options = Action(
+		"Show Grid Options...",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+				local gridOptions = sprite.spriteState.gridOptions
+				Modal.pushInspector(gridOptions)
+			end
+		end
+	)
 }
 
 function SpriteEditorContext:new()

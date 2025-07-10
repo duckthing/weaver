@@ -5,11 +5,13 @@ local Luvent = require "lib.luvent"
 local Status = require "src.global.status"
 local Bitmask = require "plugins.sprite.data.bitmask"
 local Context = require "src.global.contexts"
+local cleanedge = require "plugins.sprite.common.cleanedge"
 
 local LiftCommand = require "plugins.sprite.commands.liftcommand"
 local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
 local RemapCelCommand = require "plugins.sprite.commands.remapcelcommand"
 local BucketFillCommand = require "plugins.sprite.commands.bucketfillcommand"
+local SelectionTransformCommand = require "plugins.sprite.commands.selectiontransformcommand"
 
 local BrushProperty = require "plugins.sprite.properties.brushp"
 local BoolProperty = require "src.properties.bool"
@@ -102,7 +104,7 @@ end
 ---@param ay integer
 ---@param bx integer
 ---@param by integer
----@param callback fun(ax: integer, ay: integer, bx: integer, by: integer, ...)
+---@param callback fun(ax: integer, ay: integer, bx: integer, by: integer, xMult: 1 | -1, yMult: 1 | -1, ...)
 ---@param ... unknown
 function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 	local sprite = SpriteTool.sprite
@@ -133,6 +135,8 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 					relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 					relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 					relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
+					xMult,
+					yMult,
 					...
 				)
 			end
@@ -144,6 +148,8 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 				ay,
 				relBX * xMult + halfW + ((xMult == 1 and -offsetX) or 0),
 				by,
+				xMult,
+				1,
 				...
 			)
 		end
@@ -154,11 +160,13 @@ function SpriteTool:transformToCanvas(ax, ay, bx, by, callback, ...)
 				relAY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
 				bx,
 				relBY * yMult + halfH + ((yMult == 1 and -offsetY) or 0),
+				1,
+				yMult,
 				...
 			)
 		end
 	else
-		callback(ax, ay, bx, by, ...)
+		callback(ax, ay, bx, by, 1, 1, ...)
 	end
 end
 
@@ -349,7 +357,7 @@ function SpriteTool:bindToProperties(
 	end
 end
 
-local imageResolution = {1, 1}
+local texPixelSize = {1, 1}
 function SpriteTool.updateCanvas()
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
@@ -361,7 +369,10 @@ function SpriteTool.updateCanvas()
 	local buff = sprite.spriteState.mimicCanvas
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
-	local ox, oy = sprite.width * 0.5, sprite.height * 0.5
+	-- The selection origin
+	local ox, oy = spriteState.selectionOriginX, spriteState.selectionOriginY
+	local width, height = sprite.width, sprite.height
+	-- spriteState.selectionCel:update()
 
 	-- Draw the canvas
 	love.graphics.push("all")
@@ -369,20 +380,65 @@ function SpriteTool.updateCanvas()
 	love.graphics.setScissor()
 	love.graphics.origin()
 	love.graphics.clear()
-	-- love.graphics.setShader(cleanedge)
-	-- imageResolution[1], imageResolution[2] = width, height
-	-- cleanedge:send("iResolution", imageResolution)
+	love.graphics.setShader(cleanedge)
+	-- In Godot, it's 1/dimension (1 / width, 1 / height)
+	texPixelSize[1], texPixelSize[2] =
+		1 / width,
+		1 / height
+	local scaleX, scaleY = spriteState.selectionScaleX, spriteState.selectionScaleY
+	cleanedge:send("TEXTURE_PIXEL_SIZE", texPixelSize)
 	if bitmask._active then
 		love.graphics.setColor(1, 1, 1)
 		love.graphics.draw(
 			spriteState.selectionCel.image,
 			selectionX + ox, selectionY + oy,
-			0,
-			1, 1,
+			spriteState.selectionRotation,
+			scaleX, scaleY,
 			ox, oy
 		)
 	end
 	love.graphics.pop()
+end
+
+---@return SelectionTransformCommand?
+function SpriteTool.onBitmaskChanged()
+	local sprite = SpriteTool.sprite
+	if not sprite then return end
+	local spriteState = sprite.spriteState
+
+	---@type SelectionTransformCommand
+	local command = SelectionTransformCommand(sprite)
+
+	do
+		local bleft, btop, _, _, bw, bh = sprite.spriteState.bitmask:getBounds()
+		local centerX = math.floor(bleft + bw * 0.5)
+		local centerY = math.floor(btop + bh * 0.5)
+		spriteState.selectionOriginX, spriteState.selectionOriginY =
+			centerX, centerY
+
+		spriteState.selectionX = 0
+		spriteState.selectionY = 0
+		spriteState.selectionScaleX = 1
+		spriteState.selectionScaleY = 1
+		spriteState.selectionRotation = 0
+	end
+
+	command:completeTransform()
+	sprite.undoStack:commitWithoutPerforming(command)
+	return command
+end
+
+---Returns true if there's a complex transformation (ex. scaled, but not moved)
+---@return boolean transformed
+function SpriteTool.isSelectionTransformed()
+	local sprite = SpriteTool.sprite
+	if not sprite then return false end
+	local spriteState = sprite.spriteState
+
+	return
+		(spriteState.selectionScaleX ~= 1) or (spriteState.selectionScaleY ~= 1)
+		or
+		(spriteState.selectionRotation ~= 0)
 end
 
 ---@return LiftCommand?
@@ -452,6 +508,8 @@ function SpriteTool.applyFromSelection()
 	local cel = SpriteTool.cel
 	if not cel then return end
 
+	sprite.undoStack:pushGroup()
+
 	-- Clear the region
 	local bx, by, bright, bbottom, bw, bh = bitmask:getBounds()
 	local selectCel = spriteState.selectionCel
@@ -461,12 +519,24 @@ function SpriteTool.applyFromSelection()
 	local liftCommand = LiftCommand(sprite, cel)
 	liftCommand.transientUndo = true
 	liftCommand.transientRedo = true
-	liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
-	Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
+
+	-- If this transformation requires updating the selection image itself (ex. scaling and rotating, not moving)
+	local isDestructive = SpriteTool.isSelectionTransformed()
+
+	local data
+	if isDestructive then
+		data = spriteState.mimicCanvas:newImageData()
+		liftCommand:markRegion(0, 0, data:getDimensions())
+		Blend.alphaBlend(cel.data, data, 0, 0, 0, 0, data:getDimensions())
+	else
+		liftCommand:markRegion(selectionX + bx, selectionY + by, bw, bh)
+		Blend.alphaBlend(cel.data, selectCel.data, selectionX + bx, selectionY + by, bx, by, bw, bh)
+	end
 
 	local width = sprite.width
 	local selectP = ffi.cast("uint8_t*", selectCel.data:getFFIPointer())
 
+	-- Clear selection image
 	for x = bx, bright do
 		for y = by, bbottom do
 			if bitmask:get(x, y) then
@@ -479,27 +549,57 @@ function SpriteTool.applyFromSelection()
 		end
 	end
 
+	---@type SelectionCommand
+	local selectionCommand = SelectionCommand(sprite, bitmask)
+	selectionCommand:markRegion(bx, by, bw, bh)
+
+	-- Update the selection if destructive
+	if isDestructive then
+		bitmask:reset()
+		local w, h = data:getDimensions()
+		local dataP = ffi.cast("uint8_t*", data:getFFIPointer())
+
+		-- Set the bitmask for each new pixel
+		for x = 0, w - 1 do
+			for y = 0, h - 1 do
+				local imageIndex = (x + y * w) * 4
+
+				if dataP[imageIndex + 3] ~= 0 then
+					bitmask:set(x, y, true)
+					selectionCommand:markRegion(x, y, 1, 1)
+				end
+			end
+		end
+
+		spriteState.includeBitmask = true
+		data:release()
+
+		local selTransCommand = SpriteTool.onBitmaskChanged()
+		if selTransCommand then
+			selTransCommand.allowRenderState = false
+		end
+	else
+		-- Just shift it
+		selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
+		bitmask:shift(selectionX, selectionY)
+	end
+
 	spriteState.includeMimic = false
+	spriteState.includeMimicOutline = false
 
 	liftCommand:completeMark()
 	sprite.undoStack:commit(liftCommand)
-
-	spriteState.selectionX = 0
-	spriteState.selectionY = 0
 
 	cel:update()
 	selectCel:update()
 	SpriteTool.updateCanvas()
 
-	---@type SelectionCommand
-	local selectionCommand = SelectionCommand(sprite, bitmask)
 	selectionCommand.transientUndo = true
 	selectionCommand.transientRedo = true
-	selectionCommand:markRegion(bx, by, bw, bh)
-	selectionCommand:markRegion(bx + selectionX, by + selectionY, bw + selectionX, bh + selectionY)
-	bitmask:shift(selectionX, selectionY)
+
 	selectionCommand:completeMark()
 	sprite.undoStack:commit(selectionCommand)
+	sprite.undoStack:popGroup()
 
 	spriteState.bitmaskRenderer:update()
 
@@ -572,7 +672,7 @@ function SpriteTool.pasteSelection()
 	bitmask:reset(false)
 	bitmask:paste(selection.bitmask, 0, 0, 0, 0, selection.bitmask.width, selection.bitmask.height)
 	bitmask._active = true
-	spriteState.includeSelection = true
+	-- spriteState.includeSelection = true
 	selectionCommand:completeMark()
 
 	---@type BucketFillCommand

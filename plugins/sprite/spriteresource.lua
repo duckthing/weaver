@@ -310,7 +310,6 @@ function Sprite:createLayer(insertAt)
 
 	-- Trigger the events
 	self.layerCreated:trigger(self, newLayer, newLayerIndex)
-
 	self:insertLayer(newLayerIndex, newLayer)
 	return newLayer, newLayerIndex
 end
@@ -378,21 +377,14 @@ end
 function Sprite:cloneLayer(toCloneIndex, insertAt)
 	local originalLayer = self.layers[toCloneIndex]
 	if originalLayer then
-		local newIndex = (insertAt and math.max(1, math.min(insertAt, #self.layers + 1)))
+		local newLayerIndex = (insertAt and math.max(1, math.min(insertAt, #self.layers + 1)))
 						or #self.layers + 1
-		local clone = originalLayer:clone(self, newIndex)
-
-		-- Insert the cloned layer
-		table.insert(self.layers, newIndex, clone)
-
-		-- Update the indices of the later layers
-		for i = newIndex + 1, #self.layers do
-			self.layers[i].index = i
-		end
+		local clonedLayer = originalLayer:clone(self, newLayerIndex)
 
 		-- Trigger the events
-		self.layerCreated:trigger(self, clone, newIndex)
-		return clone, newIndex
+		self.layerCreated:trigger(self, clonedLayer, newLayerIndex)
+		self:insertLayer(newLayerIndex, clonedLayer)
+		return clonedLayer, newLayerIndex
 	end
 	return nil, 0
 end

@@ -4,9 +4,9 @@
 --- highestColor: vec3
 --- similarThreshold: float
 --- lineWidth: float
-local source = [[
+ --]]
+local gdsource = [[
 #pragma language glsl3
-
 /*** MIT LICENSE
 Copyright (c) 2022 torcado
 Permission is hereby granted, free of charge, to any person
@@ -27,10 +27,13 @@ HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
-***/
+***/ 
+
+
+//shader_type canvas_item;
 
 //enables 2:1 slopes. otherwise only uses 45 degree slopes
-#define SLOPE
+#define SLOPE 
 //cleans up small detail slope transitions (if SLOPE is enabled)
 //if only using for rotation, CLEANUP has negligable effect and should be disabled for speed
 #define CLEANUP
@@ -47,8 +50,7 @@ uniform float similarThreshold = 0.0;
 
 uniform float lineWidth = 1.0;
 
-// Love2D specific stuff
-uniform vec2 iResolution = vec2(1, 1);
+uniform vec2 TEXTURE_PIXEL_SIZE = vec2(1., 1.);
 
 const float scale = 4.0;
 const mat3 yuv_matrix = mat3(vec3(0.299, 0.587, 0.114), vec3(-0.169, -0.331, 0.5), vec3(0.5, -0.419, -0.081));
@@ -64,7 +66,7 @@ bool similar(vec4 col1, vec4 col2){
 
 //multiple versions because godot doesn't support function overloading
 //note: inner check should ideally check between all permutations
-//	but this is good enough, and faster
+//  but this is good enough, and faster
 bool similar3(vec4 col1, vec4 col2, vec4 col3){
 	return similar(col1, col2) && similar(col2, col3);
 }
@@ -98,10 +100,10 @@ float cd(vec4 col1, vec4 col2){
 }
 
 float distToLine(vec2 testPt, vec2 pt1, vec2 pt2, vec2 dir){
-	vec2 lineDir = pt2 - pt1;
-	vec2 perpDir = vec2(lineDir.y, -lineDir.x);
-	vec2 dirToPt1 = pt1 - testPt;
-	return (dot(perpDir, dir) > 0.0 ? 1.0 : -1.0) * (dot(normalize(perpDir), dirToPt1));
+  vec2 lineDir = pt2 - pt1;
+  vec2 perpDir = vec2(lineDir.y, -lineDir.x);
+  vec2 dirToPt1 = pt1 - testPt;
+  return (dot(perpDir, dir) > 0.0 ? 1.0 : -1.0) * (dot(normalize(perpDir), dirToPt1));
 }
 
 //based on down-forward direction
@@ -120,9 +122,9 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 	//edge detection
 	float distAgainst = 4.0*cd(f,d) + cd(uf,c) + cd(c,db) + cd(ff,df) + cd(df,dd);
 	float distTowards = 4.0*cd(c,df) + cd(u,f) + cd(f,dff) + cd(b,d) + cd(d,ddf);
-	bool shouldSlice =
-		(distAgainst < distTowards)
-		|| (distAgainst < distTowards + 0.001) && !higher(c, f); //equivalent edges edge case
+	bool shouldSlice = 
+	  (distAgainst < distTowards)
+	  || (distAgainst < distTowards + 0.001) && !higher(c, f); //equivalent edges edge case
 	if(similar4(f, d, b, u) && similar4(uf, df, db, ub) && !similar(c, f)){ //checkerboard edge case
 		shouldSlice = false;
 	}
@@ -143,10 +145,10 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		} else {
 			//priority edge cases
 			if(higher(c, f)){
-				flip = true;
+				flip = true; 
 			}
 			if(similar(u, f) && !similar(c, df) && !higher(c, u)){
-				flip = true;
+				flip = true; 
 			}
 		}
 		
@@ -159,7 +161,7 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		//cleanup slant transitions
 		#ifdef CLEANUP
 		if(!flip && similar(c, uf) && !(similar3(c, uf, uff) && !similar3(c, uf, ff) && !similar(d, uff))){ //shallow
-			float dist2 = distToLine(point, center+vec2(2.0, -1.0)*pointDir, center+vec2(-0.0, 1.0)*pointDir, pointDir);
+			float dist2 = distToLine(point, center+vec2(2.0, -1.0)*pointDir, center+vec2(-0.0, 1.0)*pointDir, pointDir); 
 			dist = min(dist, dist2);
 		}
 		#endif
@@ -171,11 +173,11 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 			
 		} else {
 			//priority edge cases
-			if(higher(c, d)){
-				flip = true;
+			if(higher(c, d)){ 
+				flip = true; 
 			}
 			if(similar(b, d) && !similar(c, df) && !higher(c, d)){
-				flip = true;
+				flip = true; 
 			}
 		}
 		
@@ -188,24 +190,24 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		//cleanup slant transitions
 		#ifdef CLEANUP
 		if(!flip && similar(c, db) && !(similar3(c, db, ddb) && !similar3(c, db, dd) && !similar(f, ddb))){ //steep
-			float dist2 = distToLine(point, center+vec2(1.0, 0.0)*pointDir, center+vec2(-1.0, 2.0)*pointDir, pointDir);
+			float dist2 = distToLine(point, center+vec2(1.0, 0.0)*pointDir, center+vec2(-1.0, 2.0)*pointDir, pointDir); 
 			dist = min(dist, dist2);
 		}
 		#endif
 		
 		dist -= (_lineWidth/2.0);
 		return dist <= 0.0 ? ((cd(c,f) <= cd(c,d)) ? f : d) : vec4(-1.0);
-	} else
+	} else 
 	#endif
 	if(similar(f, d)) { //45 diagonal
 		if(similar(c, df) && higher(c, f)){ //single pixel diagonal along neighbors, dont flip
 			if(!similar(c, dd) && !similar(c, ff)){ //line against triple color stripe edge case
-				flip = true;
+				flip = true; 
 			}
 		} else {
 			//priority edge cases
 			if(higher(c, f)){
-				flip = true;
+				flip = true; 
 			}
 			if(!similar(c, b) && similar4(b, f, d, u)){
 				flip = true;
@@ -214,7 +216,7 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		//single pixel 2:1 slope, dont flip
 		if((( (similar(f, db) && similar3(u, f, df)) || (similar(uf, d) && similar3(b, d, df)) ) && !similar(c, df))){
 			flip = true;
-		}
+		} 
 		
 		if(flip){
 			dist = _lineWidth-distToLine(point, center+vec2(1.0, -1.0)*pointDir, center+vec2(-1.0, 1.0)*pointDir, -pointDir); //midpoints of own diagonal pixels
@@ -226,12 +228,12 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		#ifdef SLOPE
 		#ifdef CLEANUP
 		if(!flip && similar3(c, uf, uff) && !similar3(c, uf, ff) && !similar(d, uff)){ //shallow
-			float dist2 = distToLine(point, center+vec2(1.5, 0.0)*pointDir, center+vec2(-0.5, 1.0)*pointDir, pointDir);
+			float dist2 = distToLine(point, center+vec2(1.5, 0.0)*pointDir, center+vec2(-0.5, 1.0)*pointDir, pointDir); 
 			dist = max(dist, dist2);
-		}
+		} 
 		
 		if(!flip && similar3(ddb, db, c) && !similar3(dd, db, c) && !similar(ddb, f)){ //steep
-			float dist2 = distToLine(point, center+vec2(1.0, -0.5)*pointDir, center+vec2(0.0, 1.5)*pointDir, pointDir);
+			float dist2 = distToLine(point, center+vec2(1.0, -0.5)*pointDir, center+vec2(0.0, 1.5)*pointDir, pointDir); 
 			dist = max(dist, dist2);
 		}
 		#endif
@@ -239,19 +241,19 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 		
 		dist -= (_lineWidth/2.0);
 		return dist <= 0.0 ? ((cd(c,f) <= cd(c,d)) ? f : d) : vec4(-1.0);
-	}
+	} 
 	#ifdef SLOPE
-	else if(similar3(ff, df, d) && !similar3(ff, df, c) && !similar(uff, d)){ //far corner of shallow slant
+	else if(similar3(ff, df, d) && !similar3(ff, df, c) && !similar(uff, d)){ //far corner of shallow slant 
 		
 		if(similar(f, dff) && higher(f, ff)){ //single pixel wide diagonal, dont flip
 			
 		} else {
 			//priority edge cases
-			if(higher(f, ff)){
-				flip = true;
+			if(higher(f, ff)){ 
+				flip = true; 
 			}
 			if(similar(uf, ff) && !similar(f, dff) && !higher(f, uf)){
-				flip = true;
+				flip = true; 
 			}
 		}
 		if(flip){
@@ -267,15 +269,15 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 			
 		} else {
 			//priority edge cases
-			if(higher(d, dd)){
-				flip = true;
+			if(higher(d, dd)){ 
+				flip = true; 
 			}
 			if(similar(db, dd) && !similar(d, ddf) && !higher(d, dd)){
-				flip = true;
+				flip = true; 
 			}
 //			if(!higher(d, dd)){
 //				return vec4(1.0);
-//				flip = true;
+//				flip = true; 
 //			}
 		}
 		
@@ -291,52 +293,52 @@ vec4 sliceDist(vec2 point, vec2 mainDir, vec2 pointDir, vec4 ub, vec4 u, vec4 uf
 	return vec4(-1.0);
 }
 
-vec4 effect(vec4 _color, Image tex, vec2 texture_coords, vec2 _screen_coords ) {
-	vec2 size = iResolution.xy+0.0001; //fix for some sort of rounding error
-	vec2 px = texture_coords.xy/iResolution.xy*size;
+vec4 effect(vec4 _color, Image TEXTURE, vec2 UV, vec2 _screen_coords) {
+	vec2 size = 1.0/TEXTURE_PIXEL_SIZE+0.0001; //fix for some sort of rounding error
+	vec2 px = UV*size;
 	vec2 local = fract(px);
 	px = ceil(px);
-
+	
 	vec2 pointDir = round(local)*2.0-1.0;
-
+	
 	//neighbor pixels
 	//Up, Down, Forward, and Back
 	//relative to quadrant of current location within pixel
-
-	vec4 uub = Texel(tex, (px+vec2(-1.0,-2.0)*pointDir)/size);
-	vec4 uu  = Texel(tex, (px+vec2( 0.0,-2.0)*pointDir)/size);
-	vec4 uuf = Texel(tex, (px+vec2( 1.0,-2.0)*pointDir)/size);
-
-	vec4 ubb = Texel(tex, (px+vec2(-2.0,-2.0)*pointDir)/size);
-	vec4 ub  = Texel(tex, (px+vec2(-1.0,-1.0)*pointDir)/size);
-	vec4 u   = Texel(tex, (px+vec2( 0.0,-1.0)*pointDir)/size);
-	vec4 uf  = Texel(tex, (px+vec2( 1.0,-1.0)*pointDir)/size);
-	vec4 uff = Texel(tex, (px+vec2( 2.0,-1.0)*pointDir)/size);
-
-	vec4 bb  = Texel(tex, (px+vec2(-2.0, 0.0)*pointDir)/size);
-	vec4 b   = Texel(tex, (px+vec2(-1.0, 0.0)*pointDir)/size);
-	vec4 c   = Texel(tex, (px+vec2( 0.0, 0.0)*pointDir)/size);
-	vec4 f   = Texel(tex, (px+vec2( 1.0, 0.0)*pointDir)/size);
-	vec4 ff  = Texel(tex, (px+vec2( 2.0, 0.0)*pointDir)/size);
-
-	vec4 dbb = Texel(tex, (px+vec2(-2.0, 1.0)*pointDir)/size);
-	vec4 db  = Texel(tex, (px+vec2(-1.0, 1.0)*pointDir)/size);
-	vec4 d   = Texel(tex, (px+vec2( 0.0, 1.0)*pointDir)/size);
-	vec4 df  = Texel(tex, (px+vec2( 1.0, 1.0)*pointDir)/size);
-	vec4 dff = Texel(tex, (px+vec2( 2.0, 1.0)*pointDir)/size);
-
-	vec4 ddb = Texel(tex, (px+vec2(-1.0, 2.0)*pointDir)/size);
-	vec4 dd  = Texel(tex, (px+vec2( 0.0, 2.0)*pointDir)/size);
-	vec4 ddf = Texel(tex, (px+vec2( 1.0, 2.0)*pointDir)/size);
-
+	
+	vec4 uub = Texel(TEXTURE, (px+vec2(-1.0,-2.0)*pointDir)/size);
+	vec4 uu  = Texel(TEXTURE, (px+vec2( 0.0,-2.0)*pointDir)/size);
+	vec4 uuf = Texel(TEXTURE, (px+vec2( 1.0,-2.0)*pointDir)/size);
+	
+	vec4 ubb = Texel(TEXTURE, (px+vec2(-2.0,-2.0)*pointDir)/size);
+	vec4 ub  = Texel(TEXTURE, (px+vec2(-1.0,-1.0)*pointDir)/size);
+	vec4 u   = Texel(TEXTURE, (px+vec2( 0.0,-1.0)*pointDir)/size);
+	vec4 uf  = Texel(TEXTURE, (px+vec2( 1.0,-1.0)*pointDir)/size);
+	vec4 uff = Texel(TEXTURE, (px+vec2( 2.0,-1.0)*pointDir)/size);
+	
+	vec4 bb  = Texel(TEXTURE, (px+vec2(-2.0, 0.0)*pointDir)/size);
+	vec4 b   = Texel(TEXTURE, (px+vec2(-1.0, 0.0)*pointDir)/size);
+	vec4 c   = Texel(TEXTURE, (px+vec2( 0.0, 0.0)*pointDir)/size);
+	vec4 f   = Texel(TEXTURE, (px+vec2( 1.0, 0.0)*pointDir)/size);
+	vec4 ff  = Texel(TEXTURE, (px+vec2( 2.0, 0.0)*pointDir)/size);
+	
+	vec4 dbb = Texel(TEXTURE, (px+vec2(-2.0, 1.0)*pointDir)/size);
+	vec4 db  = Texel(TEXTURE, (px+vec2(-1.0, 1.0)*pointDir)/size);
+	vec4 d   = Texel(TEXTURE, (px+vec2( 0.0, 1.0)*pointDir)/size);
+	vec4 df  = Texel(TEXTURE, (px+vec2( 1.0, 1.0)*pointDir)/size);
+	vec4 dff = Texel(TEXTURE, (px+vec2( 2.0, 1.0)*pointDir)/size);
+	
+	vec4 ddb = Texel(TEXTURE, (px+vec2(-1.0, 2.0)*pointDir)/size);
+	vec4 dd  = Texel(TEXTURE, (px+vec2( 0.0, 2.0)*pointDir)/size);
+	vec4 ddf = Texel(TEXTURE, (px+vec2( 1.0, 2.0)*pointDir)/size);
+	
 	vec4 col = c;
-
+	
 	//c_orner, b_ack, and u_p slices
 	// (slices from neighbor pixels will only ever reach these 3 quadrants
 	vec4 c_col = sliceDist(local, vec2( 1.0, 1.0), pointDir, ub, u, uf, uff, b, c, f, ff, db, d, df, dff, ddb, dd, ddf);
 	vec4 b_col = sliceDist(local, vec2(-1.0, 1.0), pointDir, uf, u, ub, ubb, f, c, b, bb, df, d, db, dbb, ddf, dd, ddb);
 	vec4 u_col = sliceDist(local, vec2( 1.0,-1.0), pointDir, db, d, df, dff, b, c, f, ff, ub, u, uf, uff, uub, uu, uuf);
-
+	
 	if(c_col.r >= 0.0){
 		col = c_col;
 	}
@@ -346,9 +348,9 @@ vec4 effect(vec4 _color, Image tex, vec2 texture_coords, vec2 _screen_coords ) {
 	if(u_col.r >= 0.0){
 		col = u_col;
 	}
-
+	
 	return col;
 }
 ]]
 
-return love.graphics.newShader(source)
+return love.graphics.newShader(gdsource)

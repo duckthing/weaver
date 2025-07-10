@@ -23,6 +23,11 @@ ColorWheel.CLASS_NAME = "ColorWheel"
 local HueSlider = Slidebox:extend()
 HueSlider.CLASS_NAME = "HueSlider"
 
+---@class ColorSelect.HexEdit: VBox
+local HexEdit = VBox:extend()
+HexEdit.CLASS_NAME = "HexEdit"
+ColorSelect.HexEdit = HexEdit
+
 local wheelShaderCode = [[
 extern float hue;
 
@@ -233,9 +238,6 @@ function HueSlider:bindToProperty(property)
 
 	self.hue = h
 end
-
----@class ColorSelect.HexEdit: VBox
-local HexEdit = VBox:extend()
 
 ---@param color Palette.Color
 ---@return string

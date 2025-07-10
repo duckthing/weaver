@@ -9,6 +9,7 @@ local BucketTool = require "plugins.sprite.tools.bucket"
 local PickTool = require "plugins.sprite.tools.pick"
 local RectMarqueeTool = require "plugins.sprite.tools.rectmarquee"
 local MagicMarqueeTool = require "plugins.sprite.tools.magicmarquee"
+local SelectionTransformTool = require "plugins.sprite.tools.selectiontransform"
 
 PencilTool:register()
 EraserTool:register()
@@ -16,6 +17,7 @@ BucketTool:register()
 PickTool:register()
 RectMarqueeTool:register()
 MagicMarqueeTool:register()
+SelectionTransformTool:register()
 
 local toolsTexture = love.graphics.newImage("assets/sprite_tools.png")
 toolsTexture:setFilter("nearest", "nearest")
@@ -41,6 +43,7 @@ function ToolDrawer:new(rules)
 	local pickBtn = IconButton(buttonRules, function() PickTool:selectTool() end, toolSpriteSheet, 4, 2)
 	local rectMarqueeBtn = IconButton(buttonRules, function() RectMarqueeTool:selectTool() end, toolSpriteSheet, 5, 2)
 	local magicMarqueeBtn = IconButton(buttonRules, function() MagicMarqueeTool:selectTool() end, toolSpriteSheet, 6, 2)
+	local selectionTransformBtn = IconButton(buttonRules, function() SelectionTransformTool:selectTool() end, toolSpriteSheet, 6, 2)
 
 	self:addChild(pencilBtn)
 	self:addChild(eraserBtn)
@@ -48,6 +51,7 @@ function ToolDrawer:new(rules)
 	self:addChild(pickBtn)
 	self:addChild(rectMarqueeBtn)
 	self:addChild(magicMarqueeBtn)
+	self:addChild(selectionTransformBtn)
 end
 
 function ToolDrawer:draw()

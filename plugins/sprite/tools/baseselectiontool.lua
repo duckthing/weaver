@@ -48,16 +48,16 @@ function BaseSelectionTool:draw(imageX, imageY, currLayerIndex)
 		local bitmask = spriteState.bitmask
 		if not bitmask._active then return end
 
-		local buff = sprite.spriteState.mimicCanvas
+		-- local buff = sprite.spriteState.mimicCanvas
 
-		local bx, by, bright, bbottom = bitmask:getBounds()
+		-- local bx, by, bright, bbottom = bitmask:getBounds()
 		local offsetX, offsetY = canvas.imageX, canvas.imageY
 
-		local bw, bh =
+		--[[ local bw, bh =
 			bright - bx + 1,
-			bbottom - by + 1
+			bbottom - by + 1 --]]
 
-		local width, height = sprite.width, sprite.height
+		-- local width, height = sprite.width, sprite.height
 		local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
 		offsetX = offsetX + selectionX
 		offsetY = offsetY + selectionY
@@ -91,14 +91,19 @@ function BaseSelectionTool:startPress(imageX, imageY)
 
 	tranformCommand = SelectionTransformCommand(sprite)
 
-	local bx, by, bright, bbottom = bitmask:getBounds()
+	-- Check if we're clicking directly on the bitmap
+	-- If it's untransformed and we are on it, move it
+	-- If it has a complex transform (not translated), move it anyways
 
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
-	do
-		local ix, iy = imageX - selectionX, imageY - selectionY
-		if not (ix >= bx and ix <= bright and iy >= by and iy <= bbottom) or not bitmask:get(ix, iy) then
-			-- Not inside or on an area
-			return false
+	if not SpriteTool.isSelectionTransformed() then
+		local bx, by, bright, bbottom = bitmask:getBounds()
+		do
+			local ix, iy = imageX - selectionX, imageY - selectionY
+			if not (ix >= bx and ix <= bright and iy >= by and iy <= bbottom) or not bitmask:get(ix, iy) then
+				-- Not inside or on an area
+				return false
+			end
 		end
 	end
 

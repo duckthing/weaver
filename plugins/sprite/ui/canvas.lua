@@ -256,6 +256,37 @@ function Canvas:update(dt)
 	end
 end
 
+local outlineShader
+do
+	local outlineShaderCode =
+[[extern vec2 stepSize;
+extern float time;
+
+vec4 effect( vec4 col, Image texture, vec2 texturePos, vec2 screenPos )
+{
+	// get color of pixels:
+	float alpha = 4.0*Texel( texture, texturePos ).a;
+	alpha -= Texel( texture, texturePos + vec2( stepSize.x, 0.0f ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( -stepSize.x, 0.0f ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( 0.0f, stepSize.y ) ).a;
+	alpha -= Texel( texture, texturePos + vec2( 0.0f, -stepSize.y ) ).a;
+
+	// calculate resulting color
+	float num = step(
+		mod(time +
+			0.05 * screenPos.x +
+			0.05 * screenPos.y,
+		1.f),
+	0.5f);
+
+	return vec4( num, num, num, min(alpha, 1.f) * 0.6 );
+}]]
+	outlineShader = love.graphics.newShader(outlineShaderCode)
+end
+
+-- For scaling the outline
+local vals = {0.1, 0.1}
+
 function Canvas:draw()
 	-- Don't render if canvas is too small
 	if self.w < 1 or self.h < 1 then
@@ -284,7 +315,7 @@ function Canvas:draw()
 						iw + 2 * borderSize, ih + 2 * borderSize)
 
 		-- The checkerboard background
-		drawCheckerboard(self.imageX, self.imageY, self.imageW, self.imageH)
+		drawCheckerboard(ix, iy, iw, ih)
 
 		-- TODO: Use events
 		local frameIndex = spriteState.frame:get()
@@ -319,6 +350,17 @@ function Canvas:draw()
 
 				if spriteState.includeMimic then
 					love.graphics.draw(spriteState.mimicCanvas, ix, iy)
+
+					if spriteState.includeMimicOutline then
+						love.graphics.push("all")
+						love.graphics.setShader(outlineShader)
+						local scale = self.scale
+						vals[1], vals[2] = 3 / self.sprite.width / scale, 3 / self.sprite.height / scale
+						outlineShader:send("stepSize", vals)
+						outlineShader:send("time", (love.timer.getTime() * 0.3) % 1)
+						love.graphics.draw(spriteState.mimicCanvas, ix, iy)
+						love.graphics.pop()
+					end
 				end
 
 				if spriteState.includeDrawBuffer then
@@ -330,8 +372,43 @@ function Canvas:draw()
 				tool:draw(pointX, pointY, i)
 				love.graphics.setColor(1, 1, 1)
 			end
+
 		end
-		spriteState.bitmaskRenderer:draw(bx, by, self.scale)
+
+		local gridOptions = spriteState.gridOptions
+		if gridOptions.showGrid:get() then
+			-- TODO: Add culling to grid
+			-- Draw the grid
+			local scale = self.scale
+			local scaleFactor = 1 / scale
+			local color = gridOptions.gridColor:getColor()
+			love.graphics.setColor(color[1], color[2], color[3], gridOptions.lineOpacity:get())
+			love.graphics.intersectScissor(
+				self.x - (self.cameraX - ix) * scale + self.w * 0.5 - 2,
+				self.y - (self.cameraY - iy) * scale + self.h * 0.5 - 2,
+				iw * scale + 4, ih * scale + 4
+			)
+			local lineSize = 2 * scaleFactor
+			local gridW, gridH =
+				gridOptions.gridW:get(),
+				gridOptions.gridH:get()
+
+			local gridX, gridY  =
+				gridOptions.gridOffsetX:get() % gridW,
+				gridOptions.gridOffsetY:get() % gridH
+
+			for i = -1, math.ceil(iw / gridW) do
+				love.graphics.rectangle("fill", ix + gridX + gridW * i - scaleFactor, iy, lineSize, ih)
+			end
+
+			for i = -1, math.ceil(ih / gridH) do
+				love.graphics.rectangle("fill", ix, iy + gridY + gridH * i - scaleFactor, iw, lineSize)
+			end
+		end
+
+		if spriteState.includeBitmask then
+			spriteState.bitmaskRenderer:draw(bx, by, self.scale)
+		end
 	end
 
 	-- Exit viewport

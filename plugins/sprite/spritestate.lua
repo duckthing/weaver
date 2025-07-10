@@ -2,9 +2,11 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Bitmask = require "plugins.sprite.data.bitmask"
 
 local Inspectable = require "src.properties.inspectable"
+local BoolProperty = require "src.properties.bool"
 local IntegerProperty = require "src.properties.integer"
 local ColorSelectionProperty = require "src.properties.colorselection"
 local EnumProperty = require "src.properties.enum"
+local GridOptions = require "plugins.sprite.objects.gridoptions"
 
 ---@class SpriteState: Inspectable
 local SpriteState = Inspectable:extend()
@@ -34,6 +36,7 @@ function SpriteState:new(sprite, context)
 
 	---@type love.Canvas # A canvas that can be rendered to temporarily, but is separate from the image
 	self.mimicCanvas = love.graphics.newCanvas(sprite.width, sprite.height)
+	self.mimicCanvas:setWrap("clampzero", "clampzero")
 
 	-- Used for drawing, before copying to the final cel
 	self.drawCel = sprite:createInternalCel()
@@ -41,10 +44,14 @@ function SpriteState:new(sprite, context)
 	self.selectionCel = sprite:createInternalCel()
 	---@type boolean # Whether the buffer should be drawn, too
 	self.includeDrawBuffer = false
-	---@type boolean # Whether the selection should be drawn, too
+	---@type boolean # Whether the selection contents should be drawn, too
 	self.includeSelection = false
+	---@type boolean # Whether the bitmask should be drawn, too
+	self.includeBitmask = false
 	---@type boolean # Whether the mimic canvas should be drawn, too
 	self.includeMimic = false
+	---@type boolean # Whether the mimic canvas should have a selection outline
+	self.includeMimicOutline = false
 
 	---@type string[] # For the ResizeCommand to know to modify these
 	self.internalCelNames = {
@@ -62,8 +69,15 @@ function SpriteState:new(sprite, context)
 	self.imageH = sprite.height
 	self.imageX = sprite.width * -0.5
 	self.imageY = sprite.height * -0.5
+
 	---@type integer, integer # For moving selections, added on top of other offsets
 	self.selectionX, self.selectionY = 0, 0
+	---@type number, number
+	self.selectionScaleX, self.selectionScaleY = 1, 1
+	---@type number
+	self.selectionRotation = 0
+	---@type integer, integer # For moving selections, added on top of other offsets
+	self.selectionOriginX, self.selectionOriginY = 0, 0
 
 	---@type Bitmask
 	self.bitmask = Bitmask.new(sprite.width, sprite.height)
@@ -85,12 +99,25 @@ function SpriteState:new(sprite, context)
 		},
 	})
 
+	---@type GridOptions
+	self.gridOptions = GridOptions()
+
 	local function updateFrameBounds()
 		self.frame.range:setMax(#sprite.frames)
+		if SpriteTool.sprite == sprite then
+			SpriteTool:selectFrame(self.frame:get())
+		end
 	end
 
 	local function updateLayerBounds()
+		local oldValue = self.layer:get()
+		self.layer:getRange().value = -1
+
 		self.layer.range:setMax(#sprite.layers)
+		self.layer:set(oldValue)
+		if SpriteTool.sprite == sprite then
+			SpriteTool:selectLayer(self.layer:get())
+		end
 	end
 
 	updateFrameBounds()

@@ -45,6 +45,10 @@ function SelectionCommand:new(sprite, bitmask)
 	self.newIncludeMimic = false
 	---@type boolean
 	self.oldIncludeMimic = sprite.spriteState.includeMimic
+	---@type boolean
+	self.newIncludeBitmask = false
+	---@type boolean
+	self.oldIncludeBitmask = sprite.spriteState.includeBitmask
 
 	self.relevantLayer = sprite.spriteState.layer:get()
 	self.relevantFrame = sprite.spriteState.frame:get()
@@ -117,6 +121,7 @@ function SelectionCommand:completeMark()
 
 	self.newActive = sourceBitmask._active
 	self.newIncludeMimic = sprite.spriteState.includeMimic
+	self.newIncludeBitmask = sprite.spriteState.includeBitmask
 	sprite.spriteState.bitmaskRenderer:update()
 end
 
@@ -149,6 +154,7 @@ function SelectionCommand:undo()
 	if self.oldIncludeMimic then
 		SelectionCommand.SpriteTool.updateCanvas()
 	end
+	sprite.spriteState.includeBitmask = self.oldIncludeBitmask
 	sprite.spriteState.bitmaskRenderer:update()
 end
 
@@ -181,6 +187,7 @@ function SelectionCommand:perform()
 	if self.newIncludeMimic then
 		SelectionCommand.SpriteTool.updateCanvas()
 	end
+	sprite.spriteState.includeBitmask = self.newIncludeBitmask
 	sprite.spriteState.bitmaskRenderer:update()
 end
 

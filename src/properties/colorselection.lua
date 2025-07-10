@@ -1,4 +1,18 @@
+local Plan = require "lib.plan"
+local IconButton = require "ui.components.button.iconbutton"
+local VBox = require "ui.components.containers.box.vbox"
+local HBox = require "ui.components.containers.box.hbox"
+local Label = require "ui.components.text.label"
+local Modal = require "src.global.modal"
+local ColorSelectModal = require "ui.components.containers.modals.colorselect"
 local ColorProperty = require "src.properties.color"
+local SpriteSheet = require "src.spritesheet"
+
+local HexEdit = ColorSelectModal.HexEdit
+
+local iconsTexture = love.graphics.newImage("assets/layer_buttons.png")
+iconsTexture:setFilter("nearest", "nearest")
+local iconSpriteSheet = SpriteSheet.new(iconsTexture, 22, 1)
 
 ---@class ColorSelectionProperty: ColorProperty
 local ColorSelectionProperty = ColorProperty:extend()
@@ -105,6 +119,74 @@ end
 ---@return integer
 function ColorSelectionProperty:getIndex()
 	return self.index
+end
+
+---@class ColorSelectionProperty.VElement: VBox
+local ColorSelectionPropertyVElement = VBox:extend()
+
+---@param rules Plan.Rules
+---@param property ColorSelectionProperty
+function ColorSelectionPropertyVElement:new(rules, property)
+	ColorSelectionPropertyVElement.super.new(self, rules)
+	self.property = property
+
+	---@type ColorSelect.HexEdit
+	local hexEdit = HexEdit(
+		Plan.Rules.new()
+			:addX(Plan.pixel(0))
+			:addY(Plan.pixel(0))
+			:addWidth(Plan.max(26))
+			:addHeight(Plan.parent()),
+		property:get()
+	)
+	hexEdit:bindToProperty(property)
+	self.hexEdit = hexEdit
+	hexEdit.label:setText(property.name)
+
+	---@type Button
+	local pickColorButton = IconButton(
+		Plan.Rules.new()
+			:addX(Plan.keep())
+			:addY(Plan.pixel(20))
+			:addWidth(Plan.pixel(26))
+			:addHeight(Plan.aspect(1)),
+		function(button)
+			Modal.pushColorSelect(self.property)
+		end,
+		iconSpriteSheet,
+		18,
+		2
+	)
+	self.button = pickColorButton
+
+	---@type HBox
+	local hbox = HBox(
+		Plan.Rules.new()
+			:addX(Plan.pixel(0))
+			:addY(Plan.keep())
+			:addWidth(Plan.parent())
+			:addHeight(Plan.parent())
+	)
+	self.hbox = hbox
+
+	hbox:addChild(hexEdit)
+	hbox:addChild(pickColorButton)
+	self:addChild(hbox)
+
+	--[[ self._valueChangedAction = property.valueChanged:addAction(function(p, value)
+		self.hexEdit.lineEdit:setText(value)
+	end) --]]
+end
+
+function ColorSelectionProperty:getVElement()
+	return ColorSelectionPropertyVElement(
+		Plan.Rules.new()
+			:addX(Plan.pixel(0))
+			:addY(Plan.keep())
+			:addWidth(Plan.parent())
+			:addHeight(Plan.pixel(46)),
+		self
+	)
 end
 
 return ColorSelectionProperty
