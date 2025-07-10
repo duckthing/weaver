@@ -9,9 +9,12 @@ local Canvas = require "plugins.sprite.ui.canvas"
 local PaletteSidebar = require "plugins.sprite.ui.palette.palettecontainer"
 local Timeline = require "plugins.sprite.ui.timeline.timelinecontainer"
 local ToolDrawer = require "plugins.sprite.ui.tooldrawer"
-local Inspector = require "ui.main.hinspector"
+local HInspector = require "ui.main.hinspector"
+local VInspector = require "ui.main.vinspector"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local SpriteState = require "plugins.sprite.spritestate"
+
+local useOldLayout = false
 
 ---@class SpriteEditor.Window: Plan.Container
 local SpriteWindow = Plan.Container:extend()
@@ -23,50 +26,80 @@ function SpriteWindow:new(rules, editor, context)
 	SpriteWindow.super.new(self, rules)
 	---@type SpriteEditor
 	self.editor = editor
+
 	---@type SpriteCanvas
-	local canvas = Canvas(
-		Plan.RuleFactory.full()
-	)
+	local canvas = Canvas(Plan.RuleFactory.full())
 	---@type PaletteContainer
-	local palette = PaletteSidebar(
-		Plan.RuleFactory.full()
-	)
+	local palette = PaletteSidebar(Plan.RuleFactory.full())
 	---@type Timeline
-	local timeline = Timeline(
-		Plan.RuleFactory.full()
-	)
+	local timeline = Timeline(Plan.RuleFactory.full())
 	---@type ToolDrawer
-	local drawer = ToolDrawer(
-		Plan.RuleFactory.full()
-	)
-	---@type HInspector
-	local inspector = Inspector(
-		Plan.RuleFactory.full()
-	)
+	local drawer = ToolDrawer(Plan.RuleFactory.full())
+
 	self.canvasUI = canvas
 	self.paletteUI = palette
 	self.timelineUI = timeline
 	self.drawerUI = drawer
 
 	canvas.minH = 40
-	local hsplit1 = HSplit(Plan.RuleFactory.full(), inspector, canvas)
-	hsplit1.minH = math.min(inspector.minW or 100, canvas.minW or 100)
-	hsplit1.splitPosition = 40
-	hsplit1.resizeMode = "keepfirst"
-	local vsplit1 = VSplit(Plan.RuleFactory.full(), palette, hsplit1)
-	vsplit1.splitPosition = 70
-	vsplit1.resizeMode = "keepfirst"
-	vsplit1.minW = math.min(palette.minW or 100, canvas.minW or 100)
-	vsplit1.minH = math.min(palette.minH or 100, canvas.minH or 100)
-	local vsplit2 = VSplit(Plan.RuleFactory.full(), vsplit1, drawer)
-	vsplit2.splitPosition = 65
-	vsplit2.resizeMode = "keepsecond"
-	vsplit2.minW = math.min(vsplit1.minW or 100, drawer.minW or 100)
-	vsplit2.minH = math.min(vsplit1.minH or 100, drawer.minH or 100)
-	local hsplit2 = HSplit(Plan.RuleFactory.full(), vsplit2, timeline)
-	hsplit2.splitPosition = -12
-	hsplit2.resizeMode = "keepsecond"
-	self:addChild(hsplit2)
+
+	if useOldLayout then
+		palette.paletteColors.colorSize = 20
+		---@type HInspector
+		local inspector = HInspector(Plan.RuleFactory.full())
+
+		---@type HSplit
+		local hsplit1 = HSplit(Plan.RuleFactory.full(), inspector, canvas)
+		-- hsplit1.minH = math.min(inspector.minW or 100, canvas.minW or 100)
+		hsplit1.splitPosition = 40
+		hsplit1.resizeMode = "keepfirst"
+
+		---@type VSplit
+		local vsplit1 = VSplit(Plan.RuleFactory.full(), palette, hsplit1)
+		vsplit1.splitPosition = 70
+		vsplit1.resizeMode = "keepfirst"
+		-- vsplit1.minW = math.min(palette.minW or 100, canvas.minW or 100)
+		-- vsplit1.minH = math.min(palette.minH or 100, canvas.minH or 100)
+
+		---@type VSplit
+		local vsplit2 = VSplit(Plan.RuleFactory.full(), vsplit1, drawer)
+		vsplit2.splitPosition = 65
+		vsplit2.resizeMode = "keepsecond"
+		-- vsplit2.minW = math.min(vsplit1.minW or 100, drawer.minW or 100)
+		-- vsplit2.minH = math.min(vsplit1.minH or 100, drawer.minH or 100)
+
+		---@type HSplit
+		local hsplit2 = HSplit(Plan.RuleFactory.full(), vsplit2, timeline)
+		hsplit2.splitPosition = -12
+		hsplit2.resizeMode = "keepsecond"
+		self:addChild(hsplit2)
+	else
+		-- The new Weaver layout
+		---@type VInspector
+		local inspector = VInspector(Plan.RuleFactory.full())
+
+		---@type HSplit
+		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, timeline)
+		hsplit1.splitPosition = -12
+		hsplit1.resizeMode = "keepsecond"
+
+		---@type HSplit
+		local hsplit2 = HSplit(Plan.RuleFactory.full(), drawer, inspector)
+		hsplit2.splitPosition = 80
+		hsplit2.resizeMode = "keepfirst"
+
+		---@type HSplit
+		local hsplit3 = HSplit(Plan.RuleFactory.full(), hsplit2, palette)
+		hsplit3.splitPosition = -100 - 27
+		hsplit3.resizeMode = "keepsecond"
+
+		---@type VSplit
+		local vsplit1 = VSplit(Plan.RuleFactory.full(), hsplit1, hsplit3)
+		vsplit1.splitPosition = -7 - 90
+		vsplit1.resizeMode = "keepsecond"
+
+		self:addChild(vsplit1)
+	end
 
 	---@param newResource Resource
 	Resources.onNewResource:addAction(function (newResource)

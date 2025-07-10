@@ -120,7 +120,7 @@ function EnumProperty:deserialize(data)
 end
 
 function EnumProperty:__tostring()
-	return "EnumProperty: "..tostring(self.value)
+	return "EnumProperty: "..tostring(self:getValue())
 end
 
 return EnumProperty

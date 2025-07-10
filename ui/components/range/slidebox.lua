@@ -74,7 +74,7 @@ function Slidebox:updatePreview(value)
 
 	self.label:setText(FORMAT_STRING:format(self.name, value))
 	local newW, _ = self.label:getTextBounds()
-	newW = math.max(DEFAULT_WIDTH, newW)
+	newW = math.max(self.w, DEFAULT_WIDTH, newW)
 	if newW ~= w then
 		self.w = newW
 		self:bubble("_bubbleSizeChanged")

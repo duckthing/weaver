@@ -80,13 +80,13 @@ function NumberProperty:getHElement()
 	)
 end
 
----@class NumberProperty.VElement: VBox
-local NumberVElement = VBox:extend()
+---@class NumberProperty.VTextElement: VBox
+local NumberVTextElement = VBox:extend()
 
 ---@param rules Plan.Rules
 ---@param property NumberProperty
-function NumberVElement:new(rules, property)
-	NumberVElement.super.new(self, rules, property.range)
+function NumberVTextElement:new(rules, property)
+	NumberVTextElement.super.new(self, rules, property.range)
 	self.property = property
 
 	---@type Label
@@ -125,14 +125,23 @@ function NumberVElement:new(rules, property)
 	self:addChild(lineEdit)
 end
 
-function NumberVElement:destroy(...)
-	NumberVElement.super.destroy(self, ...)
+function NumberVTextElement:destroy(...)
+	NumberVTextElement.super.destroy(self, ...)
 	self.lineEdit.textSubmitted:removeAction(self._textSubmittedAction)
 	self.property.valueChanged:removeAction(self._valueChangedAction)
 end
 
-function NumberProperty:getVElement()
-	return NumberVElement(Plan.Rules.new()
+function NumberProperty:getVElement(type)
+	if type == "slidebox" then
+		return NumberHElement(Plan.Rules.new()
+			:addX(Plan.pixel(0))
+			:addY(Plan.keep())
+			:addWidth(Plan.parent())
+			:addHeight(Plan.pixel(40)),
+			self
+		)
+	end
+	return NumberVTextElement(Plan.Rules.new()
 		:addX(Plan.pixel(0))
 		:addY(Plan.keep())
 		:addWidth(Plan.parent())

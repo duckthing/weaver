@@ -3,6 +3,7 @@ local Property = require "src.properties.property"
 local Label = require "ui.components.text.label"
 local Range = require "src.data.range"
 local HBox = require "ui.components.containers.box.hbox"
+local VBox = require "ui.components.containers.box.vbox"
 local Button = require "ui.components.button.button"
 local Slidebox = require "ui.components.range.slidebox"
 local Brush = require "plugins.sprite.brush.brush"
@@ -200,12 +201,88 @@ function BrushHElement:sort()
 	self._upperCull = #self.children
 end
 
+
 function BrushProperty:getHElement()
 	return BrushHElement(Plan.Rules.new()
 		:addX(Plan.keep())
 		:addY(Plan.pixel(0))
 		:addWidth(Plan.keep())
 		:addHeight(Plan.parent()),
+		self
+	)
+end
+
+
+---@class BrushProperty.VElement: VBox
+local BrushVElement = VBox:extend()
+
+---@param rules Plan.Rules
+---@param property BrushProperty
+function BrushVElement:new(rules, property)
+	BrushVElement.super.new(self, rules)
+	self.margin = 6
+	---@type BrushProperty
+	self.property = property
+	---@type Button
+	self.button = BrushButton(
+		Plan.Rules.new()
+			:addX(Plan.pixel(0))
+			:addY(Plan.keep())
+			:addWidth(Plan.pixel(40))
+			:addHeight(Plan.aspect(1)),
+		property
+	)
+	self:addChild(self.button)
+
+	local function onInspectablesChanged()
+		for i = #self.children, 1, -1 do
+			local child = self.children[i]
+			if child ~= self.button then
+				self:removeChild(child)
+			end
+		end
+
+		for _, p in ipairs(property.value:getProperties()) do
+			local child
+			if p.type == "integer" then
+				-- For the diameter, get a slidebox
+				---@cast p NumberProperty
+				child = p:getVElement("slidebox")
+			else
+				child = p:getVElement()
+			end
+			self:addChild(child)
+		end
+
+		self.h = self._containerSize
+		self:bubble("_bubbleSizeChanged")
+	end
+
+	onInspectablesChanged()
+	self._brushInspectablesChanged = property:get().inspectablesChanged:addAction(onInspectablesChanged)
+
+	local oldBrush = property:get()
+	property.valueChanged:addAction(function(_, newBrush)
+		oldBrush.inspectablesChanged:removeAction(self._brushInspectablesChanged)
+		self._brushInspectablesChanged = newBrush.inspectablesChanged:addAction(onInspectablesChanged)
+		oldBrush = newBrush
+		onInspectablesChanged()
+	end)
+end
+
+function BrushVElement:sort()
+	---@diagnostic disable-next-line
+	BrushVElement.super.sort(self)
+	self.h = self._containerSize
+	self._upperCull = #self.children
+end
+
+function BrushProperty:getVElement()
+	return BrushVElement(Plan.Rules.new()
+		:addX(Plan.pixel(0))
+		:addY(Plan.keep())
+		:addWidth(Plan.parent())
+		:addHeight(Plan.keep()),
 		self
 	)
 end

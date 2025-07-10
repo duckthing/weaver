@@ -340,6 +340,8 @@ end
 ---@field y integer
 ---@field w integer
 ---@field h integer
+---@field minW integer?
+---@field minH integer?
 ---@field rules Plan.Rules
 ---@field parent Plan.Container?
 ---@field children Plan.Container[]

@@ -55,6 +55,24 @@ local function handleResize(self, newW)
 	end
 end
 
+---@param self VSplit
+local function recalculateMinSize(self)
+	-- Calculate the min size
+	local minW = 0
+	local minH = 0
+	for _, child in ipairs(self.children) do
+		minW = math.max(child.minW or 0, minW)
+		minH = math.max(child.minH or 0, minH)
+	end
+	self.minW = minW
+	self.minH = minH
+end
+
+function VSplit:addChild(...)
+	VSplit.super.addChild(self, ...)
+	recalculateMinSize(self)
+end
+
 function VSplit:updateSplit()
 	local x, y, w, h = self.x, self.y, self.w, self.h
 	handleResize(self, w)
@@ -83,7 +101,9 @@ function VSplit:updateSplit()
 	end
 
 	self.x = x + self.splitPosition
+	recalculateMinSize(self)
 	splitHandle:refresh()
+	recalculateMinSize(self)
 	self.x, self.y, self.w, self.h = x, y, w, h
 end
 

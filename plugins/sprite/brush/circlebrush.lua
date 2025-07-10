@@ -83,6 +83,7 @@ local properties = {
 	CircleBrush.filled,
 }
 function CircleBrush:getProperties()
+	---@type Property[]
 	local newProperties = {}
 	for _, property in ipairs(properties) do
 		newProperties[#newProperties+1] = property

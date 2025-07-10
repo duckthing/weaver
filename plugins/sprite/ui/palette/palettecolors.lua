@@ -3,7 +3,7 @@ local Plan = require "lib.plan"
 ---@class PaletteContainer.Colors: Plan.Container
 local PaletteColors = Plan.Container:extend()
 
-PaletteColors.colorSize = 20
+PaletteColors.colorSize = 27
 function PaletteColors:new(rules)
 	PaletteColors.super.new(self, rules)
 

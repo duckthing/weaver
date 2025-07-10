@@ -60,6 +60,24 @@ local function handleResize(self, newH)
 	end
 end
 
+---@param self HSplit
+local function recalculateMinSize(self)
+	-- Calculate the min size
+	local minW = 0
+	local minH = 0
+	for _, child in ipairs(self.children) do
+		minW = math.max(child.minW or 0, minW)
+		minH = math.max(child.minH or 0, minH)
+	end
+	self.minW = minW
+	self.minH = minH
+end
+
+function HSplit:addChild(...)
+	HSplit.super.addChild(self, ...)
+	recalculateMinSize(self)
+end
+
 function HSplit:updateSplit()
 	local x, y, w, h = self.x, self.y, self.w, self.h
 	handleResize(self, h)
@@ -89,7 +107,9 @@ function HSplit:updateSplit()
 	end
 
 	self.y = y + self.splitPosition
+	recalculateMinSize(self)
 	splitHandle:refresh()
+	recalculateMinSize(self)
 	self.x, self.y, self.w, self.h = x, y, w, h
 end
 
