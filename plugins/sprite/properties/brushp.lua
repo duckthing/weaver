@@ -226,7 +226,7 @@ function BrushVElement:new(rules, property)
 	---@type Button
 	self.button = BrushButton(
 		Plan.Rules.new()
-			:addX(Plan.pixel(0))
+			:addX(Plan.center())
 			:addY(Plan.keep())
 			:addWidth(Plan.pixel(40))
 			:addHeight(Plan.aspect(1)),

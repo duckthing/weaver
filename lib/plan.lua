@@ -1159,10 +1159,10 @@ end
 function Rules:realise(element)
 	local parent = element.parent or {}
 	local dw, dh = element:getDesiredDimensions()
-	return (parent.x or 0) + self.rules.x:realise("x", element, self.rules, dw, dh),
-			(parent.y or 0) + self.rules.y:realise("y", element, self.rules, dw, dh),
-			self.rules.w:realise("w", element, self.rules, dw, dh),
-			self.rules.h:realise("h", element, self.rules, dw, dh)
+	return math.floor((parent.x or 0) + self.rules.x:realise("x", element, self.rules, dw, dh)),
+			math.floor((parent.y or 0) + self.rules.y:realise("y", element, self.rules, dw, dh)),
+			math.floor(self.rules.w:realise("w", element, self.rules, dw, dh)),
+			math.floor(self.rules.h:realise("h", element, self.rules, dw, dh))
 end
 
 ---Clones itself and returns a new Plan.Rules
