@@ -15,7 +15,6 @@ do
 		if settings then
 			if settings["Use Pixel Font"] == false then
 				Fonts.defaultFont = "normal"
-				print("======== SET FONT")
 			end
 
 			scale = settings["App Scale"] or 1
