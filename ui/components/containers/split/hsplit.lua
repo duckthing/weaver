@@ -34,6 +34,20 @@ function HSplit:new(rules, firstChild, secondChild)
 	end
 end
 
+---Sets the size of the child that doesn't resize when the parent does.
+---
+---Does nothing if resizeMode is 'factor'
+---@param size integer
+function HSplit:setSize(size)
+	if self.resizeMode == "keepfirst" then
+		self.splitPosition = size
+		self:updateSplit()
+	elseif self.resizeMode == "keepsecond" then
+		self.splitPosition = self._lastH - size
+		self:updateSplit()
+	end
+end
+
 function HSplit:draw()
 	for i = math.min(#self.children, 3), 1, -1 do
 		self.children[i]:draw()
@@ -79,6 +93,7 @@ function HSplit:addChild(...)
 end
 
 function HSplit:updateSplit()
+	if not self._inUITree then return end
 	local x, y, w, h = self.x, self.y, self.w, self.h
 	handleResize(self, h)
 

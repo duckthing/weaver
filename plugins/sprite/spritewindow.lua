@@ -79,23 +79,23 @@ function SpriteWindow:new(rules, editor, context)
 
 		---@type HSplit
 		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, timeline)
-		hsplit1.splitPosition = -12
 		hsplit1.resizeMode = "keepsecond"
+		hsplit1:setSize(112)
 
 		---@type HSplit
 		local hsplit2 = HSplit(Plan.RuleFactory.full(), drawer, inspector)
-		hsplit2.splitPosition = 77
 		hsplit2.resizeMode = "keepfirst"
+		hsplit2:setSize(77)
 
 		---@type HSplit
 		local hsplit3 = HSplit(Plan.RuleFactory.full(), hsplit2, palette)
-		hsplit3.splitPosition = -100 - 27
 		hsplit3.resizeMode = "keepsecond"
+		hsplit3:setSize(213)
 
 		---@type VSplit
 		local vsplit1 = VSplit(Plan.RuleFactory.full(), hsplit1, hsplit3)
-		vsplit1.splitPosition = -7 - 90 + 8
 		vsplit1.resizeMode = "keepsecond"
+		vsplit1:setSize(190)
 
 		self:addChild(vsplit1)
 	end

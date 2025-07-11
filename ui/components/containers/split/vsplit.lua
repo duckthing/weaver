@@ -29,6 +29,20 @@ function VSplit:new(rules, firstChild, secondChild)
 	end
 end
 
+---Sets the size of the child that doesn't resize when the parent does.
+---
+---Does nothing if resizeMode is 'factor'
+---@param size integer
+function VSplit:setSize(size)
+	if self.resizeMode == "keepfirst" then
+		self.splitPosition = size
+		self:updateSplit()
+	elseif self.resizeMode == "keepsecond" then
+		self.splitPosition = self._lastW - size
+		self:updateSplit()
+	end
+end
+
 function VSplit:draw()
 	for i = math.min(#self.children, 3), 1, -1 do
 		self.children[i]:draw()
@@ -74,6 +88,7 @@ function VSplit:addChild(...)
 end
 
 function VSplit:updateSplit()
+	if not self._inUITree then return end
 	local x, y, w, h = self.x, self.y, self.w, self.h
 	handleResize(self, w)
 
