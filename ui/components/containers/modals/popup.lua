@@ -8,6 +8,7 @@ function Popup:new(rules)
 	Popup.super.new(self, rules)
 	self.isPoppedUp = false
 	self.closeOnOutOfBounds = true
+	self.clampToWindowBorder = true
 	self._active = false
 	self._clipMode = "independent"
 end
@@ -15,6 +16,20 @@ end
 ---Activates the Popup
 function Popup:popup()
 	if not self.isPoppedUp then
+		if self.clampToWindowBorder then
+			local root = self:getRoot()
+			local rootBounds = root.context.rootBounds
+			local windowW, windowH = rootBounds.w, rootBounds.h
+
+			local dw, dh = self:getDesiredDimensions()
+			local sw, sh =
+				self.rules:getWidth():realise("w", self, self.rules, dw, dh),
+				self.rules:getHeight():realise("h", self, self.rules, dw, dh)
+
+			self.x = math.max(0, math.min(self.x, windowW - sw))
+			self.y = math.max(0, math.min(self.y, windowH - sh))
+		end
+
 		self.isPoppedUp = true
 		self:enable()
 		self:_pushModal()

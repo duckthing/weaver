@@ -1,4 +1,5 @@
 local Plan = require "lib.plan"
+local Modal = require "src.global.modal"
 local IconButton = require "ui.components.button.iconbutton"
 local SpriteSheet = require "src.spritesheet"
 local PaletteMenu = require "plugins.sprite.ui.palette.palettemenu"
@@ -12,7 +13,7 @@ local PaletteMenuButton = IconButton:extend()
 
 ---@param self PaletteMenuButton
 local function openPaletteMenu(self)
-	self.paletteMenu:popup()
+	Modal.pushExistingWindow(self.paletteMenu, 370, 240)
 end
 
 function PaletteMenuButton:new(rules)
@@ -23,7 +24,6 @@ function PaletteMenuButton:new(rules)
 		:addWidth(Plan.pixel(370))
 		:addHeight(Plan.pixel(240))
 	)
-	self:addChild(self.paletteMenu)
 end
 
 return PaletteMenuButton

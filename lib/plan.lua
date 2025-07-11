@@ -155,8 +155,12 @@ function BoundsContext:new(ui, x, y, w, h, overlapCheck)
 	self.shash = Shash.new()
 	---@type BoundsContext?
 	self.parent = nil
-	self.overlapCheck = overlapCheck or boundsContextSimpleOverlap
+	if overlapCheck then
+		self.overlapCheck = overlapCheck
+	end
 end
+
+BoundsContext.overlapCheck = boundsContextSimpleOverlap
 
 ---Returns whether the point is within bounds
 ---@param px integer

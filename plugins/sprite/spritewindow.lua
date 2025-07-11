@@ -88,7 +88,7 @@ function SpriteWindow:new(rules, editor, context)
 
 		---@type HSplit
 		local hsplit2 = HSplit(Plan.RuleFactory.full(), drawer, inspector)
-		hsplit2.splitPosition = 80
+		hsplit2.splitPosition = 77
 		hsplit2.resizeMode = "keepfirst"
 
 		---@type HSplit
