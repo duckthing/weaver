@@ -45,6 +45,7 @@ function SpriteWindow:new(rules, editor, context)
 
 	if useOldLayout then
 		palette.paletteColors.colorSize = 20
+		drawer.minW = 30
 		drawer.itemW = 30
 		drawer.itemH = 30
 		---@type HInspector
@@ -52,7 +53,6 @@ function SpriteWindow:new(rules, editor, context)
 
 		---@type HSplit
 		local hsplit1 = HSplit(Plan.RuleFactory.full(), inspector, canvas)
-		-- hsplit1.minH = math.min(inspector.minW or 100, canvas.minW or 100)
 		hsplit1.splitPosition = 40
 		hsplit1.resizeMode = "keepfirst"
 
@@ -60,15 +60,11 @@ function SpriteWindow:new(rules, editor, context)
 		local vsplit1 = VSplit(Plan.RuleFactory.full(), palette, hsplit1)
 		vsplit1.splitPosition = 70
 		vsplit1.resizeMode = "keepfirst"
-		-- vsplit1.minW = math.min(palette.minW or 100, canvas.minW or 100)
-		-- vsplit1.minH = math.min(palette.minH or 100, canvas.minH or 100)
 
 		---@type VSplit
 		local vsplit2 = VSplit(Plan.RuleFactory.full(), vsplit1, drawer)
-		vsplit2.splitPosition = 65
+		vsplit2.splitPosition = 70
 		vsplit2.resizeMode = "keepsecond"
-		-- vsplit2.minW = math.min(vsplit1.minW or 100, drawer.minW or 100)
-		-- vsplit2.minH = math.min(vsplit1.minH or 100, drawer.minH or 100)
 
 		---@type HSplit
 		local hsplit2 = HSplit(Plan.RuleFactory.full(), vsplit2, timeline)
@@ -105,7 +101,7 @@ function SpriteWindow:new(rules, editor, context)
 	end
 
 	---@param newResource Resource
-	Resources.onNewResource:addAction(function (newResource)
+	Resources.onNewResource:addAction(function(newResource)
 		-- Create the SpriteState
 		if newResource.TYPE == "sprite" then
 			---@cast newResource Sprite
@@ -117,7 +113,7 @@ function SpriteWindow:new(rules, editor, context)
 	end)
 
 	---@param selectedResource Resource
-	Resources.onResourceSelected:addAction(function (selectedResource)
+	Resources.onResourceSelected:addAction(function(selectedResource)
 		-- Load the SpriteState
 		if selectedResource and selectedResource.TYPE == "sprite" then
 			---@cast selectedResource Sprite
@@ -147,7 +143,7 @@ function SpriteWindow:new(rules, editor, context)
 	end)
 
 	---@param deselectedResource Sprite
-	Resources.onResourceDeselected:addAction(function (deselectedResource)
+	Resources.onResourceDeselected:addAction(function(deselectedResource)
 		-- Save the SpriteState
 		if deselectedResource.TYPE == "sprite" then
 			if SpriteTool.drawing then

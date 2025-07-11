@@ -28,7 +28,7 @@ function GridBox:_sortFunction()
 	local column = 0
 	local itemW, itemH = self.itemW, self.itemH
 
-	if spaceAvailable < itemW + padding then
+	if spaceAvailable < itemW + padding * 2 then
 		-- No space, remove all children from tree
 		for i = 1, #self.children do
 			self.children[i]:_treeRemove()
@@ -46,7 +46,7 @@ function GridBox:_sortFunction()
 		child._depth = lowerDepth
 		child._bounds = lowerBounds
 
-		if itemW > spaceAvailable - padding * 2 + 1 then
+		if itemW > spaceAvailable - padding * 2 then
 			-- Reset to next row, first column
 			spaceAvailable = totalSpaceAvailable
 			row = row + 1

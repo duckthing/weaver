@@ -35,7 +35,7 @@ local buttonRules = Plan.Rules.new()
 
 function ToolDrawer:new(rules)
 	ToolDrawer.super.new(self, rules)
-	self.minW = 35
+	self.minW = 46
 	self.itemW = 36
 	self.itemH = 36
 
