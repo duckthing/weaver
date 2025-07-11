@@ -333,7 +333,7 @@ end
 ---| "sink" # Will receive events if overlapping a checked area
 ---| "pass" # Will ignore events, and let other elements receive them
 
----@class (exact) Plan.Container: Object
+---@class Plan.Container: Object
 ---@field super Plan.Container
 ---@field CLASS_NAME string
 ---@field x integer
@@ -349,14 +349,13 @@ end
 ---@field _depth integer
 ---@field _bounds BoundsContext
 ---@field _inUITree boolean
----@field _valid boolean Not destroyed; can be used or recycled
+---@field _valid boolean # Not destroyed; can be used or recycled
 ---@field _clipMode Plan.ClipMode
 ---@field _passMode Plan.PassMode
 ---@field isUIRoot boolean
 ---@field sizeRatio number
 ---@field extend fun(self: self): Plan.Container
 ---@field refresh fun(self: self): nil
----@field withinBounds fun(self: self, x: integer, y: integer): boolean
 ---@field mousemoved (fun(self: self, mx: integer, my: integer, cx: integer, cy: integer): nil)?
 ---@field mousepressed (fun(self: self, x: integer, y: integer, button: integer, isTouch: boolean, pressCount: integer): nil)?
 ---@field mousereleased (fun(self: self, x: integer, y: integer, button: integer): nil)?
@@ -492,6 +491,8 @@ function Container:_treeUpdate()
 	end
 end
 
+---Removes this Container from the UI tree, preventing it from receiving spatial events.
+---Doesn't check if this element is active.
 function Container:_treeRemove()
 	if self._inUITree then
 		self._inUITree = false

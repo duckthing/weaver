@@ -45,6 +45,8 @@ function SpriteWindow:new(rules, editor, context)
 
 	if useOldLayout then
 		palette.paletteColors.colorSize = 20
+		drawer.itemW = 30
+		drawer.itemH = 30
 		---@type HInspector
 		local inspector = HInspector(Plan.RuleFactory.full())
 
@@ -77,6 +79,7 @@ function SpriteWindow:new(rules, editor, context)
 		-- The new Weaver layout
 		---@type VInspector
 		local inspector = VInspector(Plan.RuleFactory.full())
+		drawer.padding = 5
 
 		---@type HSplit
 		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, timeline)
@@ -95,7 +98,7 @@ function SpriteWindow:new(rules, editor, context)
 
 		---@type VSplit
 		local vsplit1 = VSplit(Plan.RuleFactory.full(), hsplit1, hsplit3)
-		vsplit1.splitPosition = -7 - 90
+		vsplit1.splitPosition = -7 - 90 + 8
 		vsplit1.resizeMode = "keepsecond"
 
 		self:addChild(vsplit1)

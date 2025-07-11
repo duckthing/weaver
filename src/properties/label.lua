@@ -79,7 +79,7 @@ function LabelVElement:new(rules, property)
 	self.property = property
 	---@type Label
 	self.label = Label(FULL_SPACE, tostring(property.value))
-	self.label:setAlign("left")
+	self.label:setAlign("center")
 	self.label:setJustify("top")
 	self.label:setWrapLimit(1000000)
 	self:addChild(self.label)

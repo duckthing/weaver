@@ -1,5 +1,3 @@
-local Resources = require "src.global.resources"
-local KeyResource = require "plugins.keys.keybuffer"
 local Plugin = require "src.data.plugin"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
