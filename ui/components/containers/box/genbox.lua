@@ -47,6 +47,7 @@ function GenBox:_sortFunction()
 	end
 
 	local padding, margin = self.padding, self.margin
+	local oldOffset = self.offset
 	self.offset = math.max(0, math.min(self.offset, self._containerSize - self[size]))
 
 	-- How big the container actually is
@@ -116,6 +117,12 @@ function GenBox:_sortFunction()
 		self._containerSize = containerSize
 		return true
 	end
+
+	self.offset = math.max(0, math.min(oldOffset, self._containerSize - self[size]))
+	if self.offset ~= oldOffset then
+		self:_sortFunction()
+	end
+
 	return gotBubble
 end
 

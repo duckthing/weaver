@@ -1,5 +1,5 @@
 local Plan = require "lib.plan"
-local VScroll = require "ui.components.containers.box.vscroll"
+local GridBox = require "ui.components.containers.box.grid"
 local IconButton = require "ui.components.button.iconbutton"
 local SpriteSheet = require "src.spritesheet"
 
@@ -23,19 +23,21 @@ local toolsTexture = love.graphics.newImage("assets/sprite_tools.png")
 toolsTexture:setFilter("nearest", "nearest")
 local toolSpriteSheet = SpriteSheet.new(toolsTexture, 7, 1)
 
----@class ToolDrawer: VScroll
-local ToolDrawer = VScroll:extend()
+---@class ToolDrawer: GridBox
+local ToolDrawer = GridBox:extend()
 
 -- TODO: Offset drag handle so that we don't have to add an offset
 local buttonRules = Plan.Rules.new()
-	:addX(Plan.pixel(5))
+	:addX(Plan.keep())
 	:addY(Plan.keep())
-	:addWidth(Plan.max(5))
-	:addHeight(Plan.pixel(30))
+	:addWidth(Plan.keep())
+	:addHeight(Plan.keep())
 
 function ToolDrawer:new(rules)
 	ToolDrawer.super.new(self, rules)
 	self.minW = 35
+	self.itemW = 36
+	self.itemH = 36
 
 	local pencilBtn = IconButton(buttonRules, function() PencilTool:selectTool() end, toolSpriteSheet, 1, 2)
 	local eraserBtn = IconButton(buttonRules, function() EraserTool:selectTool() end, toolSpriteSheet, 2, 2)

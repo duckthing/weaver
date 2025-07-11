@@ -70,7 +70,7 @@ function PaletteSelections:mousepressed(mx, my, button)
 	if button == 1 then
 		local popupX, popupY =
 			self.x + self.w,
-			self.y + self.h - Modal.DEFAULT_COLOR_HEIGHT
+			self.y - Modal.DEFAULT_COLOR_HEIGHT
 		if my - self.y < self.h * 0.5 then
 			-- First half
 			Modal.pushColorSelect(self.primarySelection, popupX, popupY)

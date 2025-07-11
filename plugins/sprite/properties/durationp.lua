@@ -6,14 +6,14 @@ local Resources = require "src.global.resources"
 local DurationProperty = NumberProperty:extend()
 
 function DurationProperty:getVElement()
-	---@type NumberProperty.VElement
+	---@type NumberProperty.VTextElement
 	local element = DurationProperty.super.getVElement(self)
 
 	element.lineEdit.textSubmitted:removeAction(element._textSubmittedAction)
 
 	element._textSubmittedAction = element.lineEdit.textSubmitted:addAction(function(text)
-		---@type Sprite
 		local sprite = Resources.getCurrentResource()
+		---@cast sprite Sprite
 
 		sprite.undoStack:commit(
 			SetDurationCommand(

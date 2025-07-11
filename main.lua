@@ -2,7 +2,6 @@ love.graphics.setDefaultFilter("nearest", "nearest")
 love.graphics.setLineStyle("rough")
 love.keyboard.setKeyRepeat(true)
 
-local GlobalConfig = require "src.global.config"
 local Sessions = require "src.global.sessions"
 local Fonts = require "src.global.fonts"
 Sessions.load()
@@ -22,6 +21,8 @@ do
 		end
 	end
 end
+
+local GlobalConfig = require "src.global.config"
 
 -- TODO: Move plugin loading out of previewer
 local Previewer = require "ui.main.previewer"

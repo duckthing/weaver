@@ -1,7 +1,6 @@
 local json = require "lib.json"
 local Luvent = require "lib.luvent"
 local Plugin = require "src.data.plugin"
-local GlobalConfig = require "src.global.config"
 
 local SessionsModule = {}
 SessionsModule.pluginDataLoaded = Luvent.newEvent()

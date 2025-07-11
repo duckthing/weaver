@@ -317,13 +317,23 @@ function FileBrowser:_bubbleFBClicked(sourceButton, fullPath, isFile)
 	local property = self.property
 	if property then
 		local pathMode = property.pathMode
-		if not isFile and pathMode ~= "directory" then
-			self.cwdLineEdit:setText(fullPath)
-			self.cwdLineEdit:submitText()
+		if pathMode ~= "directory" then
+			if not isFile then
+				-- Set this folder as the CWD
+				self.cwdLineEdit:setText(fullPath)
+				self.cwdLineEdit:submitText()
+			else
+				-- Select this item
+				self.selected = true
+				property:set(fullPath)
+				self:close()
+			end
 		else
-			self.selected = true
-			property:set(fullPath)
-			self:close()
+			if not isFile then
+				-- Set this folder as the CWD
+				self.cwdLineEdit:setText(fullPath)
+				self.cwdLineEdit:submitText()
+			end
 		end
 	end
 end

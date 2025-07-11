@@ -1,5 +1,3 @@
-local Resources = require "src.global.resources"
-local KeyResource = require "plugins.keys.keybuffer"
 local Plugin = require "src.data.plugin"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
@@ -27,7 +25,7 @@ GlobalConfig.appScale:getRange()
 ---@type IntegerProperty
 GlobalConfig.maxRecentItems = IntegerProperty(GlobalConfig, "Max Recent Items", 30)
 ---@type BoolProperty
-GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", true)
+GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", false)
 ---@type StringProperty
 GlobalConfig.defaultResource = StringProperty(GlobalConfig, "Default Resource to Create", "Sprite")
 --[[GlobalConfig.editKeybinds = ButtonProperty(GlobalConfig, "Edit Keybinds",

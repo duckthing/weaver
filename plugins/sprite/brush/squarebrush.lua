@@ -84,6 +84,7 @@ local properties = {
 	SquareBrush.filled,
 }
 function SquareBrush:getProperties()
+	---@type Property[]
 	local newProperties = {}
 	for _, property in ipairs(properties) do
 		newProperties[#newProperties+1] = property
@@ -93,8 +94,8 @@ function SquareBrush:getProperties()
 
 	if self.patternMode:getValue() == "scrolloffset" then
 		-- Add the scroll properties
-		newProperties[#newProperties+1] = self.scrollOffsetX
-		newProperties[#newProperties+1] = self.scrollOffsetY
+		newProperties[#newProperties+1] = self.sourceOffsetX
+		newProperties[#newProperties+1] = self.sourceOffsetY
 	end
 
 	return newProperties

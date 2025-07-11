@@ -155,8 +155,12 @@ function BoundsContext:new(ui, x, y, w, h, overlapCheck)
 	self.shash = Shash.new()
 	---@type BoundsContext?
 	self.parent = nil
-	self.overlapCheck = overlapCheck or boundsContextSimpleOverlap
+	if overlapCheck then
+		self.overlapCheck = overlapCheck
+	end
 end
+
+BoundsContext.overlapCheck = boundsContextSimpleOverlap
 
 ---Returns whether the point is within bounds
 ---@param px integer
@@ -333,13 +337,15 @@ end
 ---| "sink" # Will receive events if overlapping a checked area
 ---| "pass" # Will ignore events, and let other elements receive them
 
----@class (exact) Plan.Container: Object
+---@class Plan.Container: Object
 ---@field super Plan.Container
 ---@field CLASS_NAME string
 ---@field x integer
 ---@field y integer
 ---@field w integer
 ---@field h integer
+---@field minW integer?
+---@field minH integer?
 ---@field rules Plan.Rules
 ---@field parent Plan.Container?
 ---@field children Plan.Container[]
@@ -347,14 +353,13 @@ end
 ---@field _depth integer
 ---@field _bounds BoundsContext
 ---@field _inUITree boolean
----@field _valid boolean Not destroyed; can be used or recycled
+---@field _valid boolean # Not destroyed; can be used or recycled
 ---@field _clipMode Plan.ClipMode
 ---@field _passMode Plan.PassMode
 ---@field isUIRoot boolean
 ---@field sizeRatio number
 ---@field extend fun(self: self): Plan.Container
 ---@field refresh fun(self: self): nil
----@field withinBounds fun(self: self, x: integer, y: integer): boolean
 ---@field mousemoved (fun(self: self, mx: integer, my: integer, cx: integer, cy: integer): nil)?
 ---@field mousepressed (fun(self: self, x: integer, y: integer, button: integer, isTouch: boolean, pressCount: integer): nil)?
 ---@field mousereleased (fun(self: self, x: integer, y: integer, button: integer): nil)?
@@ -490,6 +495,8 @@ function Container:_treeUpdate()
 	end
 end
 
+---Removes this Container from the UI tree, preventing it from receiving spatial events.
+---Doesn't check if this element is active.
 function Container:_treeRemove()
 	if self._inUITree then
 		self._inUITree = false
@@ -1157,10 +1164,10 @@ end
 function Rules:realise(element)
 	local parent = element.parent or {}
 	local dw, dh = element:getDesiredDimensions()
-	return (parent.x or 0) + self.rules.x:realise("x", element, self.rules, dw, dh),
-			(parent.y or 0) + self.rules.y:realise("y", element, self.rules, dw, dh),
-			self.rules.w:realise("w", element, self.rules, dw, dh),
-			self.rules.h:realise("h", element, self.rules, dw, dh)
+	return math.floor((parent.x or 0) + self.rules.x:realise("x", element, self.rules, dw, dh)),
+			math.floor((parent.y or 0) + self.rules.y:realise("y", element, self.rules, dw, dh)),
+			math.floor(self.rules.w:realise("w", element, self.rules, dw, dh)),
+			math.floor(self.rules.h:realise("h", element, self.rules, dw, dh))
 end
 
 ---Clones itself and returns a new Plan.Rules
