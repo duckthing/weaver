@@ -19,6 +19,8 @@ function GenBox:new(rules)
 	self.margin = 0
 	---@type integer # The scroll position of this GenBox
 	self.offset = 0
+	---@type integer # The old scroll position before the hierarchy changed
+	self.targetOffset = 0
 	---@type integer # How much space the child elements take up
 	self._containerSize = 0
 end
@@ -48,7 +50,7 @@ function GenBox:_sortFunction()
 
 	local padding, margin = self.padding, self.margin
 	local oldOffset = self.offset
-	self.offset = math.max(0, math.min(self.offset, self._containerSize - self[size]))
+	self.offset = math.max(0, math.min(self.targetOffset, self._containerSize - self[size]))
 
 	-- How big the container actually is
 	local containerSize = padding * 2
@@ -118,7 +120,7 @@ function GenBox:_sortFunction()
 		return true
 	end
 
-	self.offset = math.max(0, math.min(oldOffset, self._containerSize - self[size]))
+	self.offset = math.max(0, math.min(self.targetOffset, self._containerSize - self[size]))
 	if self.offset ~= oldOffset then
 		self:_sortFunction()
 	end
@@ -132,6 +134,7 @@ end
 
 function GenBox:draw()
 	if self.w < 0 or self.h < 0 then return end
+	self.targetOffset = self.offset
 	local ox, oy, ow, oh = love.graphics.getScissor()
 	love.graphics.intersectScissor(self.x, self.y, self.w, self.h)
 	GenBox.super.draw(self)

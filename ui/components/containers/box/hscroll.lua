@@ -15,7 +15,7 @@ end
 function HScroll:wheelmoved(_, y)
 	if self.allowScrolling then
 		local factor = (self.direction == "first" and 1) or -1
-		self.offset = self.offset - y * self.scrollSpeed * factor
+		self.targetOffset = self.offset - y * self.scrollSpeed * factor
 		self:sort()
 	end
 end

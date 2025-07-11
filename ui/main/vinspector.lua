@@ -20,8 +20,9 @@ function VInspector:new(rules)
 	if SpriteTool.currentTool then self:selectInspectable(SpriteTool.currentTool) end
 end
 
----@param inspectable Inspectable
+---@param inspectable Inspectable?
 function VInspector:updateProperties(inspectable)
+	local oldOffset = self.offset
 	self:clearChildren(true)
 	self.selected = inspectable
 	-- If it's nil, do nothing else
@@ -33,6 +34,7 @@ function VInspector:updateProperties(inspectable)
 	end
 
 	if self._inUITree then
+		self.offset = oldOffset
 		self:sort()
 	end
 end
