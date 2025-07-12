@@ -37,16 +37,16 @@ function StatusBar:new(rules)
 		if tempContext then
 			self.tempContext = tempContext
 			self:addChild(tempContext)
-			self.offset = 0
+			self.targetOffset = 0
 
 			-- The animation
 			self.isTempShown = true
 			self.startedAt = love.timer.getTime()
 			self.endAt = self.startedAt + duration
-			self.tween = Flux.to(self, 0.2, {offset = self.h}):ease("quartout"):onupdate(function()
+			self.tween = Flux.to(self, 0.2, {targetOffset = self.h}):ease("quartout"):onupdate(function()
 				self:sort()
 			end):oncomplete(function()
-				self.tween = Flux.to(self, 0.2, {offset = 0}):delay(self.endAt - love.timer.getTime()):ease("quartout")
+				self.tween = Flux.to(self, 0.2, {targetOffset = 0}):delay(self.endAt - love.timer.getTime()):ease("quartout")
 					:onupdate(function()
 						self:sort()
 					end):oncomplete(function()
