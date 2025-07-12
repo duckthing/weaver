@@ -37,6 +37,9 @@ local spriteToolbarActions = {
 		items = {
 			actions.undo,
 			actions.redo,
+			actions.copy_selection,
+			actions.cut_selection,
+			actions.paste_selection,
 		}
 	},
 	{
