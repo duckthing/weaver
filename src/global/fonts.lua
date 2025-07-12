@@ -1,6 +1,6 @@
 local Fonts = {}
 
-Fonts.defaultFont = "pixeloid"
+Fonts.defaultFont = "normal"
 
 ---@type {[string]: string}
 Fonts.fontPaths = {

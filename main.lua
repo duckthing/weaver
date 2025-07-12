@@ -13,8 +13,8 @@ do
 	if data.global then
 		local settings = data.global.settings
 		if settings then
-			if settings["Use Pixel Font"] == false then
-				Fonts.defaultFont = "normal"
+			if settings["Use Pixel Font"] == true then
+				Fonts.defaultFont = "pixeloid"
 			end
 
 			scale = settings["App Scale"] or 1

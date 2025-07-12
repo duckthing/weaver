@@ -1,5 +1,6 @@
 local Plan = require "lib.plan"
 local Resources = require "src.global.resources"
+local Sessions = require "src.global.sessions"
 
 local PickTool = require "plugins.sprite.tools.pick"
 
@@ -15,6 +16,18 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 local SpriteState = require "plugins.sprite.spritestate"
 
 local useOldLayout = false
+do
+	-- (Temp) Switch to old layout if we should
+	local data = Sessions.getCachedData()
+	if data.sprite then
+		local settings = data.sprite.settings
+		if settings then
+			if settings["Use Old Layout"] then
+				useOldLayout = true
+			end
+		end
+	end
+end
 
 ---@class SpriteEditor.Window: Plan.Container
 local SpriteWindow = Plan.Container:extend()

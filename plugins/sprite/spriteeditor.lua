@@ -14,6 +14,7 @@ local SpriteFormats = require "plugins.sprite.formats.spriteformats"
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
 local EnumProperty = require "src.properties.enum"
+local BoolProperty = require "src.properties.bool"
 
 Handler.addFormat(SpriteFormats)
 
@@ -207,11 +208,14 @@ SpriteEditor.defaultDataExtension:setOptions({
 		value = "json",
 	}
 })
+---@type BoolProperty
+SpriteEditor.useOldLayout = BoolProperty(SpriteEditor, "Use Old Layout", false)
 
 local settings = {
 	SpriteEditor.maxUndo,
 	SpriteEditor.defaultPalette,
 	SpriteEditor.defaultDataExtension,
+	SpriteEditor.useOldLayout,
 }
 
 function SpriteEditor:getSettings()
