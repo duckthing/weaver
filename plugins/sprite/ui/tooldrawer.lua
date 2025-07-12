@@ -21,7 +21,7 @@ SelectionTransformTool:register()
 
 local toolsTexture = love.graphics.newImage("assets/sprite_tools.png")
 toolsTexture:setFilter("nearest", "nearest")
-local toolSpriteSheet = SpriteSheet.new(toolsTexture, 7, 1)
+local toolSpriteSheet = SpriteSheet.new(toolsTexture, 8, 1)
 
 ---@class ToolDrawer: GridBox
 local ToolDrawer = GridBox:extend()
@@ -45,7 +45,7 @@ function ToolDrawer:new(rules)
 	local pickBtn = IconButton(buttonRules, function() PickTool:selectTool() end, toolSpriteSheet, 4, 2)
 	local rectMarqueeBtn = IconButton(buttonRules, function() RectMarqueeTool:selectTool() end, toolSpriteSheet, 5, 2)
 	local magicMarqueeBtn = IconButton(buttonRules, function() MagicMarqueeTool:selectTool() end, toolSpriteSheet, 6, 2)
-	local selectionTransformBtn = IconButton(buttonRules, function() SelectionTransformTool:selectTool() end, toolSpriteSheet, 6, 2)
+	local selectionTransformBtn = IconButton(buttonRules, function() SelectionTransformTool:selectTool() end, toolSpriteSheet, 7, 2)
 
 	self:addChild(pencilBtn)
 	self:addChild(eraserBtn)
