@@ -36,10 +36,12 @@ local function chooseNewScale(oldScale, y)
 		-- Zoom in
 		if index == #scales then return scales[index] end
 		return scales[index + 1]
-	else
+	elseif y < 0 then
 		-- Zoom out
 		if index == 1 then return scales[1] end
 		return scales[index - 1]
+	else
+		return oldScale
 	end
 
 	-- TODO: Replace canvas zoom algorithm with something smarter
@@ -167,7 +169,7 @@ function Canvas:wheelmoved(_, y)
 		if y < 0 then
 			-- Shrink
 			brush:shrink()
-		else
+		elseif y > 0 then
 			-- Grow
 			brush:grow()
 		end
