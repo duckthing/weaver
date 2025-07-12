@@ -39,6 +39,7 @@ function GridBox:_sortFunction()
 
 	local lowerDepth = self._depth + 1
 	local lowerBounds = self._bounds
+	-- TODO: Add culling to grid
 	self._lowerCull = 1
 	self._upperCull = #self.children
 	for i = 1, #self.children do

@@ -26,13 +26,13 @@ function DropdownButton:wheelmoved(_, y)
 	local property = self.property
 	if not property then return end
 	if y > 0 then
-		self.property:set(property.options[(property.index % #property.options) + 1])
-	elseif y < 0 then
 		if property.index == 1 then
 			self.property:set(property.options[#property.options])
 		else
 			self.property:set(property.options[property.index - 1])
 		end
+	elseif y < 0 then
+		self.property:set(property.options[(property.index % #property.options) + 1])
 	end
 end
 
