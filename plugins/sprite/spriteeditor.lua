@@ -72,8 +72,8 @@ local spriteToolbarActions = {
 			actions.clone_layer,
 			actions.delete_layer,
 			actions.merge_layer_down,
-			actions.move_layer_down,
 			actions.move_layer_up,
+			actions.move_layer_down,
 		}
 	},
 	{
