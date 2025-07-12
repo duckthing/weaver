@@ -116,6 +116,7 @@ function LayerTimeline:new(rules, sprite, layer)
 end
 
 function LayerTimeline:onRemovedFromParent()
+	LayerTimeline.super.onRemovedFromParent(self)
 	local layer = self.layer
 	layer.visible.valueChanged:removeAction(self._layerVisibleChanged)
 	layer.locked.valueChanged:removeAction(self._layerLockedChanged)
