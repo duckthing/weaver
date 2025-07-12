@@ -672,6 +672,8 @@ function SpriteTool.pasteSelection()
 	bitmask:reset(false)
 	bitmask:paste(selection.bitmask, 0, 0, 0, 0, selection.bitmask.width, selection.bitmask.height)
 	bitmask._active = true
+	spriteState.includeBitmask = true
+	spriteState.includeMimic = true
 	-- spriteState.includeSelection = true
 	selectionCommand:completeMark()
 
@@ -691,6 +693,7 @@ function SpriteTool.pasteSelection()
 	bucketCommand:completeMark()
 	selectionCel:update()
 	spriteState.bitmaskRenderer:update()
+	SpriteTool.updateCanvas()
 
 	sprite.undoStack:commitWithoutPerforming(selectionCommand)
 	sprite.undoStack:commitWithoutPerforming(bucketCommand)
