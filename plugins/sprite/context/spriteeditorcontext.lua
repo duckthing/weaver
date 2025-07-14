@@ -1,5 +1,6 @@
 local ffi = require "ffi"
 local Context = require "src.data.context"
+local Contexts = require "src.global.contexts"
 local Action = require "src.data.action"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Modal = require "src.global.modal"
@@ -976,7 +977,8 @@ local actions = {
 					SpriteTool.applyFromSelection()
 					---@type SelectionCommand
 					local command = SelectionCommand(sprite, bitmask)
-					command:markRegion(0, 0, sprite.width - 1, sprite.height - 1)
+					local bx, by, _, _, bw, bh = bitmask:getBounds()
+					command:markRegion(bx, by, bw, bh)
 					bitmask:setActive(false)
 					bitmask:reset()
 					command:completeMark()
@@ -1056,6 +1058,8 @@ local actions = {
 			if editor then
 				local canvas = editor.container.canvasUI
 				canvas:toggleAnimation()
+				SpriteTool.applyFromSelection()
+				Contexts.raiseAction("clear_selection")
 			end
 		end
 	),
