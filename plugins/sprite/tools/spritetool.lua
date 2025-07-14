@@ -675,6 +675,7 @@ function SpriteTool.pasteSelection()
 	spriteState.includeBitmask = true
 	spriteState.includeMimic = true
 	-- spriteState.includeSelection = true
+	SpriteTool.onBitmaskChanged()
 	selectionCommand:completeMark()
 
 	---@type BucketFillCommand
