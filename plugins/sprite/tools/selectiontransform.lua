@@ -57,20 +57,26 @@ function Transform:pressing(imageX, imageY)
 
 		local originalAngle = math.atan2((startY - centerY - selectionY), (startX - centerX - selectionX))
 		local newAngle = math.atan2((imageY - centerY - selectionY), (imageX - centerX - selectionX))
+		local angleDiff = newAngle - originalAngle
+		local startRotation = startRot
 
 		if love.keyboard.isDown("lctrl") then
 			local stepAmount = math.rad(45)
 			if love.keyboard.isDown("lshift") then
 				stepAmount = math.rad(15)
 			end
+			if angleDiff < 0 then
+				angleDiff = angleDiff + math.rad(360)
+			end
 
-			newAngle = newAngle - math.fmod(
-				newAngle,
+			angleDiff = angleDiff - math.fmod(
+				angleDiff + stepAmount * 0.5,
 				stepAmount
-			)
+			) + stepAmount * 0.5
 		end
 
-		sprite.spriteState.selectionRotation = newAngle - originalAngle + startRot
+		sprite.spriteState.selectionRotation = angleDiff + startRotation
+		print(math.deg(sprite.spriteState.selectionRotation))
 		SpriteTool.updateCanvas()
 	end
 
