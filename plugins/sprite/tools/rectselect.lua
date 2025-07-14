@@ -144,7 +144,7 @@ function RectSelect:stopPress(imageX, imageY)
 end
 
 ---@type LabelProperty
-RectSelect.name = LabelProperty(RectSelect, "Name", "Rectangle Marquee")
+RectSelect.name = LabelProperty(RectSelect, "Name", "Rectangle Select")
 local properties = {
 	RectSelect.name,
 }

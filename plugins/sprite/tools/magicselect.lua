@@ -211,7 +211,7 @@ function MagicSelect:stopPress(imageX, imageY)
 end
 
 ---@type LabelProperty
-MagicSelect.name = LabelProperty(MagicSelect, "Name", "Magic Marquee")
+MagicSelect.name = LabelProperty(MagicSelect, "Name", "Magic Select")
 ---@type EnumProperty
 MagicSelect.mode = EnumProperty(MagicSelect, "Fill Mode", false)
 MagicSelect.mode:setOptions({
@@ -225,13 +225,9 @@ MagicSelect.mode:setOptions({
 	},
 })
 
----@type BoolProperty
--- MagicMarquee.sameLayer = BoolProperty(MagicMarquee, "Same layer", false)
-
 local properties = {
 	MagicSelect.name,
 	MagicSelect.mode,
-	-- MagicMarquee.sameLayer,
 }
 
 function MagicSelect:getProperties()
