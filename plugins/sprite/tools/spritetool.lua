@@ -565,8 +565,8 @@ function SpriteTool.applyFromSelection()
 				local imageIndex = (x + y * w) * 4
 
 				if dataP[imageIndex + 3] ~= 0 then
-					bitmask:set(x, y, true)
 					selectionCommand:markRegion(x, y, 1, 1)
+					bitmask:set(x, y, true)
 				end
 			end
 		end
