@@ -76,7 +76,6 @@ function Transform:pressing(imageX, imageY)
 		end
 
 		sprite.spriteState.selectionRotation = angleDiff + startRotation
-		print(math.deg(sprite.spriteState.selectionRotation))
 		SpriteTool.updateCanvas()
 	end
 
