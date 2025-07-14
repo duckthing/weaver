@@ -163,6 +163,8 @@ Eraser.name = LabelProperty(Eraser, "name", "Eraser")
 local properties = {
 	Eraser.name,
 	SpriteTool.brush,
+	SpriteTool.mirrorX,
+	SpriteTool.mirrorY,
 }
 
 function Eraser:getProperties()
