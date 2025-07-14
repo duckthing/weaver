@@ -2,16 +2,15 @@ local ffi = require "ffi"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local BaseSelectionTool = require "plugins.sprite.tools.baseselectiontool"
 local LabelProperty = require "src.properties.label"
-local BoolProperty = require "src.properties.bool"
 local EnumProperty = require "src.properties.enum"
 local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
 local spanfill = require "src.common.spanfill"
 
----@class SpriteMagicMarquee: BaseSelectionTool
-local MagicMarquee = BaseSelectionTool:extend()
+---@class SpriteMagicSelect: BaseSelectionTool
+local MagicSelect = BaseSelectionTool:extend()
 
-function MagicMarquee:draw(imageX, imageY, currLayerIndex)
-	if BaseSelectionTool.draw(MagicMarquee, imageX, imageY, currLayerIndex) then return end
+function MagicSelect:draw(imageX, imageY, currLayerIndex)
+	if BaseSelectionTool.draw(MagicSelect, imageX, imageY, currLayerIndex) then return end
 	if currLayerIndex == SpriteTool.layer.index then
 		local sprite = SpriteTool.sprite
 		local canvas = SpriteTool.canvas
@@ -85,8 +84,8 @@ end
 
 ---@param imageX integer
 ---@param imageY integer
-function MagicMarquee:startPress(imageX, imageY)
-	if BaseSelectionTool.startPress(MagicMarquee, imageX, imageY) then return end
+function MagicSelect:startPress(imageX, imageY)
+	if BaseSelectionTool.startPress(MagicSelect, imageX, imageY) then return end
 	local sprite = SpriteTool.sprite
 	local cel = SpriteTool.cel
 	if not sprite then return end
@@ -119,7 +118,7 @@ function MagicMarquee:startPress(imageX, imageY)
 
 	local celFFI = ffi.cast("uint8_t*", cel.data:getFFIPointer())
 	local operation = BaseSelectionTool:getOperation()
-	local mode = MagicMarquee.mode:getValue()
+	local mode = MagicSelect.mode:getValue()
 	SpriteTool.applyFromSelection()
 	sprite.spriteState.includeMimic = true
 
@@ -204,18 +203,18 @@ function MagicMarquee:startPress(imageX, imageY)
 	SpriteTool.drawing = true
 end
 
-function MagicMarquee:stopPress(imageX, imageY)
-	if BaseSelectionTool.stopPress(MagicMarquee, imageX, imageY) then return end
+function MagicSelect:stopPress(imageX, imageY)
+	if BaseSelectionTool.stopPress(MagicSelect, imageX, imageY) then return end
 	if SpriteTool.drawing then
 		SpriteTool.drawing = false
 	end
 end
 
 ---@type LabelProperty
-MagicMarquee.name = LabelProperty(MagicMarquee, "Name", "Magic Marquee")
+MagicSelect.name = LabelProperty(MagicSelect, "Name", "Magic Marquee")
 ---@type EnumProperty
-MagicMarquee.mode = EnumProperty(MagicMarquee, "Fill Mode", false)
-MagicMarquee.mode:setOptions({
+MagicSelect.mode = EnumProperty(MagicSelect, "Fill Mode", false)
+MagicSelect.mode:setOptions({
 	{
 		name = "4-way",
 		value = "4-way"
@@ -230,13 +229,13 @@ MagicMarquee.mode:setOptions({
 -- MagicMarquee.sameLayer = BoolProperty(MagicMarquee, "Same layer", false)
 
 local properties = {
-	MagicMarquee.name,
-	MagicMarquee.mode,
+	MagicSelect.name,
+	MagicSelect.mode,
 	-- MagicMarquee.sameLayer,
 }
 
-function MagicMarquee:getProperties()
+function MagicSelect:getProperties()
 	return properties
 end
 
-return MagicMarquee
+return MagicSelect

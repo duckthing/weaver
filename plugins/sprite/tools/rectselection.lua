@@ -3,8 +3,8 @@ local BaseSelectionTool = require "plugins.sprite.tools.baseselectiontool"
 local LabelProperty = require "src.properties.label"
 local SelectionCommand = require "plugins.sprite.commands.selectioncommand"
 
----@class SpriteRectMarquee: BaseSelectionTool
-local RectMarquee = BaseSelectionTool:extend()
+---@class SpriteRectSelect: BaseSelectionTool
+local RectSelect = BaseSelectionTool:extend()
 
 local startX, startY = 0, 0
 
@@ -18,8 +18,8 @@ vec4 effect(vec4 color, Image texture, vec2 texturePos, vec2 screenPos)
 ]] --]]
 -- local invertShader = love.graphics.newShader(invertShaderCode)
 
-function RectMarquee:draw(imageX, imageY, currLayerIndex)
-	if BaseSelectionTool.draw(RectMarquee, imageX, imageY, currLayerIndex) then return end
+function RectSelect:draw(imageX, imageY, currLayerIndex)
+	if BaseSelectionTool.draw(RectSelect, imageX, imageY, currLayerIndex) then return end
 	if currLayerIndex == SpriteTool.layer.index then
 		local sprite = SpriteTool.sprite
 		local canvas = SpriteTool.canvas
@@ -49,8 +49,8 @@ end
 
 ---@param imageX integer
 ---@param imageY integer
-function RectMarquee:startPress(imageX, imageY)
-	if BaseSelectionTool.startPress(RectMarquee, imageX, imageY) then return end
+function RectSelect:startPress(imageX, imageY)
+	if BaseSelectionTool.startPress(RectSelect, imageX, imageY) then return end
 
 	startX, startY = imageX, imageY
 	SpriteTool.lastX, SpriteTool.lastY = imageX, imageY
@@ -59,8 +59,8 @@ end
 
 ---@param imageX integer
 ---@param imageY integer
-function RectMarquee:pressing(imageX, imageY)
-	if BaseSelectionTool.pressing(RectMarquee, imageX, imageY) then return end
+function RectSelect:pressing(imageX, imageY)
+	if BaseSelectionTool.pressing(RectSelect, imageX, imageY) then return end
 
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
@@ -69,8 +69,8 @@ end
 
 ---@param imageX integer
 ---@param imageY integer
-function RectMarquee:stopPress(imageX, imageY)
-	if BaseSelectionTool.stopPress(RectMarquee, imageX, imageY) then return end
+function RectSelect:stopPress(imageX, imageY)
+	if BaseSelectionTool.stopPress(RectSelect, imageX, imageY) then return end
 	if not SpriteTool.drawing then return end
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
@@ -144,13 +144,13 @@ function RectMarquee:stopPress(imageX, imageY)
 end
 
 ---@type LabelProperty
-RectMarquee.name = LabelProperty(RectMarquee, "Name", "Rectangle Marquee")
+RectSelect.name = LabelProperty(RectSelect, "Name", "Rectangle Marquee")
 local properties = {
-	RectMarquee.name,
+	RectSelect.name,
 }
 
-function RectMarquee:getProperties()
+function RectSelect:getProperties()
 	return properties
 end
 
-return RectMarquee
+return RectSelect
