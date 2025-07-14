@@ -41,6 +41,10 @@ local tilemapOptions = {
 		name = "8-way (sides and corners)",
 		value = "8-way",
 	},
+	--[[ {
+		name = "Dual-grid",
+		value = "dualgrid"
+	}, --]]
 }
 
 function CreateSprite:new()
