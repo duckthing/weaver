@@ -12,7 +12,7 @@ function VInspector:new(rules)
 	---@type Inspectable?
 	self.selected = nil
 	self.padding = 12
-	self.margin = 12
+	self.margin = 6
 
 	SpriteTool.toolSelected:addAction(function (newTool)
 		self:selectInspectable(newTool)
