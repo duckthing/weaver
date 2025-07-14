@@ -7,8 +7,8 @@ local PencilTool = require "plugins.sprite.tools.pencil"
 local EraserTool = require "plugins.sprite.tools.eraser"
 local BucketTool = require "plugins.sprite.tools.bucket"
 local PickTool = require "plugins.sprite.tools.pick"
-local RectMarqueeTool = require "plugins.sprite.tools.rectselection"
-local MagicMarqueeTool = require "plugins.sprite.tools.magicselection"
+local RectMarqueeTool = require "plugins.sprite.tools.rectselect"
+local MagicMarqueeTool = require "plugins.sprite.tools.magicselect"
 local SelectionTransformTool = require "plugins.sprite.tools.selectiontransform"
 
 PencilTool:register()
