@@ -149,6 +149,7 @@ function TabButton:draw()
 end
 
 function TabButton:onRemovedFromParent()
+	TabButton.super.onRemovedFromParent(self)
 	self.resource.name.valueChanged:removeAction(self._nameChangedAction)
 	self.resource.modified.valueChanged:removeAction(self._modifiedAction)
 	self._nameChangedAction = nil

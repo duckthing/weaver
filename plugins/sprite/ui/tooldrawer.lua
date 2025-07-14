@@ -1,5 +1,5 @@
 local Plan = require "lib.plan"
-local GridBox = require "ui.components.containers.box.grid"
+local GridBox = require "ui.components.containers.box.gridbox"
 local IconButton = require "ui.components.button.iconbutton"
 local SpriteSheet = require "src.spritesheet"
 

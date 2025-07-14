@@ -57,6 +57,7 @@ function DropdownButton:bindToProperty(newProperty)
 end
 
 function DropdownButton:onRemovedFromParent()
+	DropdownButton.super.onRemovedFromParent(self)
 	self:bindToProperty()
 end
 
