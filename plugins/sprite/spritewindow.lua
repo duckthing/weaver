@@ -55,6 +55,8 @@ function SpriteWindow:new(rules, editor, context)
 	self.drawerUI = drawer
 
 	canvas.minH = 40
+	Canvas.checkerboardPrimary = editor.checkerboardPrimary:getColor()
+	Canvas.checkerboardSecondary = editor.checkerboardSecondary:getColor()
 
 	if useOldLayout then
 		palette.paletteColors.colorSize = 20

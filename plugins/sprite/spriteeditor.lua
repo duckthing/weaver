@@ -15,6 +15,7 @@ local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
 local EnumProperty = require "src.properties.enum"
 local BoolProperty = require "src.properties.bool"
+local ColorSelectionProperty = require "src.properties.colorselection"
 
 Handler.addFormat(SpriteFormats)
 
@@ -213,12 +214,22 @@ SpriteEditor.defaultDataExtension:setOptions({
 })
 ---@type BoolProperty
 SpriteEditor.useOldLayout = BoolProperty(SpriteEditor, "Use Old Layout", false)
+---@type ColorSelectionProperty
+SpriteEditor.checkerboardPrimary = ColorSelectionProperty(
+	SpriteEditor, "Checkerboard Primary Color", {0.65, 0.65, 0.65}
+)
+---@type ColorSelectionProperty
+SpriteEditor.checkerboardSecondary = ColorSelectionProperty(
+	SpriteEditor, "Checkerboard Secondary Color", {0.45, 0.45, 0.5}
+)
 
 local settings = {
 	SpriteEditor.maxUndo,
 	SpriteEditor.defaultPalette,
 	SpriteEditor.defaultDataExtension,
 	SpriteEditor.useOldLayout,
+	SpriteEditor.checkerboardPrimary,
+	SpriteEditor.checkerboardSecondary,
 }
 
 function SpriteEditor:getSettings()

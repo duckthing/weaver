@@ -29,6 +29,12 @@ function ColorSelectionProperty:new(object, name, value)
 	self.defaultIndex = 1
 end
 
+function ColorSelectionProperty:deserialize(data)
+	if type(data) == "table" then
+		self:userSetColor(data[1], data[2], data[3])
+	end
+end
+
 function ColorSelectionProperty:triggerValueChanged()
 	self.valueChanged:trigger(self, self.color, self.index)
 end
@@ -39,6 +45,10 @@ end
 ---@param b number
 function ColorSelectionProperty:userSetColor(r, g, b)
 	local palette = self.palette
+
+	r = math.max(0, math.min(r, 1))
+	g = math.max(0, math.min(g, 1))
+	b = math.max(0, math.min(b, 1))
 
 	if (palette and not palette.locked) or self:getIndex() == 0 then
 		-- Edit the current color, which may be in the palette

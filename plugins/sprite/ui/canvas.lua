@@ -3,6 +3,10 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 
 ---@class SpriteCanvas: Viewport
 local Canvas = Viewport:extend()
+---@type Palette.Color
+Canvas.checkerboardPrimary = nil
+---@type Palette.Color
+Canvas.checkerboardSecondary = nil
 
 local pointerCursor = love.mouse.getSystemCursor("crosshair")
 
@@ -81,12 +85,16 @@ local function drawCheckerboard(x, y, w, h)
 
 	local maxW = w
 	local maxH = h
+
+	local primaryColor = Canvas.checkerboardPrimary
+	local secondaryColor = Canvas.checkerboardSecondary
+
 	for i = 0, endI do
 		for j = 0, endJ do
 			if (i + j) % 2 == 1 then
-				love.graphics.setColor(0.65, 0.65, 0.65)
+				love.graphics.setColor(primaryColor)
 			else
-				love.graphics.setColor(0.45, 0.45, 0.5)
+				love.graphics.setColor(secondaryColor)
 			end
 
 			local offsetX = j * checkerboardFlipSize
