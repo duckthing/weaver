@@ -16,19 +16,27 @@ function GridOptions:new()
 	---@type BoolProperty
 	self.showGrid = BoolProperty(self, "Show Grid", false)
 
-	---@type IntegerProperty
-	self.gridW = IntegerProperty(self, "Grid Width", 8)
-	self.gridW:getRange():setMin(1)
+	---@type NumberProperty
+	self.gridW = NumberProperty(self, "Grid Width", 8)
+	self.gridW:getRange()
+		:setMin(1)
+		:setStep(0.5)
 
-	---@type IntegerProperty
-	self.gridH = IntegerProperty(self, "Grid Height", 8)
-	self.gridH:getRange():setMin(1)
+	---@type NumberProperty
+	self.gridH = NumberProperty(self, "Grid Height", 8)
+	self.gridH:getRange()
+		:setMin(1)
+		:setStep(0.5)
 
-	---@type IntegerProperty
-	self.gridOffsetX = IntegerProperty(self, "Grid Offset X", 0)
+	---@type NumberProperty
+	self.gridOffsetX = NumberProperty(self, "Grid Offset X", 0)
+	self.gridOffsetX:getRange()
+		:setStep(0.5)
 
-	---@type IntegerProperty
-	self.gridOffsetY = IntegerProperty(self, "Grid Offset Y", 0)
+	---@type NumberProperty
+	self.gridOffsetY = NumberProperty(self, "Grid Offset Y", 0)
+	self.gridOffsetY:getRange()
+		:setStep(0.5)
 
 	---@type ColorSelectionProperty
 	self.gridColor = ColorSelectionProperty(self, "Grid Color", {1, 1, 1})
