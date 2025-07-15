@@ -144,11 +144,17 @@ function TLHeader:mousereleased(mx, my, button)
 		local frame = self.sprite.frames[self.hoveringFrameIndex]
 		if frame then
 			-- This index is valid
-			self:bubble("_bSelectFrame", frame)
-			if button == 1 and self.pressCount == 2 then
-				-- Double clicked; open properties
-				Modal.pushInspector(frame)
+			local spriteState = self.spriteState
+			if button == 1 then
+				if self.pressCount >= 2 and spriteState.frame:get() == frame.index then
+					-- Double clicked same frame; open properties
+					self:bubble("_bSelectFrame", frame)
+					Modal.pushInspector(frame)
+				else
+					self:bubble("_bSelectFrame", frame)
+				end
 			elseif button == 2 then
+				self:bubble("_bSelectFrame", frame)
 				Modal.pushMenu(mx, my, frameMenuItems, frame, Contexts.contextStack[#Contexts.contextStack])
 			end
 		end
