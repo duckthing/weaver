@@ -19,6 +19,11 @@ function Property:new(object, name, value)
 	---@type any?
 	self.value = value
 
+	---@type string? # Used for serializing, defaults to self.name
+	self.key = nil
+	---@type string? # An optional description, which is displayed in some places (like settings)
+	self.description = nil
+
 	---@type Luvent
 	self.valueChanged = Luvent.newEvent()
 end
@@ -36,6 +41,22 @@ function Property:set(value)
 		self.value = value
 		self.valueChanged:trigger(self, value)
 	end
+end
+
+---Sets the key used when serializing
+---@param key string
+---@return self
+function Property:setKey(key)
+	self.key = key
+	return self
+end
+
+---Sets the key used when serializing
+---@param description string
+---@return self
+function Property:setDescription(description)
+	self.description = description
+	return self
 end
 
 ---Returns any data in a format that can be saved

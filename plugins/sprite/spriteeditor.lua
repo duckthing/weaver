@@ -196,12 +196,15 @@ end
 
 ---@type IntegerProperty
 SpriteEditor.maxUndo = IntegerProperty(SpriteEditor, "Undo History Limit", 30)
+	:setKey("maxUndo")
 SpriteEditor.maxUndo:getRange()
 	:setMin(0)
 ---@type StringProperty
 SpriteEditor.defaultPalette = StringProperty(SpriteEditor, "Default Palette Name", "")
+	:setKey("defaultPalette")
 ---@type EnumProperty
 SpriteEditor.defaultDataExtension = EnumProperty(SpriteEditor, "Default Data Extension", ".lua")
+	:setKey("defaultDataExtension")
 SpriteEditor.defaultDataExtension:setOptions({
 	{
 		name = "*.lua",
@@ -214,14 +217,17 @@ SpriteEditor.defaultDataExtension:setOptions({
 })
 ---@type BoolProperty
 SpriteEditor.useOldLayout = BoolProperty(SpriteEditor, "Use Old Layout", false)
+	:setKey("useOldLayout")
 ---@type ColorSelectionProperty
 SpriteEditor.checkerboardPrimary = ColorSelectionProperty(
 	SpriteEditor, "Checkerboard Primary Color", {0.65, 0.65, 0.65}
 )
+	:setKey("checkerboardPrimary")
 ---@type ColorSelectionProperty
 SpriteEditor.checkerboardSecondary = ColorSelectionProperty(
 	SpriteEditor, "Checkerboard Secondary Color", {0.45, 0.45, 0.5}
 )
+	:setKey("checkerboardSecondary")
 
 local settings = {
 	SpriteEditor.maxUndo,

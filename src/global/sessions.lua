@@ -47,7 +47,7 @@ local function getPersistentDataFromPlugin(plugin)
 	for _, property in ipairs(settings) do
 		local serialized = property:serialize()
 		if serialized ~= nil then
-			saved[property.name] = serialized
+			saved[property.key or property.name] = serialized
 		end
 	end
 
@@ -94,7 +94,7 @@ local function loadWithSessionData(plugin, sessionData)
 			local settingsProperties = plugin:getSettings()
 
 			for _, property in ipairs(settingsProperties) do
-				local serialized = settingsData[property.name]
+				local serialized = settingsData[property.key or property.name]
 				if serialized ~= nil then
 					property:deserialize(serialized)
 				end

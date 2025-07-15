@@ -15,19 +15,24 @@ local CreateProject = require "src.objects.createproject"
 local GlobalConfig = Plugin:extend()
 GlobalConfig.TYPE = "global"
 
+---@type LabelProperty
 GlobalConfig.disclaimer = LabelProperty(GlobalConfig, "Disclaimer", "Weaver is alpha software; settings may be reset between versions\nYou may need to restart for changes to take effect")
 ---@type NumberProperty
 GlobalConfig.appScale = NumberProperty(GlobalConfig, "App Scale", 1)
+	:setKey("appScale")
 GlobalConfig.appScale:getRange()
 	:setMin(0.25)
 	:setMax(4)
 	:setStep(0.05)
 ---@type IntegerProperty
 GlobalConfig.maxRecentItems = IntegerProperty(GlobalConfig, "Max Recent Items", 30)
+	:setKey("maxRecentItems")
 ---@type BoolProperty
 GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", false)
+	:setKey("pixelFont")
 ---@type StringProperty
 GlobalConfig.defaultResource = StringProperty(GlobalConfig, "Default Resource to Create", "Sprite")
+	:setKey("defaultResource")
 --[[GlobalConfig.editKeybinds = ButtonProperty(GlobalConfig, "Edit Keybinds",
 	function(button)
 		Resources.selectResourceId(Resources.addResource(KeyResource()))
