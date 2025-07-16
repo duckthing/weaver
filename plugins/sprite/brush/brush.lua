@@ -15,9 +15,6 @@ local Brush = Inspectable:extend()
 ---| "center"
 ---| "manual"
 
----@type BoolProperty
-Brush.continuous = BoolProperty(Brush, "Continuous", true)
-
 local patternOptions = {
 	{
 		name = "Simple",
@@ -33,6 +30,10 @@ local patternOptions = {
 	},
 }
 
+---@alias Brush.Type
+---| "mask"
+---| "color"
+
 local brushTypeOptions = {
 	{
 		name = "Mask",
@@ -43,6 +44,27 @@ local brushTypeOptions = {
 		value = "color"
 	},
 }
+
+---@alias Brush.BlendMode
+---| "blend"
+---| "lockalpha"
+
+local blendModeOptions = {
+	{
+		name = "Normal",
+		value = "blend"
+	},
+	{
+		name = "Lock Alpha",
+		value = "lockalpha"
+	},
+}
+
+---@type BoolProperty
+Brush.continuous = BoolProperty(Brush, "Continuous", true)
+---@type EnumProperty
+Brush.blendMode = EnumProperty(Brush, "Blend Mode", "blend")
+Brush.blendMode:setOptions(blendModeOptions)
 
 function Brush:new()
 	Brush.super.new(self)
@@ -236,16 +258,15 @@ local function forEachPixel(
 			if not checkBrushPixel(brushP, brushIndex) then goto continue end
 
 			-- Call the passed function
-			local alphaValue = brushP[brushIndex]
 			local imageIndex = (curX + curY * spriteWidth) * 4
-			callback(imageP, brushP, imageIndex, brushIndex, curX, curY, alphaValue, ...)
+			callback(imageP, brushP, imageIndex, brushIndex, curX, curY, ...)
 			::continue::
 		end
 	end
 end
 
 ---Applies a function per valid pixel
----@param callback fun(imageP: ffi.cdata*, brushP: ffi.cdata*, imageIndex: integer, brushIndex: integer, curX: integer, curY: integer, alphaValue: integer, ...): nil
+---@param callback fun(imageP: ffi.cdata*, brushP: ffi.cdata*, imageIndex: integer, brushIndex: integer, curX: integer, curY: integer, ...): nil
 ---@param imageData love.ImageData
 ---@param startX integer
 ---@param startY integer
@@ -296,7 +317,6 @@ function Brush:forEachPixel(
 		...
 	)
 end
-
 
 local flatMaskShaderCode = [[
 vec4 effect(vec4 color, Image texture, vec2 texture_coords, vec2 screen_coords){

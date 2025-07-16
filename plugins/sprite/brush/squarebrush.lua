@@ -75,6 +75,7 @@ function SquareBrush:shrink(amount)
 end
 
 local properties = {
+	Brush.blendMode,
 	SquareBrush.size,
 	Brush.continuous,
 	SquareBrush.filled,

@@ -5,14 +5,6 @@ local BoolProperty = require "src.properties.bool"
 local bellipse = require "src.common.bellipse"
 local bfilledellipse = require "src.common.bfilledellipse"
 
-local function squared(n)
-	return n * n
-end
-
-local function isInsideCircle(ax, ay, cx, cy, radiusSquared)
-	return squared(cx - ax + 0.5) + squared(cy - ay + 0.5) <= radiusSquared
-end
-
 ---@class CircleBrush: Brush
 local CircleBrush = Brush:extend()
 
@@ -78,6 +70,7 @@ function CircleBrush:shrink(amount)
 end
 
 local properties = {
+	Brush.blendMode,
 	CircleBrush.size,
 	Brush.continuous,
 	CircleBrush.filled,

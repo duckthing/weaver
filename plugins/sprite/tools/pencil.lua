@@ -47,19 +47,57 @@ function Pencil:startPress(imageX, imageY)
 	Pencil:pressing(imageX, imageY)
 end
 
-local function maskForEachPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, alphaValue, r, g, b)
+---+ Uses brush as mask
+---+ Overwrites alpha and color at this point
+local function useBrushMaskBlendPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, r, g, b)
 	imageP[imageIndex    ] = r
 	imageP[imageIndex + 1] = g
 	imageP[imageIndex + 2] = b
 	imageP[imageIndex + 3] = 255
 end
 
-local function colorForEachPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, alphaValue)
+---+ Uses brush as mask
+---+ Overwrites color if alpha value is 255
+local function useBrushMaskLockAlphaPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, r, g, b, sourceP)
+	if sourceP[imageIndex + 3] == 255 then
+		imageP[imageIndex    ] = r
+		imageP[imageIndex + 1] = g
+		imageP[imageIndex + 2] = b
+		imageP[imageIndex + 3] = 255
+	end
+end
+
+---+ Uses brush color, pastes into this point
+---+ Overwrites alpha and color at this point
+local function useBrushColorBlendPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY)
 	imageP[imageIndex    ] = brushP[brushIndex    ]
 	imageP[imageIndex + 1] = brushP[brushIndex + 1]
 	imageP[imageIndex + 2] = brushP[brushIndex + 2]
 	imageP[imageIndex + 3] = brushP[brushIndex + 3]
 end
+
+---+ Uses brush color, pastes into this point
+---+ Overwrites color if alpha value is 255
+local function useBrushColorLockAlphaPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, _, _, _, sourceP)
+	if sourceP[imageIndex + 3] == 255 then
+		imageP[imageIndex    ] = brushP[brushIndex    ]
+		imageP[imageIndex + 1] = brushP[brushIndex + 1]
+		imageP[imageIndex + 2] = brushP[brushIndex + 2]
+		imageP[imageIndex + 3] = brushP[brushIndex + 3]
+	end
+end
+
+---@type {[Brush.Type]: {[Brush.BlendMode]: function}}
+local modeToMap = {
+	mask = {
+		blend = useBrushMaskBlendPerPixel,
+		lockalpha = useBrushMaskLockAlphaPerPixel,
+	},
+	color = {
+		blend = useBrushColorBlendPerPixel,
+		lockalpha = useBrushColorLockAlphaPerPixel,
+	}
+}
 
 ---@param imageX integer
 ---@param imageY integer
@@ -75,7 +113,13 @@ function Pencil:pressing(imageX, imageY)
 	local bitmask = sprite.spriteState.bitmask
 	local cr, cg, cb = love.math.colorToBytes(color[1], color[2], color[3])
 
-	local callback = (brush.type:getValue() == "mask" and maskForEachPixel) or colorForEachPixel
+	-- local callback = (brush.type:getValue() == "mask" and useBrushMaskBlendPerPixel) or useBrushColorBlendPerPixel
+	local callback = modeToMap[brush.type:getValue()][brush.blendMode:getValue()]
+	local sourceP
+	if brush.blendMode:getValue() == "lockalpha" then
+		sourceP = ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+	end
+	-- print(callback, brush.type:getValue(), brush.blendMode:getValue())
 
 	local lastX, lastY = SpriteTool.lastX, SpriteTool.lastY
 
@@ -87,7 +131,7 @@ function Pencil:pressing(imageX, imageY)
 				drawCel.data, ax, ay, bx, by,
 				xMult, yMult,
 				bitmask, command,
-				cr, cg, cb
+				cr, cg, cb, sourceP
 			)
 		end
 	)
