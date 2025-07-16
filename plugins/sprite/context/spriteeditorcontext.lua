@@ -863,6 +863,7 @@ local actions = {
 			if sprite then
 				local spriteState = sprite.spriteState
 				sprite.undoStack:pushGroup()
+				SpriteTool.applyFromSelection()
 				---@type SelectionCommand
 				local command = SelectionCommand(sprite, spriteState.bitmask)
 				command:markRegion(0, 0, sprite.width - 1, sprite.height - 1)
