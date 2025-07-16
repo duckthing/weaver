@@ -52,12 +52,7 @@ function Eraser:startPress(imageX, imageY)
 	sprite.undoStack:pushGroup()
 	command = DrawCommand(sprite, cel)
 
-	local liftCommand, _ = SpriteTool.applyFromSelection()
-	if liftCommand then
-		liftCommand.transientUndo = false
-		command.transientUndo = true
-		-- command.transientRedo = true
-	end
+	SpriteTool.applyFromSelection()
 
 	local brush = SpriteTool.brush:get()
 	local pasteMode = brush.patternMode:getValue()
@@ -137,11 +132,7 @@ function Eraser:stopPress(imageX, imageY)
 	cel:update()
 	activeLayer.editorData.canvas.visible = true
 
-	local liftCommand = SpriteTool.liftIntoSelection()
-	--[[ if liftCommand then
-		command.transientRedo = true
-		liftCommand.transientRedo = false
-	end --]]
+	SpriteTool.liftIntoSelection()
 	sprite.undoStack:popGroup()
 
 	local brush = SpriteTool.brush:get()

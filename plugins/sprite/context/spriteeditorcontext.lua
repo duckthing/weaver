@@ -918,12 +918,9 @@ local actions = {
 					local cel = spriteState.selectionCel
 					local id = ffi.cast("uint8_t*", cel.data:getFFIPointer())
 					local width, height = sprite.width, sprite.height
-					local liftCommand = SpriteTool.liftIntoSelection()
-					liftCommand.transientUndo = false
-					liftCommand.transientRedo = true
+					SpriteTool.liftIntoSelection()
 					---@type BucketFillCommand
 					local command = BucketFillCommand(sprite, cel)
-					command.transientUndo = true
 					-- ---@type SelectionCommand
 					-- local selectionCommand = SelectionCommand(sprite, bitmask)
 

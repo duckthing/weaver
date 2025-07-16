@@ -31,15 +31,9 @@ function Pencil:startPress(imageX, imageY)
 	sprite.spriteState.includeDrawBuffer = true
 
 	sprite.undoStack:pushGroup()
-	local liftCommand, _ = SpriteTool.applyFromSelection()
+	SpriteTool.applyFromSelection()
 	SpriteTool:ensureCel()
 	command = DrawCommand(sprite, SpriteTool.cel)
-
-	if liftCommand then
-		liftCommand.transientUndo = false
-		command.transientUndo = true
-		-- command.transientRedo = true
-	end
 
 	local brush = SpriteTool.brush:get()
 	local pasteMode = brush.patternMode:getValue()

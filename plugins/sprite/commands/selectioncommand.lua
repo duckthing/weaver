@@ -37,18 +37,15 @@ function SelectionCommand:new(sprite, bitmask)
 	self.newFragments = {}
 	---@type Bitmask[][]
 	self.oldFragments = {}
-	---@type boolean
-	self.newActive = false
-	---@type boolean
+
 	self.oldActive = bitmask._active
-	---@type boolean
-	self.newIncludeMimic = false
-	---@type boolean
-	self.oldIncludeMimic = sprite.spriteState.includeMimic
-	---@type boolean
-	self.newIncludeBitmask = false
-	---@type boolean
+	self.newActive = false
 	self.oldIncludeBitmask = sprite.spriteState.includeBitmask
+	self.newIncludeBitmask = false
+	self.oldIncludeMimic = sprite.spriteState.includeMimic
+	self.newIncludeMimic = false
+	self.oldIncludeMimicOutline = sprite.spriteState.includeMimicOutline
+	self.newIncludeMimicOutline = false
 
 	self.relevantLayer = sprite.spriteState.layer:get()
 	self.relevantFrame = sprite.spriteState.frame:get()
@@ -120,8 +117,9 @@ function SelectionCommand:completeMark()
 	end
 
 	self.newActive = sourceBitmask._active
-	self.newIncludeMimic = sprite.spriteState.includeMimic
 	self.newIncludeBitmask = sprite.spriteState.includeBitmask
+	self.newIncludeMimic = sprite.spriteState.includeMimic
+	self.newIncludeMimicOutline = sprite.spriteState.includeMimicOutline
 	sprite.spriteState.bitmaskRenderer:update()
 end
 
@@ -150,11 +148,14 @@ function SelectionCommand:undo()
 	end
 
 	sourceBitmask:setActive(self.oldActive)
-	sprite.spriteState.includeMimic = self.oldIncludeMimic
+
+	local spriteState = sprite.spriteState
+	spriteState.includeBitmask = self.oldIncludeBitmask
+	spriteState.includeMimic = self.oldIncludeMimic
+	spriteState.includeMimicOutline = self.oldIncludeMimicOutline
 	if self.oldIncludeMimic then
 		SelectionCommand.SpriteTool.updateCanvas()
 	end
-	sprite.spriteState.includeBitmask = self.oldIncludeBitmask
 	sprite.spriteState.bitmaskRenderer:update()
 end
 
@@ -183,12 +184,15 @@ function SelectionCommand:perform()
 	end
 
 	sourceBitmask:setActive(self.newActive)
-	sprite.spriteState.includeMimic = self.newIncludeMimic
+
+	local spriteState = sprite.spriteState
+	spriteState.includeBitmask = self.newIncludeBitmask
+	spriteState.includeMimic = self.newIncludeMimic
+	spriteState.includeMimicOutline = self.newIncludeMimicOutline
 	if self.newIncludeMimic then
 		SelectionCommand.SpriteTool.updateCanvas()
 	end
-	sprite.spriteState.includeBitmask = self.newIncludeBitmask
-	sprite.spriteState.bitmaskRenderer:update()
+	spriteState.bitmaskRenderer:update()
 end
 
 function SelectionCommand:hasChanges()

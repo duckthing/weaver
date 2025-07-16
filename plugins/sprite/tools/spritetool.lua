@@ -372,7 +372,6 @@ function SpriteTool.updateCanvas()
 	-- The selection origin
 	local ox, oy = spriteState.selectionOriginX, spriteState.selectionOriginY
 	local width, height = sprite.width, sprite.height
-	-- spriteState.selectionCel:update()
 
 	-- Draw the canvas
 	love.graphics.push("all")
@@ -441,6 +440,7 @@ function SpriteTool.isSelectionTransformed()
 		(spriteState.selectionRotation ~= 0)
 end
 
+---Moves pixels out of the current cel into the selection buffer, based off of the bitmask
 ---@return LiftCommand?
 function SpriteTool.liftIntoSelection()
 	local sprite = SpriteTool.sprite
@@ -481,12 +481,11 @@ function SpriteTool.liftIntoSelection()
 	end
 
 	spriteState.includeMimic = true
+	spriteState.selectionX = 0
+	spriteState.selectionY = 0
 
 	liftCommand:completeMark()
 	sprite.undoStack:commit(liftCommand)
-
-	spriteState.selectionX = 0
-	spriteState.selectionY = 0
 
 	cel:update()
 	selectCel:update()
@@ -517,8 +516,6 @@ function SpriteTool.applyFromSelection()
 
 	---@type LiftCommand
 	local liftCommand = LiftCommand(sprite, cel)
-	liftCommand.transientUndo = true
-	liftCommand.transientRedo = true
 
 	-- If this transformation requires updating the selection image itself (ex. scaling and rotating, not moving)
 	local isDestructive = SpriteTool.isSelectionTransformed()
@@ -593,9 +590,6 @@ function SpriteTool.applyFromSelection()
 	cel:update()
 	selectCel:update()
 	SpriteTool.updateCanvas()
-
-	selectionCommand.transientUndo = true
-	selectionCommand.transientRedo = true
 
 	selectionCommand:completeMark()
 	sprite.undoStack:commit(selectionCommand)
