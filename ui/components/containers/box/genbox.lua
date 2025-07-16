@@ -132,6 +132,34 @@ function GenBox:updateScroll()
 	self:sort()
 end
 
+---Scrolls this GenBox to the child, so that it is visible
+---@param childIndex any
+function GenBox:scrollToChild(childIndex)
+	local child = self.children[childIndex]
+	if not child then return end
+	local pos, size = self._position, self._size
+
+	local boxPos = self[pos]
+	local boxSize = self[size]
+	local childPos = child[pos]
+	local childSize = child[size]
+	local offset = self.offset
+
+	local leftSideClipped = childPos < boxPos -- Left side is clipped off
+	local rightSideClipped = childPos + childSize > boxPos + boxSize -- Right size is clipped off
+	if leftSideClipped or rightSideClipped then
+		local bestOffset = 0
+		if leftSideClipped then
+			bestOffset = offset + childPos - boxPos
+		else
+			bestOffset = offset + childPos + childSize - boxPos - boxSize
+		end
+
+		self.targetOffset = bestOffset
+		self:sort()
+	end
+end
+
 function GenBox:draw()
 	if self.w < 0 or self.h < 0 then return end
 	self.targetOffset = self.offset

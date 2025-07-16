@@ -191,11 +191,16 @@ function Bufferline:new(rules)
 	Resources.onResourceSelected:addAction(function (selectedResource)
 		-- TODO: Make less hacky
 		local selectedID = (selectedResource and selectedResource.id) or 0
+		local selectedChildIndex = nil
 		for i = 1, #self.children do
 			local child = self.children[i]
 			---@cast child TabButton
 			child.selected = child.resourceID == selectedID
+			if child.selected then
+				selectedChildIndex = i
+			end
 		end
+		self:scrollToChild(selectedChildIndex)
 	end)
 end
 
