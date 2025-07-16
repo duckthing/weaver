@@ -8,6 +8,7 @@ function Viewport:new(rules)
 	Viewport.super.new(self, rules)
 	self.cameraX, self.cameraY = 0, 0
 	self.scale = 1
+	self.pixelPerfect = true
 end
 
 ---Converts a UI into a viewport point
@@ -54,9 +55,20 @@ function Viewport:pushTransform()
 	local scale = self.scale
 	local factor = 1 / scale
 	love.graphics.push("all")
-	love.graphics.translate(self.x, self.y)
-	love.graphics.scale(scale)
-	love.graphics.translate(-self.cameraX + self.w * 0.5 * factor, -self.cameraY + self.h * 0.5 * factor)
+	if not self.pixelPerfect then
+		love.graphics.translate(self.x, self.y)
+		love.graphics.scale(scale)
+		love.graphics.translate(-self.cameraX + self.w * 0.5 * factor, -self.cameraY + self.h * 0.5 * factor)
+	else
+		-- Make sure the translation is a whole number when scaled
+		love.graphics.translate(math.floor(self.x), math.floor(self.y))
+		love.graphics.scale(scale)
+		local xTrans = -self.cameraX + self.w * 0.5 * factor
+		local yTrans = -self.cameraY + self.h * 0.5 * factor
+		xTrans = xTrans - math.fmod(xTrans, factor)
+		yTrans = yTrans - math.fmod(yTrans, factor)
+		love.graphics.translate(xTrans, yTrans)
+	end
 end
 
 function Viewport:popTransform()
