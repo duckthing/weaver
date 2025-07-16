@@ -1,12 +1,13 @@
 ---@type Keybinds.KeyCombinations
 local defaultKeybinds = {
 	normal = {
-		["1"] = "select_tool_1",
-		["2"] = "select_tool_2",
-		["3"] = "select_tool_3",
-		["4"] = "select_tool_4",
-		["5"] = "select_tool_5",
-		["6"] = "select_tool_6",
+		q = "select_tool_1",
+		w = "select_tool_2",
+		e = "select_tool_3",
+		r = "select_tool_4",
+		t = "select_tool_5",
+		a = "select_tool_6",
+		s = "select_tool_7",
 		[","] = "shrink_brush",
 		["."] = "grow_brush",
 		left = "select_previous_frame",

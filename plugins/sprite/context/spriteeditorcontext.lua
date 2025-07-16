@@ -97,6 +97,12 @@ local actions = {
 			SpriteTool.spriteTools[6]:selectTool()
 		end
 	),
+	select_tool_7 = Action(
+		"Select Tool 7",
+		function(_, _, _, _)
+			SpriteTool.spriteTools[7]:selectTool()
+		end
+	),
 	grow_brush = Action(
 		"Increase Brush Size",
 		function(_, _, _, _)
