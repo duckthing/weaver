@@ -49,7 +49,7 @@ function Transform:pressing(imageX, imageY)
 
 	---@type SelectionTransformTool.Mode
 	local mode = Transform.mode:getValue()
-	local diffX, diffY = imageX - startX, imageY - startY
+	-- local diffX, diffY = imageX - startX, imageY - startY
 	local selectionX, selectionY = spriteState.selectionX, spriteState.selectionY
 
 	if mode == "rotate" then
