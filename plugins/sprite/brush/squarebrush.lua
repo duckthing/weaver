@@ -3,10 +3,6 @@ local Brush = require "plugins.sprite.brush.brush"
 local IntegerProperty = require "src.properties.integer"
 local BoolProperty = require "src.properties.bool"
 
-local function squared(n)
-	return n * n
-end
-
 ---@class SquareBrush: Brush
 local SquareBrush = Brush:extend()
 
