@@ -165,14 +165,15 @@ function PaletteContainer:bindToProperties(sprite, paletteProperty, primaryPrope
 	end
 
 	self.primaryColorSelection = primaryProperty
+	self.sprite = sprite
 	self.secondaryColorSelection = secondaryProperty
 	self.paletteColors.primarySelection = primaryProperty
+	self.paletteColors.sprite = sprite
 	self.paletteColors.secondarySelection = secondaryProperty
 	self.paletteSelections:setPalette(paletteProperty:get())
 	self.paletteSelections.primarySelection = primaryProperty
 	self.paletteSelections.secondarySelection = secondaryProperty
-	self.sprite = sprite
-	self.paletteColors.sprite = sprite
+	self.paletteSelections.sprite = sprite
 end
 
 return PaletteContainer

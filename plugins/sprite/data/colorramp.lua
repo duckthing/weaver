@@ -27,8 +27,6 @@ function ColorRamp:addColor(r, g, b)
 			if i ~= #self._usedColors then
 				-- In the back, move it to the front
 				table.insert(self._usedColors, table.remove(self._usedColors, i))
-				self._usedColors[i], self._usedColors[#self._usedColors] =
-					self._usedColors[#self._usedColors], self._usedColors[i]
 
 				self._shouldRecalculateRamps = true
 			end
