@@ -22,7 +22,7 @@ do
 	if data.sprite then
 		local settings = data.sprite.settings
 		if settings then
-			if settings["Use Old Layout"] then
+			if settings.useOldLayout then
 				useOldLayout = true
 			end
 		end
