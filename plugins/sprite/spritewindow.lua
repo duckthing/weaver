@@ -135,7 +135,8 @@ function SpriteWindow:new(rules, editor, context)
 			context.sprite = selectedResource
 
 			local state = selectedResource.spriteState
-			palette:bindToProperties(selectedResource.palette, state.primaryColorSelection, state.secondaryColorSelection)
+			palette.sprite = selectedResource
+			palette:bindToProperties(selectedResource, selectedResource.palette, state.primaryColorSelection, state.secondaryColorSelection)
 			canvas.cameraX = state.cameraX
 			canvas.cameraY = state.cameraY
 			canvas.imageX = state.imageX

@@ -7,6 +7,8 @@ PaletteColors.colorSize = 30
 function PaletteColors:new(rules)
 	PaletteColors.super.new(self, rules)
 
+	---@type Sprite?
+	self.sprite = nil
 	---@type Palette?
 	self.palette = nil
 	---@type ColorSelectionProperty?, ColorSelectionProperty?
@@ -26,6 +28,11 @@ function PaletteColors:setPalette(palette)
 	end
 end
 
+---Returns the color at the mouse position. If there isn't a color, it returns 0 as the index.
+---@param mx integer
+---@param my integer
+---@return 0 | integer
+---@return nil | Palette.Color
 function PaletteColors:getIndexAndColorUnderMouse(mx, my)
 	local palette = self.palette
 	if not palette then return 0, nil end
@@ -55,11 +62,20 @@ end
 function PaletteColors:mousepressed(mx, my, button)
 	local index, color = self:getIndexAndColorUnderMouse(mx, my)
 
-	if index then
-		if button == 1 then
-			self.primarySelection:setColorByIndex(index)
-		elseif button == 2 then
-			self.secondarySelection:setColorByIndex(index)
+	if color then
+		local holdingCtrl = love.keyboard.isDown("lctrl")
+		local colorRamp = self.sprite.spriteState.colorRamp
+		if not holdingCtrl then
+			-- Reset color ramp and update color selection
+			colorRamp:reset()
+			if button == 1 then
+				self.primarySelection:setColorByIndex(index)
+			elseif button == 2 then
+				self.secondarySelection:setColorByIndex(index)
+			end
+		else
+			-- Add to color ramp
+			colorRamp:addColor(color)
 		end
 	end
 end

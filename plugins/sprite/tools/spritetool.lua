@@ -21,6 +21,8 @@ local SpriteTool = Inspectable:extend()
 
 ---@type SpriteTool?
 SpriteTool.currentTool = nil
+---@type boolean # If LMB is pressed (RMB if false)
+SpriteTool.primaryPressed = false
 ---@type Sprite?
 SpriteTool.sprite = nil
 ---@type Sprite.Layer?

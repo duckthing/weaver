@@ -1,4 +1,5 @@
 local ffi = require "ffi"
+local bit = require "bit"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local LabelProperty = require "src.properties.label"
 local DrawCommand = require "plugins.sprite.commands.drawcommand"
@@ -53,7 +54,7 @@ local function useBrushMaskBlendPerPixel(imageP, brushP, imageIndex, brushIndex,
 	imageP[imageIndex    ] = r
 	imageP[imageIndex + 1] = g
 	imageP[imageIndex + 2] = b
-	imageP[imageIndex + 3] = 255
+	imageP[imageIndex + 3] = 255 -- Only applied if the pixel in the draw buffer is alpha > 0
 end
 
 ---+ Uses brush as mask
@@ -78,7 +79,7 @@ end
 
 ---+ Uses brush color, pastes into this point
 ---+ Overwrites color if alpha value is 255
-local function useBrushColorLockAlphaPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, _, _, _, sourceP)
+local function useBrushColorLockAlphaPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, sourceP)
 	if sourceP[imageIndex + 3] == 255 then
 		imageP[imageIndex    ] = brushP[brushIndex    ]
 		imageP[imageIndex + 1] = brushP[brushIndex + 1]
@@ -87,15 +88,39 @@ local function useBrushColorLockAlphaPerPixel(imageP, brushP, imageIndex, brushI
 	end
 end
 
+---+ Ignores brush type
+---+ Sets a new color from the source and color ramps
+local function useBrushAnyShadePerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, sourceP, ramp)
+	if sourceP[imageIndex + 3] > 0 then
+		-- Alpha is not 0
+		local sBit = bit.lshift(bit.lshift(sourceP[imageIndex], 8) + sourceP[imageIndex+1], 8) + sourceP[imageIndex+2]
+		local cBit = ramp[sBit]
+		if cBit ~= nil then
+			local r, g, b =
+				bit.rshift(cBit, 16),
+				bit.band(bit.rshift(cBit, 8), 255),
+				bit.band(cBit, 255)
+
+			imageP[imageIndex    ] = r
+			imageP[imageIndex + 1] = g
+			imageP[imageIndex + 2] = b
+			imageP[imageIndex + 3] = 255
+		end
+	end
+end
+
+
 ---@type {[Brush.Type]: {[Brush.BlendMode]: function}}
 local modeToMap = {
 	mask = {
 		blend = useBrushMaskBlendPerPixel,
 		lockalpha = useBrushMaskLockAlphaPerPixel,
+		shade = useBrushAnyShadePerPixel,
 	},
 	color = {
 		blend = useBrushColorBlendPerPixel,
 		lockalpha = useBrushColorLockAlphaPerPixel,
+		shade = useBrushAnyShadePerPixel,
 	}
 }
 
@@ -113,22 +138,52 @@ function Pencil:pressing(imageX, imageY)
 	local bitmask = sprite.spriteState.bitmask
 	local cr, cg, cb = love.math.colorToBytes(color[1], color[2], color[3])
 
+	local brushTypeVal = brush.type:getValue()
 	local blendModeVal = brush.blendMode:getValue()
-	local callback = modeToMap[brush.type:getValue()][blendModeVal]
+	local callback = modeToMap[brushTypeVal][blendModeVal]
 
 	---Returns the parameters as a tuple
 	---@type fun(): ...
 	local tupleFunc
-	if blendModeVal == "blend" then
-		tupleFunc = function()
-			return
-				cr, cg, cb
+	if brushTypeVal == "mask" then
+		if blendModeVal == "blend" then
+			tupleFunc = function()
+				return
+					cr, cg, cb
+			end
+		elseif blendModeVal == "lockalpha" then
+			tupleFunc = function()
+				return
+					cr, cg, cb,
+					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+			end
+		elseif blendModeVal == "shade" then
+			local forward, backward = sprite.spriteState.colorRamp:getRamps()
+			local target = SpriteTool.primaryPressed and forward or backward
+			tupleFunc = function()
+				return
+					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer()),
+					target
+			end
 		end
-	elseif blendModeVal == "lockalpha" then
-		tupleFunc = function()
-			return
-				cr, cg, cb,
-				ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+	else
+		if blendModeVal == "blend" then
+			tupleFunc = function()
+				return nil
+			end
+		elseif blendModeVal == "lockalpha" then
+			tupleFunc = function()
+				return
+					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+			end
+		elseif blendModeVal == "shade" then
+			local forward, backward = sprite.spriteState.colorRamp:getRamps()
+			local target = SpriteTool.primaryPressed and forward or backward
+			tupleFunc = function()
+				return
+					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer()),
+					target
+			end
 		end
 	end
 

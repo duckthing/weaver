@@ -1,5 +1,6 @@
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Bitmask = require "plugins.sprite.data.bitmask"
+local ColorRamp = require "plugins.sprite.data.colorramp"
 
 local Inspectable = require "src.properties.inspectable"
 local BoolProperty = require "src.properties.bool"
@@ -98,6 +99,9 @@ function SpriteState:new(sprite, context)
 			name = "All",
 		},
 	})
+
+	---@type ColorRamp
+	self.colorRamp = ColorRamp()
 
 	---@type GridOptions
 	self.gridOptions = GridOptions()

@@ -1,27 +1,23 @@
 local Plan = require "lib.plan"
-local Luvent = require "lib.luvent"
 local Palettes = require "src.global.palettes"
 local PaletteMenuButton = require "plugins.sprite.ui.palette.palettemenubutton"
 local PaletteLockButton = require "plugins.sprite.ui.palette.palettelockbutton"
 local PaletteColors = require "plugins.sprite.ui.palette.palettecolors"
 local PaletteSelections = require "plugins.sprite.ui.palette.paletteselections"
 local VBox = require "ui.components.containers.box.vbox"
-local HBox = require "ui.components.containers.box.hbox"
 local HFlex = require "ui.components.containers.flex.hflex"
 local VScroll = require "ui.components.containers.box.vscroll"
-local Modal = require "src.global.modal"
 
 ---@class PaletteContainer: VBox
 local PaletteContainer = VBox:extend()
 
-local yOffset = 26
 function PaletteContainer:new(rules)
 	PaletteContainer.super.new(self, rules)
 	self.padding = 4
 	self.margin = 4
 	self.minW = 30
 	---@type Sprite?
-	self.activeSprite = nil
+	self.sprite = nil
 	---@type Palette
 	self.palette = Palettes.globalPalettes[1]
 
@@ -133,10 +129,11 @@ function PaletteContainer:draw()
 end
 
 ---Binds the events to the properties
+---@param sprite Sprite
 ---@param paletteProperty PaletteProperty
 ---@param primaryProperty ColorSelectionProperty
 ---@param secondaryProperty ColorSelectionProperty
-function PaletteContainer:bindToProperties(paletteProperty, primaryProperty, secondaryProperty)
+function PaletteContainer:bindToProperties(sprite, paletteProperty, primaryProperty, secondaryProperty)
 	-- If previously connected to a PaletteProperty, remove it
 	if self.paletteProperty then
 		self.paletteProperty.valueChanged:removeAction(self._paletteChangedAction)
@@ -174,6 +171,8 @@ function PaletteContainer:bindToProperties(paletteProperty, primaryProperty, sec
 	self.paletteSelections:setPalette(paletteProperty:get())
 	self.paletteSelections.primarySelection = primaryProperty
 	self.paletteSelections.secondarySelection = secondaryProperty
+	self.sprite = sprite
+	self.paletteColors.sprite = sprite
 end
 
 return PaletteContainer

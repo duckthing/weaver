@@ -58,6 +58,10 @@ local blendModeOptions = {
 		name = "Lock Alpha",
 		value = "lockalpha"
 	},
+	{
+		name = "Shade",
+		value = "shade"
+	},
 }
 
 ---@type BoolProperty
