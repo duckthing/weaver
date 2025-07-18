@@ -16,8 +16,13 @@ local command = nil
 function Pencil:draw(imageX, imageY, currLayerIndex)
 	if currLayerIndex == SpriteTool.layer.index and not SpriteTool.drawing then
 		local color = SpriteTool.primaryColor
-		love.graphics.setColor(color)
-		Pencil.brush:get():drawOnCanvas(imageX, imageY, "flat", SpriteTool.canvas)
+		local brush = SpriteTool.brush:get()
+		if brush.blendMode:getValue() == "shade" then
+			love.graphics.setColor(1, 1, 1, 0.6)
+		else
+			love.graphics.setColor(color)
+		end
+		brush:drawOnCanvas(imageX, imageY, "flat", SpriteTool.canvas)
 	end
 end
 
