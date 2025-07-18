@@ -113,13 +113,24 @@ function Pencil:pressing(imageX, imageY)
 	local bitmask = sprite.spriteState.bitmask
 	local cr, cg, cb = love.math.colorToBytes(color[1], color[2], color[3])
 
-	-- local callback = (brush.type:getValue() == "mask" and useBrushMaskBlendPerPixel) or useBrushColorBlendPerPixel
-	local callback = modeToMap[brush.type:getValue()][brush.blendMode:getValue()]
-	local sourceP
-	if brush.blendMode:getValue() == "lockalpha" then
-		sourceP = ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+	local blendModeVal = brush.blendMode:getValue()
+	local callback = modeToMap[brush.type:getValue()][blendModeVal]
+
+	---Returns the parameters as a tuple
+	---@type fun(): ...
+	local tupleFunc
+	if blendModeVal == "blend" then
+		tupleFunc = function()
+			return
+				cr, cg, cb
+		end
+	elseif blendModeVal == "lockalpha" then
+		tupleFunc = function()
+			return
+				cr, cg, cb,
+				ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
+		end
 	end
-	-- print(callback, brush.type:getValue(), brush.blendMode:getValue())
 
 	local lastX, lastY = SpriteTool.lastX, SpriteTool.lastY
 
@@ -131,7 +142,7 @@ function Pencil:pressing(imageX, imageY)
 				drawCel.data, ax, ay, bx, by,
 				xMult, yMult,
 				bitmask, command,
-				cr, cg, cb, sourceP
+				tupleFunc()
 			)
 		end
 	)
