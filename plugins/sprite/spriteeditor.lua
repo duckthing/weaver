@@ -195,7 +195,7 @@ function SpriteEditor:getContext()
 end
 
 ---@type IntegerProperty
-SpriteEditor.maxUndo = IntegerProperty(SpriteEditor, "Undo History Limit", 30)
+SpriteEditor.maxUndo = IntegerProperty(SpriteEditor, "Undo History Limit", 50)
 	:setKey("maxUndo")
 SpriteEditor.maxUndo:getRange()
 	:setMin(0)
