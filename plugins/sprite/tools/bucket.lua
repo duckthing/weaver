@@ -140,7 +140,10 @@ function Bucket:startPress(imageX, imageY)
 	SpriteTool.applyFromSelection()
 	local imageData = currentCel.data
 	local data = ffi.cast("uint8_t*", imageData:getFFIPointer())
-	local color = SpriteTool.primaryColor
+	local color =
+		SpriteTool.primaryPressed and SpriteTool.primaryColor
+		or
+		SpriteTool.secondaryColor
 	local r, g, b = love.math.colorToBytes(color[1], color[2], color[3])
 
 	local mode = Bucket.mode:getValue()

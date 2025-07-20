@@ -8,6 +8,7 @@ local BoolProperty = require "src.properties.bool"
 local Pick = SpriteTool:extend()
 
 Pick.primaryColorSelected = Luvent.newEvent()
+Pick.secondaryColorSelected = Luvent.newEvent()
 
 Pick.sameLayer = BoolProperty(Pick, "Same Layer", false)
 
@@ -34,6 +35,11 @@ function Pick:startPress(imageX, imageY)
 	if imageX < 0 or imageX >= sprite.width or imageY < 0 or imageY >= sprite.height then return end
 
 	local sameLayer = Pick.sameLayer:get()
+	local event =
+		SpriteTool.primaryPressed and Pick.primaryColorSelected
+		or
+		Pick.secondaryColorSelected
+
 
 	if sameLayer then
 		-- Pick the color on this layer only
@@ -44,7 +50,7 @@ function Pick:startPress(imageX, imageY)
 
 		if a ~= 0 then
 			-- Color is visible
-			Pick.primaryColorSelected:trigger(r, g, b, a)
+			event:trigger(r, g, b, a)
 		end
 	else
 		-- Start from the top, and go down the visible layers
@@ -70,7 +76,7 @@ function Pick:startPress(imageX, imageY)
 					local r, g, b, a = cel.data:getPixel(imageX, imageY)
 					if a ~= 0 then
 						-- Color is visible
-						Pick.primaryColorSelected:trigger(r, g, b, a)
+						event:trigger(r, g, b, a)
 					end
 				end
 			end
@@ -87,7 +93,7 @@ function Pick:startPress(imageX, imageY)
 		local r, g, b, a = selectionCel.data:getPixel(imageX, imageY)
 		if a ~= 0 then
 			-- Color is visible
-			Pick.primaryColorSelected:trigger(r, g, b, a)
+			event:trigger(r, g, b, a)
 		end
 	end
 

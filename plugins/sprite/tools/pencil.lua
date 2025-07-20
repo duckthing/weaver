@@ -135,7 +135,10 @@ function Pencil:pressing(imageX, imageY)
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
 	local drawCel = sprite.spriteState.drawCel
-	local color = SpriteTool.primaryColor
+	local color =
+		SpriteTool.primaryPressed and SpriteTool.primaryColor
+		or
+		SpriteTool.secondaryColor
 
 	---@type Brush
 	local brush = Pencil.brush:get()

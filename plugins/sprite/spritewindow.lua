@@ -191,6 +191,10 @@ function SpriteWindow:new(rules, editor, context)
 	PickTool.primaryColorSelected:addAction(function(r, g, b)
 		palette.primaryColorSelection:findIndexAndSetColor({r, g, b})
 	end)
+
+	PickTool.secondaryColorSelected:addAction(function(r, g, b)
+		palette.secondaryColorSelection:findIndexAndSetColor({r, g, b})
+	end)
 end
 
 function SpriteWindow:update(dt)
