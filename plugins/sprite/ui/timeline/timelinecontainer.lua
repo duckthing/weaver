@@ -90,7 +90,7 @@ function TimelineContainer:new(rules)
 	end)
 
 	self.celContainer.scrollChanged:addAction(function(posX, posY)
-		self.layerContainer.offset = posY
+		self.layerContainer.targetOffset = posY
 		self.layerContainer:refresh()
 		self.header.scrollX = posX
 		self.header:recalculateBoundaries()

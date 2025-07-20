@@ -115,11 +115,21 @@ function BlendModule.alphaBlend(target, other, dx, dy, sx, sy, w, h)
 			local oIndex = (oy + ox) * 4
 
 			-- TODO: Make operations not use floats
-			local dA = otherFFI[oIndex + 3] / 255 -- the buffer alpha (1 / 255)
-			targetFFI[tIndex    ] = targetFFI[tIndex    ] * (1 - dA) + otherFFI[oIndex    ] * dA
-			targetFFI[tIndex + 1] = targetFFI[tIndex + 1] * (1 - dA) + otherFFI[oIndex + 1] * dA
-			targetFFI[tIndex + 2] = targetFFI[tIndex + 2] * (1 - dA) + otherFFI[oIndex + 2] * dA
-			targetFFI[tIndex + 3] = targetFFI[tIndex + 3] * (1 - dA) + otherFFI[oIndex + 3] * dA
+			local otherA = otherFFI[oIndex + 3]
+			if otherA == 255 then
+				-- Simple copy
+				targetFFI[tIndex    ] = otherFFI[oIndex    ]
+				targetFFI[tIndex + 1] = otherFFI[oIndex + 1]
+				targetFFI[tIndex + 2] = otherFFI[oIndex + 2]
+				targetFFI[tIndex + 3] = otherA
+			elseif otherA ~= 0 then
+				-- Blend two colors together
+				local dA = otherFFI[oIndex + 3] / 255 -- the buffer alpha (1 / 255)
+				targetFFI[tIndex    ] = targetFFI[tIndex    ] * (1 - dA) + otherFFI[oIndex    ] * dA
+				targetFFI[tIndex + 1] = targetFFI[tIndex + 1] * (1 - dA) + otherFFI[oIndex + 1] * dA
+				targetFFI[tIndex + 2] = targetFFI[tIndex + 2] * (1 - dA) + otherFFI[oIndex + 2] * dA
+				targetFFI[tIndex + 3] = targetFFI[tIndex + 3] * (1 - dA) + otherA               * dA
+			end
 		end
 	end
 end
