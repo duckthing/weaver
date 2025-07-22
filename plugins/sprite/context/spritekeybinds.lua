@@ -8,6 +8,7 @@ local defaultKeybinds = {
 		t = "select_tool_5",
 		a = "select_tool_6",
 		s = "select_tool_7",
+		d = "select_tool_8",
 		[","] = "shrink_brush",
 		["."] = "grow_brush",
 		left = "select_previous_frame",
