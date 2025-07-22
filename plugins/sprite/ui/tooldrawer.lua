@@ -7,16 +7,18 @@ local PencilTool = require "plugins.sprite.tools.pencil"
 local EraserTool = require "plugins.sprite.tools.eraser"
 local BucketTool = require "plugins.sprite.tools.bucket"
 local PickTool = require "plugins.sprite.tools.pick"
-local RectMarqueeTool = require "plugins.sprite.tools.rectselect"
-local MagicMarqueeTool = require "plugins.sprite.tools.magicselect"
+local DrawShapeTool = require "plugins.sprite.tools.drawshape"
+local RectSelectTool = require "plugins.sprite.tools.rectselect"
+local MagicSelectTool = require "plugins.sprite.tools.magicselect"
 local SelectionTransformTool = require "plugins.sprite.tools.selectiontransform"
 
 PencilTool:register()
 EraserTool:register()
 BucketTool:register()
 PickTool:register()
-RectMarqueeTool:register()
-MagicMarqueeTool:register()
+DrawShapeTool:register()
+RectSelectTool:register()
+MagicSelectTool:register()
 SelectionTransformTool:register()
 
 local toolsTexture = love.graphics.newImage("assets/sprite_tools.png")
@@ -43,14 +45,16 @@ function ToolDrawer:new(rules)
 	local eraserBtn = IconButton(buttonRules, function() EraserTool:selectTool() end, toolSpriteSheet, 2, 2)
 	local bucketBtn = IconButton(buttonRules, function() BucketTool:selectTool() end, toolSpriteSheet, 3, 2)
 	local pickBtn = IconButton(buttonRules, function() PickTool:selectTool() end, toolSpriteSheet, 4, 2)
-	local rectMarqueeBtn = IconButton(buttonRules, function() RectMarqueeTool:selectTool() end, toolSpriteSheet, 5, 2)
-	local magicMarqueeBtn = IconButton(buttonRules, function() MagicMarqueeTool:selectTool() end, toolSpriteSheet, 6, 2)
+	local drawShapeBtn = IconButton(buttonRules, function() DrawShapeTool:selectTool() end, toolSpriteSheet, 4, 2)
+	local rectMarqueeBtn = IconButton(buttonRules, function() RectSelectTool:selectTool() end, toolSpriteSheet, 5, 2)
+	local magicMarqueeBtn = IconButton(buttonRules, function() MagicSelectTool:selectTool() end, toolSpriteSheet, 6, 2)
 	local selectionTransformBtn = IconButton(buttonRules, function() SelectionTransformTool:selectTool() end, toolSpriteSheet, 7, 2)
 
 	self:addChild(pencilBtn)
 	self:addChild(eraserBtn)
 	self:addChild(bucketBtn)
 	self:addChild(pickBtn)
+	self:addChild(drawShapeBtn)
 	self:addChild(rectMarqueeBtn)
 	self:addChild(magicMarqueeBtn)
 	self:addChild(selectionTransformBtn)

@@ -114,7 +114,6 @@ local function useBrushAnyShadePerPixel(imageP, brushP, imageIndex, brushIndex, 
 	end
 end
 
-
 ---@type {[Brush.Type]: {[Brush.BlendMode]: function}}
 local modeToMap = {
 	mask = {
