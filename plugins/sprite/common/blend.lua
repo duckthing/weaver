@@ -4,27 +4,6 @@ local BlendModule = {}
 ---@alias BlendOperation
 ---| fun(destination: love.ImageData, source: love.ImageData, dx: integer, dy: integer, sx: integer, sy: integer, w: integer, h: integer)
 
----Checks the bounds
----@param tw integer
----@param th integer
----@param ow integer
----@param oh integer
----@param dx integer
----@param dy integer
----@param sx integer
----@param sy integer
----@param w integer
----@param h integer
-local function checkBounds(tw, th, ow, oh, dx, dy, sx, sy, w, h)
-	-- Make sure these are within bounds
-	-- if dx < 0 or dx + w > tw or dy < 0 or dy + h > th then
-	-- 	error(("Target's source is out of bounds: TDim is (%d, %d) and TSource is (%d, %d) + (%d, %d)"):format(tw, th, dx, dy, w, h))
-	-- end
-	-- if sx < 0 or sx + w > ow or sy < 0 or sy + h > oh then
-	-- 	error(("Other's source is out of bounds: ODim is (%d, %d) and OSource is (%d, %d) + (%d, %d)"):format(ow, oh, sx, sy, w, h))
-	-- end
-end
-
 ---@param dest love.ImageData
 ---@param source love.ImageData
 ---@param dx integer
@@ -97,7 +76,6 @@ function BlendModule.alphaBlend(target, other, dx, dy, sx, sy, w, h)
 	local tw, th = target:getDimensions()
 	local ow, oh = other:getDimensions()
 
-	-- checkBounds(tw, th, ow, oh, dx, dy, sx, sy, w, h)
 	dx, dy, sx, sy, w, h = normalizeParams(target, other, dx, dy, sx, sy, w, h)
 
 	-- TODO: possible issue with love2d documentation reading out of bounds?
@@ -163,7 +141,6 @@ function BlendModule.copyVisible(target, other, dx, dy, sx, sy, w, h)
 	local tw, th = target:getDimensions()
 	local ow, oh = other:getDimensions()
 
-	-- checkBounds(tw, th, ow, oh, dx, dy, sx, sy, w, h)
 	dx, dy, sx, sy, w, h = normalizeParams(target, other, dx, dy, sx, sy, w, h)
 
 	for j = 0, h - 1 do
