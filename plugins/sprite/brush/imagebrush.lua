@@ -71,6 +71,7 @@ function ImageBrush:generate()
 end
 
 local properties = {
+	Brush.blendMode,
 	Brush.continuous,
 }
 function ImageBrush:getProperties()

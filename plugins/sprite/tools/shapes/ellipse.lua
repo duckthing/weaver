@@ -32,21 +32,25 @@ end --]]
 function Ellipse:apply(ax1, ay1, bx2, by2)
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
+	local brush = SpriteTool.brush:get()
+	-- Out of bounds, with offsets added so that patterns can be calculated
+	local oobX, oobY =
+		-brush.w * 2 - math.abs(brush.offsetX) - ax1 % brush.w,
+		-brush.h * 2 - math.abs(brush.offsetY) - ay1 % brush.h
+	Pencil:startPress(oobX, oobY)
 
 	local lastContinuous = Brush.continuous:get()
 	local lastAlgo = Brush:getAlgorithm()
 	Brush.continuous:set(true)
 	Brush:setAlgorithm(bellipse)
 
-	---@type DrawCommand
-	local command = DrawCommand(sprite, SpriteTool.cel)
+	local command = Pencil:_getDrawCommand()
+	if not command then error() end
+
 	local drawCel = sprite.spriteState.drawCel
 
 	local callback, tupleFunc = Pencil:getPixelCallback(command)
 	if not callback or not tupleFunc then error() end
-
-	local brush = SpriteTool.brush:get()
-
 
 	SpriteTool:transformToCanvas(
 		ax1, ay1, bx2, by2,
@@ -63,8 +67,7 @@ function Ellipse:apply(ax1, ay1, bx2, by2)
 	Brush.continuous:set(lastContinuous)
 	Brush:setAlgorithm(lastAlgo)
 
-	command:completeMark(sprite.spriteState.drawCel, "alphaBlend")
-	sprite.undoStack:commit(command)
+	Pencil:stopPress(oobX, oobY)
 end
 
 return Ellipse

@@ -53,6 +53,11 @@ function Pencil:startPress(imageX, imageY)
 	Pencil:pressing(imageX, imageY)
 end
 
+---@return DrawCommand?
+function Pencil:_getDrawCommand()
+	return command
+end
+
 ---+ Uses brush as mask
 ---+ Overwrites alpha and color at this point
 local function useBrushMaskBlendPerPixel(imageP, brushP, imageIndex, brushIndex, curX, curY, r, g, b)
