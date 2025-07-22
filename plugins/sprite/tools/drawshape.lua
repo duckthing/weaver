@@ -94,6 +94,10 @@ local options = {
 		name = "Line",
 		value = require "plugins.sprite.tools.shapes.line",
 	},
+	{
+		name = "Ellipse",
+		value = require "plugins.sprite.tools.shapes.ellipse",
+	},
 }
 
 ---@type LabelProperty

@@ -128,9 +128,8 @@ local modeToMap = {
 	}
 }
 
----@param imageX integer
----@param imageY integer
-function Pencil:pressing(imageX, imageY)
+---@param command DrawCommand
+function Pencil:getPixelCallback(command)
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
 	local drawCel = sprite.spriteState.drawCel
@@ -138,9 +137,7 @@ function Pencil:pressing(imageX, imageY)
 		SpriteTool.primaryPressed and SpriteTool.primaryColor
 		or
 		SpriteTool.secondaryColor
-
-	---@type Brush
-	local brush = Pencil.brush:get()
+	local brush = SpriteTool.brush:get()
 
 	local bitmask = sprite.spriteState.bitmask
 	local cr, cg, cb = love.math.colorToBytes(color[1], color[2], color[3])
@@ -156,11 +153,13 @@ function Pencil:pressing(imageX, imageY)
 		if blendModeVal == "blend" then
 			tupleFunc = function()
 				return
+					bitmask, command,
 					cr, cg, cb
 			end
 		elseif blendModeVal == "lockalpha" then
 			tupleFunc = function()
 				return
+					bitmask, command,
 					cr, cg, cb,
 					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
 			end
@@ -169,6 +168,7 @@ function Pencil:pressing(imageX, imageY)
 			local target = SpriteTool.primaryPressed and forward or backward
 			tupleFunc = function()
 				return
+					bitmask, command,
 					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer()),
 					target
 			end
@@ -176,11 +176,13 @@ function Pencil:pressing(imageX, imageY)
 	else
 		if blendModeVal == "blend" then
 			tupleFunc = function()
-				return nil
+				return
+					bitmask, command
 			end
 		elseif blendModeVal == "lockalpha" then
 			tupleFunc = function()
 				return
+					bitmask, command,
 					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer())
 			end
 		elseif blendModeVal == "shade" then
@@ -188,11 +190,28 @@ function Pencil:pressing(imageX, imageY)
 			local target = SpriteTool.primaryPressed and forward or backward
 			tupleFunc = function()
 				return
+					bitmask, command,
 					ffi.cast("uint8_t*", sprite.spriteState:getCurrentCel().data:getFFIPointer()),
 					target
 			end
 		end
 	end
+
+	return callback, tupleFunc
+end
+
+---@param imageX integer
+---@param imageY integer
+function Pencil:pressing(imageX, imageY)
+	local sprite = SpriteTool.sprite
+	if not sprite then return end
+	local drawCel = sprite.spriteState.drawCel
+
+	---@type Brush
+	local brush = Pencil.brush:get()
+
+	local callback, tupleFunc = Pencil:getPixelCallback(command)
+	if not callback or not tupleFunc then return end
 
 	local lastX, lastY = SpriteTool.lastX, SpriteTool.lastY
 
@@ -203,7 +222,6 @@ function Pencil:pressing(imageX, imageY)
 				callback,
 				drawCel.data, ax, ay, bx, by,
 				xMult, yMult,
-				bitmask, command,
 				tupleFunc()
 			)
 		end

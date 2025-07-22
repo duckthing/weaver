@@ -269,6 +269,16 @@ local function forEachPixel(
 	end
 end
 
+local algo = bline
+
+function Brush:getAlgorithm()
+	return algo
+end
+
+function Brush:setAlgorithm(a)
+	algo = a
+end
+
 ---Applies a function per valid pixel
 ---@param callback fun(imageP: ffi.cdata*, brushP: ffi.cdata*, imageIndex: integer, brushIndex: integer, curX: integer, curY: integer, ...): nil
 ---@param imageData love.ImageData
@@ -308,7 +318,7 @@ function Brush:forEachPixel(
 		offsetY = offsetY - 1
 	end
 
-	bline(
+	algo(
 		startX - offsetX, startY - offsetY,
 		endX - offsetX, endY - offsetY,
 		forEachPixel,
