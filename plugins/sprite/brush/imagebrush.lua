@@ -75,6 +75,7 @@ local properties = {
 	Brush.continuous,
 }
 function ImageBrush:getProperties()
+	---@type Property[]
 	local newProperties = {}
 	for _, property in ipairs(properties) do
 		newProperties[#newProperties+1] = property

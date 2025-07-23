@@ -364,6 +364,7 @@ local actions = {
 					---@type SwapFramesCommand
 					local swapCommand = SwapFramesCommand(sprite, sprite.frames[frameIndex], sprite.frames[frameIndex - 1])
 					sprite.undoStack:commit(swapCommand)
+					sprite.spriteState.frame:set(frameIndex - 1)
 				end
 			end
 		end
@@ -380,6 +381,7 @@ local actions = {
 					---@type SwapFramesCommand
 					local swapCommand = SwapFramesCommand(sprite, sprite.frames[frameIndex], sprite.frames[frameIndex + 1])
 					sprite.undoStack:commit(swapCommand)
+					sprite.spriteState.frame:set(frameIndex + 1)
 				end
 			end
 		end

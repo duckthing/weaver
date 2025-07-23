@@ -44,6 +44,7 @@ function PalettesModule.reloadPalettes()
 
 	-- Create a default one, just in case
 	if #palettes == 0 then
+		---@type Palette
 		local palette = Palette()
 		palette.colors[1], palette.colors[2] = {0, 0, 0}, {1, 1, 1}
 		palettes[1] = palette
