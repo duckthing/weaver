@@ -221,6 +221,7 @@ function Canvas:mousepressed(_, _, button)
 end
 
 function Canvas:mousereleased(_, _, button)
+	SpriteTool.primaryPressed = not love.mouse.isDown(2)
 	if (button == 1 or button == 3) and self.panning then
 		self:releaseFocus()
 		self.panning = false
@@ -228,7 +229,6 @@ function Canvas:mousereleased(_, _, button)
 		self:releaseFocus()
 		local ix, iy = self:getImagePoint(self.lastMouseX, self.lastMouseY)
 		SpriteTool.currentTool:stopPress(ix, iy)
-		SpriteTool.primaryPressed = not love.mouse.isDown(2)
 	end
 end
 
