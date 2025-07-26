@@ -108,6 +108,10 @@ local options = {
 		name = "Ellipse",
 		value = require "plugins.sprite.tools.shapes.ellipse",
 	},
+	{
+		name = "Stamp",
+		value = require "plugins.sprite.tools.shapes.stamp",
+	},
 }
 
 ---@type LabelProperty
