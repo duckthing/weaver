@@ -3,11 +3,11 @@ local SpriteTool = require "plugins.sprite.tools.spritetool"
 local Pencil = require "plugins.sprite.tools.pencil"
 local bline = require "src.common.bline"
 
----@class Square: Shape
-local Square = Shape:extend()
-Square.TYPE = "Square"
+---@class Rectangle: Shape
+local Rectangle = Shape:extend()
+Rectangle.TYPE = "Rectangle"
 
-function Square:draw(ax, ay, bx, by)
+function Rectangle:draw(ax, ay, bx, by)
 	local brush = SpriteTool.brush:get()
 	local drawFunc = function(curX, curY)
 		brush:drawOnCanvas(curX, curY, "flat", SpriteTool.canvas)
@@ -19,7 +19,7 @@ function Square:draw(ax, ay, bx, by)
 	bline(ax, by, bx, by, drawFunc)
 end
 
-function Square:apply(ax, ay, bx, by)
+function Rectangle:apply(ax, ay, bx, by)
 	Pencil:startPress(ax, ay)
 
 	Pencil:pressing(bx, ay)
@@ -30,4 +30,4 @@ function Square:apply(ax, ay, bx, by)
 	Pencil:stopPress(ax, ay)
 end
 
-return Square
+return Rectangle

@@ -2,6 +2,7 @@ local ffi = require "ffi"
 local bit = require "bit"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local DrawCommand = require "plugins.sprite.commands.drawcommand"
+local Status = require "src.global.status"
 
 local LabelProperty = require "src.properties.label"
 local EnumProperty = require "src.properties.enum"
@@ -86,6 +87,11 @@ function DrawShape:stopPress(imageX, imageY)
 	local shape = DrawShape.shape:getValue()
 	shape:apply(startX, startY, imageX, imageY)
 
+	local brush = SpriteTool.brush:get()
+	if not brush.continuous:get() then
+		Status.pushTemporaryMessage("Brush is not continuous; drawing points only", "warning", 3)
+	end
+
 	sprite.undoStack:popGroup()
 end
 
@@ -95,8 +101,8 @@ local options = {
 		value = require "plugins.sprite.tools.shapes.line",
 	},
 	{
-		name = "Square",
-		value = require "plugins.sprite.tools.shapes.square",
+		name = "Rectangle",
+		value = require "plugins.sprite.tools.shapes.rectangle",
 	},
 	{
 		name = "Ellipse",
