@@ -95,6 +95,10 @@ local options = {
 		value = require "plugins.sprite.tools.shapes.line",
 	},
 	{
+		name = "Square",
+		value = require "plugins.sprite.tools.shapes.square",
+	},
+	{
 		name = "Ellipse",
 		value = require "plugins.sprite.tools.shapes.ellipse",
 	},
