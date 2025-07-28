@@ -346,8 +346,8 @@ function Sprite:createFrame(insertAt)
 
 	-- Trigger the events
 	self.frameCreated:trigger(self, newFrame, newFrameIndex)
-
 	self:insertFrame(newFrameIndex, newFrame)
+
 	return newFrame, newFrameIndex
 end
 
@@ -403,23 +403,27 @@ function Sprite:cloneFrame(toCloneIndex, insertAt)
 
 		-- Trigger the events
 		self.frameCreated:trigger(self, clone, newIndex)
-
 		self:insertFrame(newIndex, clone)
+
+		-- "Inserting" a frame inserts zeroes in the cel indices at that point
+		-- No need to use table.insert
+		-- print(#self.frames, #self.layers[1].celIndices)
 
 		-- Set the cel indices for the new frame in each layer
 		for _, layer in ipairs(self.layers) do
-			local curCelIndex = layer.celIndices[toCloneIndex]
-			local preferLinked = layer.preferLinkedCels:get()
+			local curCelIndex = layer.celIndices[originalFrame.index]
 			if curCelIndex == 0 then
 				-- Nothing at this place
-				table.insert(layer.celIndices, newIndex, 0)
+				-- (this is done by self:insertFrame())
+				-- layer.celIndices[newIndex] = 0
 			else
 				-- Current cel has something
+				local preferLinked = layer.preferLinkedCels:get()
 				if preferLinked then
-					table.insert(layer.celIndices, newIndex, curCelIndex)
+					layer.celIndices[newIndex] = curCelIndex
 				else
 					local _, clonedCelIndex = self:cloneCel(curCelIndex)
-					table.insert(layer.celIndices, newIndex, clonedCelIndex)
+					layer.celIndices[newIndex] = clonedCelIndex
 				end
 			end
 		end
