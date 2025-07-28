@@ -17,7 +17,10 @@ local startX, startY = 0, 0
 ---@param currLayerIndex integer
 function DrawShape:draw(imageX, imageY, currLayerIndex)
 	if currLayerIndex == SpriteTool.layer.index then
-		local color = SpriteTool.primaryColor
+		local color =
+			SpriteTool.primaryPressed and SpriteTool.primaryColor
+			or
+			SpriteTool.secondaryColor
 		local brush = SpriteTool.brush:get()
 		if brush.blendMode:getValue() == "shade" then
 			love.graphics.setColor(1, 1, 1, 0.6)
