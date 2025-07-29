@@ -189,7 +189,6 @@ function SpriteLayer:clone(sprite, layerIndex)
 	clone.index = layerIndex
 
 	-- Clone all the cels
-	-- TODO: Keep cels linked relatively
 	local celIndices = {}
 	---@type {[integer]: integer} # Map of original index to cloned index, useful to avoid duplicates
 	local alreadyClonedIndices = {}
