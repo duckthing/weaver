@@ -24,8 +24,10 @@ function ImageBrush:new(sprite, type)
 
 	local bx, by, bright, bbottom, bw, bh = bitmask:getBounds()
 
-	local celW, celH = cel.data:getDimensions()
-	local celP = ffi.cast("uint8_t*", cel.data:getFFIPointer())
+	if not cel then
+		-- If there isn't a cel, we ignore the type and make this into a mask
+		asMask = true
+	end
 
 	---@type love.ImageData
 	local data
@@ -41,6 +43,8 @@ function ImageBrush:new(sprite, type)
 			end
 		end
 	else
+		local celW, _ = cel.data:getDimensions()
+		local celP = ffi.cast("uint8_t*", cel.data:getFFIPointer())
 		data = love.image.newImageData(bw, bh, sprite.format)
 		local dataP = ffi.cast("uint8_t*", data:getFFIPointer())
 		self.type:setValue("color")

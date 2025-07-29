@@ -1023,7 +1023,8 @@ local actions = {
 			local sprite = context.sprite
 			if sprite then
 				local bitmask = sprite.spriteState.bitmask
-				if bitmask._active then
+				if bitmask._active and sprite.spriteState:getCurrentCel() then
+					-- If there's an image here
 					local newBrush = ImageBrush(sprite, "color")
 					BrushProperty.addBrush(newBrush, "Color")
 					SpriteTool.brush:set(newBrush)
