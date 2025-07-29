@@ -191,12 +191,27 @@ function SpriteLayer:clone(sprite, layerIndex)
 	-- Clone all the cels
 	-- TODO: Keep cels linked relatively
 	local celIndices = {}
+	---@type {[integer]: integer} # Map of original index to cloned index, useful to avoid duplicates
+	local alreadyClonedIndices = {}
 	for i = 1, #self.celIndices do
+		-- This cel index
 		local currIndex = self.celIndices[i]
+
 		if currIndex == 0 then
+			-- No changes; keep 0
 			celIndices[i] = 0
 		else
-			local newCel, newCelIndex = sprite:cloneCel(currIndex)
+			---@type integer?
+			local newCelIndex = alreadyClonedIndices[currIndex]
+
+			if not newCelIndex then
+				-- Clone and remap it
+				local newCel, _newCelIndex = sprite:cloneCel(currIndex)
+				newCelIndex = _newCelIndex
+
+				alreadyClonedIndices[currIndex] = newCelIndex
+			end
+
 			celIndices[i] = newCelIndex
 		end
 	end
