@@ -134,8 +134,13 @@ end
 ---@return Sprite.Cel clone
 function SpriteCel:clone(sprite, celIndex)
 	local clone = SpriteCel(sprite, celIndex)
+
+	-- Get rid of the placeholders
+	clone.data:release()
+	clone.image:release()
+
 	clone.data = self.data:clone()
-	---@diagnostic disable-next-line
+	---@diagnostic disable-next-line: param-type-mismatch
 	clone.image = love.graphics.newImage(clone.data)
 	clone.index = celIndex
 	return clone
@@ -187,10 +192,11 @@ function SpriteLayer:clone(sprite, layerIndex)
 	-- TODO: Keep cels linked relatively
 	local celIndices = {}
 	for i = 1, #self.celIndices do
-		if self.celIndices[i] == 0 then
+		local currIndex = self.celIndices[i]
+		if currIndex == 0 then
 			celIndices[i] = 0
 		else
-			local newCel, newCelIndex = sprite:cloneCel(i)
+			local newCel, newCelIndex = sprite:cloneCel(currIndex)
 			celIndices[i] = newCelIndex
 		end
 	end
@@ -321,7 +327,6 @@ function Sprite:createCel()
 	local newCelIndex = #self.cels + 1
 	local newCel = SpriteCel(self, newCelIndex)
 	self.cels[newCelIndex] = newCel
-
 	self.celCreated:trigger(self, newCel, newCelIndex)
 	return newCel, newCelIndex
 end
@@ -530,7 +535,6 @@ function Sprite:insertLayer(insertAt, existingLayer)
 
 	-- Trigger the events
 	self.layerInserted:trigger(self, existingLayer, newLayerIndex)
-	-- self.celIndexEdited:trigger()
 end
 
 ---Removes a frame and fires the frame removed event
