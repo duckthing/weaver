@@ -65,8 +65,8 @@ function ImageBrush:new(sprite, type)
 	end
 
 	self.w, self.h = bw, bh
-	self.sourceOffsetX:set(bx % bw)
-	self.sourceOffsetY:set(by % bh)
+	self.sourceOffsetX:set((bx + spriteState.selectionX) % bw)
+	self.sourceOffsetY:set((by + spriteState.selectionY) % bh)
 	self:setBrushData(data)
 end
 
