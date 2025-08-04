@@ -247,7 +247,7 @@ end
 ---@return Sprite.Frame clone
 function SpriteFrame:clone(sprite, frameIndex)
 	local clone = SpriteFrame(sprite, frameIndex)
-	clone.duration = self.duration
+	clone.duration:set(self.duration:get())
 	clone.index = frameIndex
 	return clone
 end
