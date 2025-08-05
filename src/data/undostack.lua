@@ -61,10 +61,7 @@ function UndoStack:undo()
 	self.midStep = true
 	local command = self.stack[index]
 	command:undo()
-	-- command:focus()
-	if self.stack[index - 1] then
-		self.stack[index - 1]:focus()
-	end
+	command:focus()
 	-- print("UNDO", command)
 	self.index = index - 1
 	self.indexChanged:trigger(self.index)
