@@ -46,6 +46,7 @@ function PalettesModule.reloadPalettes()
 	if #palettes == 0 then
 		---@type Palette
 		local palette = Palette()
+		palette.name = "Add a '.gpl' palette into the palettes folder"
 		palette.colors[1], palette.colors[2] = {0, 0, 0}, {1, 1, 1}
 		palettes[1] = palette
 	end
