@@ -88,6 +88,8 @@ function SpriteWindow:new(rules, editor, context)
 		self:addChild(hsplit2)
 	else
 		-- The new Weaver layout
+		palette.paletteColors.colorSize = 26
+
 		---@type VInspector
 		local inspector = VInspector(Plan.RuleFactory.full())
 		drawer.padding = 5
