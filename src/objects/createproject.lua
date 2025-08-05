@@ -10,6 +10,7 @@ local ProjectFormat = require "src.formats.projectformat"
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
 local FilePathProperty = require "src.properties.filepath"
+local LabelProperty = require "src.properties.label"
 
 ---@class CreateProject: Inspectable
 local CreateProject = Inspectable:extend()
@@ -20,17 +21,19 @@ function CreateProject:new()
 	CreateProject.super.new(self)
 
 	---@type FilePathProperty
-	self.path = FilePathProperty(self, "Project Folder", love.filesystem.getUserDirectory().."Projects/mycoolprojects/")
+	self.path = FilePathProperty(self, "Project Folder", love.filesystem.getUserDirectory())
 	self.path:setPathMode("directory")
 
 	---@type StringProperty
 	self.name = StringProperty(self, "Project Name", "Project")
 end
 
+CreateProject.warning = LabelProperty(CreateProject, "", "Projects are still a work in progress; they only set your export destination for new resources")
 function CreateProject:getProperties()
 	return {
 		self.path,
 		self.name,
+		CreateProject.warning,
 	}
 end
 

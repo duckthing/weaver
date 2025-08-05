@@ -105,20 +105,16 @@ end
 ---@type LabelProperty
 Transform.name = LabelProperty(Transform, "Name", "Selection Transform")
 ---@type EnumProperty
-Transform.mode = EnumProperty(Transform, "Mode", nil)
+Transform.mode = EnumProperty(Transform, "Mode", "rotate")
 Transform.mode:setOptions(
 	{
 		{
-			name = "Scale",
+			name = "Scale (NYI)",
 			value = "scale",
 		},
 		{
 			name = "Rotate",
 			value = "rotate",
-		},
-		{
-			name = "Move",
-			value = "move",
 		},
 	}
 )

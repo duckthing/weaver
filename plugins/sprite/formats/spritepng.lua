@@ -9,10 +9,10 @@ local Status = require "src.global.status"
 local isWindows = love.system.getOS() == "Windows"
 
 local SpritePngFormat = {}
-local SpriteBuffer
+local SpriteResource
 
 function SpritePngFormat.setSprite(type)
-	SpriteBuffer = type
+	SpriteResource = type
 end
 
 function SpritePngFormat:import(path, file, options)
@@ -40,19 +40,18 @@ function SpritePngFormat:import(path, file, options)
 			math.floor(height)
 
 		---@type Sprite
-		local buffer = SpriteBuffer(width, height)
-		buffer.name:set(name)
-		buffer:getSaveTemplate().path:set(Path.parentdirsep(path)..name..".wgf")
+		local sprite = SpriteResource(width, height, name, nil)
+		sprite:getSaveTemplate().path:set(Path.parentdirsep(path)..name..".wgf")
 
 		local frames = rows * columns
 		local imagePointer = ffi.cast("uint8_t*", image:getFFIPointer())
-		local layer = buffer.layers[1]
+		local layer = sprite.layers[1]
 
 		-- 1 frame exists by default, create #layers - 1
-		for _ = 2, frames do buffer:createFrame() end
+		for _ = 2, frames do sprite:createFrame() end
 
 		for i = 1, frames do
-			local cel, celIndex = buffer:createCel()
+			local cel, celIndex = sprite:createCel()
 			layer.celIndices[i] = celIndex
 			local celPointer = ffi.cast("uint8_t*", cel.data:getFFIPointer())
 
@@ -81,12 +80,12 @@ function SpritePngFormat:import(path, file, options)
 		end
 
 		-- Update the exporter info
-		local exporter = buffer.exporter
+		local exporter = sprite.exporter
 		exporter.rows:set(rows)
 		exporter.imagePath:set(path)
 		exporter.alreadyExported = true
 
-		return true, buffer
+		return true, sprite
 	end
 end
 

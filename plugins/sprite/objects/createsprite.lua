@@ -167,25 +167,9 @@ local actions = {
 				self.width:get(),
 				self.height:get()
 
-			-- Find the default palette
-			local paletteName = SpriteEditor.defaultPalette:get()
-
-			---@type Palette
-			local palette
-			if paletteName ~= "" then
-				for _, p in ipairs(Palettes.globalPalettes) do
-					if p.name == paletteName then
-						palette = p:clone()
-					end
-				end
-			end
-			if not palette then
-				palette = Palettes.globalPalettes[love.math.random(1, #Palettes.globalPalettes)]:clone()
-			end
-
 			-- Create and select the new sprite
 			---@type Sprite
-			local resource = SpriteResource(width, height, nil, palette)
+			local resource = SpriteResource(width, height, nil, nil)
 			local id = Resources.addResource(resource)
 
 			-- Set the grid options from the preset

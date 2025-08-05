@@ -1,6 +1,7 @@
 local Plan = require "lib.plan"
 local Status = require "src.global.status"
 local Label = require "ui.components.text.label"
+local Info = require "src.meta"
 
 ---@class HomeStatus: StatusContext
 local HomeStatus = Status.StatusContext:extend()
@@ -11,7 +12,7 @@ function HomeStatus:new()
 	---@type Label
 	self.label = Label(
 		Plan.RuleFactory.full(),
-		"v2025.6.1a"
+		("%s   Check the source repository for new features and fixes"):format(Info.VERSION)
 	)
 	self.label:setPadding(8)
 	self:addChild(self.label)

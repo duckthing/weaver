@@ -3,6 +3,8 @@ local SpriteWindow = require "plugins.sprite.spritewindow"
 local SpriteStatus = require "plugins.sprite.spritestatus"
 local Status = require "src.global.status"
 local Resources = require "src.global.resources"
+local Sprite = require "plugins.sprite.spriteresource"
+local Palettes = require "src.global.palettes"
 local CreateSprite = require "plugins.sprite.objects.createsprite"
 local ImportSprite = require "plugins.sprite.objects.importsprite"
 local ExportSprite = require "plugins.sprite.objects.exportsprite"
@@ -23,6 +25,7 @@ Handler.addFormat(SpriteFormats)
 local SpriteEditor = Plugin:extend()
 SpriteEditor.TYPE = "sprite"
 
+Sprite.setEditor(SpriteEditor)
 CreateSprite.addSpriteEditor(SpriteEditor)
 ExportSprite.addSpriteEditor(SpriteEditor)
 
@@ -105,6 +108,32 @@ function SpriteEditor:new(rules)
 	self.statusContext = SpriteStatus()
 	self.statusContext:setEditor(self)
 	self:setToolbarActions(spriteToolbarActions, self:getContext())
+end
+
+---Returns the default palette from user preferences, or a random one
+---@return Palette
+function SpriteEditor.getDefaultPalette()
+	---@type Palette
+	local palette
+	-- Find the default palette
+	local paletteName = SpriteEditor.defaultPalette:get()
+
+	---@type Palette
+	if paletteName ~= "" then
+		-- If there is a desired default...
+		for _, p in ipairs(Palettes.globalPalettes) do
+			if p.name == paletteName then
+				palette = p:clone()
+			end
+		end
+	end
+
+	if not palette then
+		-- Clone a random palette if we don't have a default/couldn't find one
+		palette = Palettes.globalPalettes[love.math.random(1, #Palettes.globalPalettes)]:clone()
+	end
+
+	return palette
 end
 
 ---@param sprite Sprite

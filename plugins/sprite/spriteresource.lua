@@ -265,6 +265,7 @@ end
 function Sprite:new(width, height, name, palette)
 	spritesCreated = spritesCreated + 1
 	local spriteName = name or (("sprite-%03d"):format(spritesCreated))
+	if not palette then palette = SpriteEditor.getDefaultPalette() end
 
 	---@type Sprite
 	Sprite.super.new(self)
@@ -1027,6 +1028,12 @@ WgfFormat.registerWGFType(Sprite)
 do
 	local PngFormat = require "plugins.sprite.formats.spritepng"
 	PngFormat.setSprite(Sprite)
+end
+
+---Sets the SpriteEditor reference
+---@param editor SpriteEditor
+function Sprite.setEditor(editor)
+	SpriteEditor = editor
 end
 
 return Sprite
