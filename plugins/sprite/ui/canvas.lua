@@ -213,6 +213,7 @@ function Canvas:mousepressed(_, _, button)
 		self.panning = true
 	elseif (button == 1 or button == 2) and not self.panning and SpriteTool.currentTool then
 		if SpriteTool.currentTool:canDraw() and not SpriteTool.drawing then
+			self.sprite.undoStack:pushGroup()
 			self:getFocus()
 			local ix, iy = self:getImagePoint(self.lastMouseX, self.lastMouseY)
 			SpriteTool.currentTool:startPress(ix, iy)
@@ -228,6 +229,7 @@ function Canvas:mousereleased(_, _, button)
 		self:releaseFocus()
 		local ix, iy = self:getImagePoint(self.lastMouseX, self.lastMouseY)
 		SpriteTool.currentTool:stopPress(ix, iy)
+		self.sprite.undoStack:popGroup()
 	end
 	SpriteTool.primaryPressed = not love.mouse.isDown(2)
 end

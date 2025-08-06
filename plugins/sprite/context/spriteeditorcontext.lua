@@ -137,8 +137,8 @@ local actions = {
 				local newFrameIndex = frameProperty:get() + 1
 				local newFrame = sprite:createFrame(newFrameIndex)
 				local insertCommand = InsertFrameCommand(sprite, true, newFrame)
-				frameProperty:set(newFrameIndex)
 				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				frameProperty:set(newFrameIndex)
 			end
 		end
 	),
@@ -157,8 +157,8 @@ local actions = {
 				local toCloneIndex = frameProperty:get()
 				local newFrame = sprite:cloneFrame(toCloneIndex, toCloneIndex + 1)
 				local insertCommand = InsertFrameCommand(sprite, true, newFrame)
-				frameProperty:set(toCloneIndex + 1)
 				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				frameProperty:set(toCloneIndex + 1)
 
 				if wasDrawing then
 					SpriteTool.currentTool:startPress(SpriteTool.lastX, SpriteTool.lastY)
@@ -187,8 +187,8 @@ local actions = {
 				end
 
 				local insertCommand = InsertFrameCommand(sprite, true, newFrame)
-				frameProperty:set(toCloneIndex + 1)
 				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				frameProperty:set(toCloneIndex + 1)
 
 				if wasDrawing then
 					SpriteTool.currentTool:startPress(SpriteTool.lastX, SpriteTool.lastY)
@@ -208,8 +208,8 @@ local actions = {
 				local frame = sprite.frames[toDeleteIndex]
 				local insertCommand = InsertFrameCommand(sprite, false, frame)
 				sprite:removeFrame(toDeleteIndex)
-				frameProperty:set(toDeleteIndex - 1)
 				sprite.undoStack:commitWithoutPerforming(insertCommand)
+				frameProperty:set(toDeleteIndex - 1)
 			end
 		end
 	),
