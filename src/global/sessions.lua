@@ -82,8 +82,6 @@ local function loadWithSessionData(plugin, sessionData)
 	if sessionData then
 		-- Existing data loaded
 		-- Call it, even if it's nil
-		plugin:setSessionData(sessionData.data)
-
 		if sessionData.keymap then
 			plugin:getContext():addChangedKeybinds(sessionData.keymap)
 		end
@@ -102,6 +100,8 @@ local function loadWithSessionData(plugin, sessionData)
 
 			plugin:onSettingsLoaded()
 		end
+
+		plugin:setSessionData(sessionData.data)
 	else
 		-- No data, return whatever the plugin has
 		plugin:setSessionData()

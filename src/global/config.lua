@@ -1,6 +1,7 @@
 local Plugin = require "src.data.plugin"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
+local Modal = require "src.global.modal"
 
 local LabelProperty = require "src.properties.label"
 local ButtonProperty = require "src.properties.button"
@@ -30,6 +31,8 @@ GlobalConfig.maxRecentItems = IntegerProperty(GlobalConfig, "Max Recent Items", 
 ---@type BoolProperty
 GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", false)
 	:setKey("pixelFont")
+---@type BoolProperty
+GlobalConfig.restoreWindowSize = BoolProperty(GlobalConfig, "Restore Window Size on Launch", true)
 ---@type StringProperty
 GlobalConfig.defaultResource = StringProperty(GlobalConfig, "Default Resource to Create", "Sprite")
 	:setKey("defaultResource")
@@ -54,6 +57,9 @@ GlobalConfig.firstLaunch = true
 GlobalConfig.recentItems = {}
 ---@type string[]
 GlobalConfig.recentProjects = {}
+
+local DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT =
+	800, 600
 
 ---@param arr any[]
 ---@param item any
@@ -103,9 +109,17 @@ function GlobalConfig:getContext()
 end
 
 function GlobalConfig:getSessionData()
+	local windowW, windowH = DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT
+	if Modal.uiRoot then
+		local root = Modal.uiRoot.root
+		windowW, windowH = root.w, root.h
+	end
 	return {
 		recentItems = GlobalConfig.recentItems,
 		recentProjects = GlobalConfig.recentProjects,
+		maximized = love.window.isMaximized(),
+		windowW = windowW,
+		windowH = windowH,
 	}
 end
 
@@ -114,6 +128,14 @@ function GlobalConfig:setSessionData(data)
 		GlobalConfig.firstLaunch = false
 		GlobalConfig.recentItems = data.recentItems
 		GlobalConfig.recentProjects = data.recentProjects
+
+		if GlobalConfig.restoreWindowSize:get() then
+			if data.maximized then
+				love.window.maximize()
+			else
+				love.window.setMode(data.windowW or DEFAULT_WINDOW_WIDTH, data.windowH or DEFAULT_WINDOW_HEIGHT, {resizable = true})
+			end
+		end
 	end
 end
 
@@ -123,6 +145,7 @@ function GlobalConfig:getSettings()
 		GlobalConfig.appScale,
 		GlobalConfig.maxRecentItems,
 		GlobalConfig.pixelFont,
+		GlobalConfig.restoreWindowSize,
 		GlobalConfig.defaultResource,
 		-- GlobalConfig.editKeybinds,
 		GlobalConfig.viewThirdPartyLicenses,
