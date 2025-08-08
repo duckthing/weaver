@@ -79,7 +79,7 @@ function Brush:new()
 	---@type integer, integer
 	self.offsetX, self.offsetY = 0, 0
 	---@type EnumProperty
-	self.patternMode = EnumProperty(self, "Pattern", "simple")
+	self.patternMode = EnumProperty(self, "Pattern", "scrolloffset")
 	self.patternMode:setOptions(patternOptions)
 	---@type Brush.OffsetMode
 	self.offsetMode = "center"
@@ -443,11 +443,16 @@ function Brush:drawOnCanvas(x, y, shaderMode, canvas)
 			y - (y - self.sourceOffsetY:get() - canvas.imageY) % bh
 		local cameraX, cameraY, scale = canvas.cameraX, canvas.cameraY, canvas.scale
 
+		local screenX, screenY = canvas:worldToScreen(
+			x - math.floor(bw * 0.5),
+			y - math.floor(bh * 0.5)
+		)
+
 		love.graphics.intersectScissor(
-			canvas.x - (cameraX - x + math.floor(bw * 0.5)) * scale + canvas.w * 0.5,
-			canvas.y - (cameraY - y + math.floor(bh * 0.5)) * scale + canvas.h * 0.5,
-			bw * scale - 1,
-			bh * scale - 1
+			screenX + 1,
+			screenY + 1,
+			math.floor(bw * scale) - 2,
+			math.floor(bh * scale) - 2
 		)
 
 		--TODO: Make this draw 4 times instead of 9

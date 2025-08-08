@@ -72,7 +72,30 @@ function Viewport:pushTransform()
 end
 
 function Viewport:worldToScreen(localX, localY)
-	return localX, localY
+	local scale = self.scale
+	local factor = 1 / scale
+
+	local xTrans = -self.cameraX * scale + self.w * 0.5
+	local yTrans = -self.cameraY * scale + self.h * 0.5
+
+	-- UI size offset
+	xTrans, yTrans =
+		xTrans + localX * scale,
+		yTrans + localY * scale
+
+	-- UI translation offset
+	xTrans, yTrans =
+		xTrans + self.x,
+		yTrans + self.y
+
+	-- print(xTrans, yTrans)
+	if self.pixelPerfect then
+		-- Make sure the translation is a whole number when scaled
+		xTrans = xTrans - math.fmod(xTrans, factor)
+		yTrans = yTrans - math.fmod(yTrans, factor)
+	end
+
+	return xTrans, yTrans
 end
 
 function Viewport:popTransform()
