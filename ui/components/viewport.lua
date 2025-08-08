@@ -88,7 +88,6 @@ function Viewport:worldToScreen(localX, localY)
 		xTrans + self.x,
 		yTrans + self.y
 
-	-- print(xTrans, yTrans)
 	if self.pixelPerfect then
 		-- Make sure the translation is a whole number when scaled
 		xTrans = xTrans - math.fmod(xTrans, factor)

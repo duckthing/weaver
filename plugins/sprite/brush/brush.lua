@@ -79,7 +79,7 @@ function Brush:new()
 	---@type integer, integer
 	self.offsetX, self.offsetY = 0, 0
 	---@type EnumProperty
-	self.patternMode = EnumProperty(self, "Pattern", "scrolloffset")
+	self.patternMode = EnumProperty(self, "Pattern", "simple")
 	self.patternMode:setOptions(patternOptions)
 	---@type Brush.OffsetMode
 	self.offsetMode = "center"
