@@ -55,20 +55,24 @@ function Viewport:pushTransform()
 	local scale = self.scale
 	local factor = 1 / scale
 	love.graphics.push("all")
-	if not self.pixelPerfect then
-		love.graphics.translate(self.x, self.y)
-		love.graphics.scale(scale)
-		love.graphics.translate(-self.cameraX + self.w * 0.5 * factor, -self.cameraY + self.h * 0.5 * factor)
-	else
+
+	love.graphics.translate(self.x, self.y)
+
+	local xTrans = -self.cameraX + self.w * 0.5 * factor
+	local yTrans = -self.cameraY + self.h * 0.5 * factor
+
+	if self.pixelPerfect then
 		-- Make sure the translation is a whole number when scaled
-		love.graphics.translate(math.floor(self.x), math.floor(self.y))
-		love.graphics.scale(scale)
-		local xTrans = -self.cameraX + self.w * 0.5 * factor
-		local yTrans = -self.cameraY + self.h * 0.5 * factor
 		xTrans = xTrans - math.fmod(xTrans, factor)
 		yTrans = yTrans - math.fmod(yTrans, factor)
-		love.graphics.translate(xTrans, yTrans)
 	end
+
+	love.graphics.scale(scale)
+	love.graphics.translate(xTrans, yTrans)
+end
+
+function Viewport:worldToScreen(localX, localY)
+	return localX, localY
 end
 
 function Viewport:popTransform()
