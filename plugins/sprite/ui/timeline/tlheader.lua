@@ -269,11 +269,9 @@ function TLHeader:draw()
 		end
 
 		if hovering and x == hoveringFrameIndex then
-			if pressing then
-				if x == pressingFrameIndex then
-					-- Is pressing the same thing originally
-					love.graphics.setColor(0.1, 0.1, 0.2)
-				end
+			if pressing and x == pressingFrameIndex then
+				-- Is pressing the same thing originally
+				love.graphics.setColor(0.1, 0.1, 0.2)
 			else
 				-- Just hovering, not pressing anything
 				love.graphics.setColor(0.45, 0.45, 0.5)
