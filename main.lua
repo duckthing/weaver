@@ -59,7 +59,7 @@ function love.load()
 	-- The GlobalContext
 	---@type GlobalContext
 	---@diagnostic disable-next-line: assign-type-mismatch
-	local globalContext = GlobalConfig:getContext()
+	local globalContext = GlobalConfig:getContexts()[1]
 	globalContext.uiRoot = uiRoot
 	Editor.setGlobalContext(globalContext)
 	Contexts.pushContext(globalContext)

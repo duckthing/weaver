@@ -19,9 +19,12 @@ function Plugin:new()
 
 	---@type Editor[]
 	self.editors = {}
+
+	self._initialized = false
 end
 
 function Plugin:initialize()
+	self._initialized = true
 	Plugin.pluginInitialized:trigger(self)
 end
 

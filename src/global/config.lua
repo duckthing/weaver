@@ -115,10 +115,6 @@ function GlobalConfig:new()
 	}
 end
 
-function GlobalConfig:getContext()
-	return self.context
-end
-
 function GlobalConfig:getSessionData()
 	local windowW, windowH = DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT
 	if Modal.uiRoot then
@@ -168,6 +164,10 @@ end
 
 function GlobalConfig:getCreateInspectables()
 	return {CreateProject()}
+end
+
+function GlobalConfig:getContexts()
+	return self.contexts
 end
 
 local g = GlobalConfig()

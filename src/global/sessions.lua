@@ -6,7 +6,7 @@ local SessionsModule = {}
 SessionsModule.pluginDataLoaded = Luvent.newEvent()
 
 ---@class SessionData
----@field keymap Keybinds.SerializedData?
+---@field keymap {[string]: Keybinds.SerializedData}
 ---@field settings {[string]: any}?
 ---@field data any
 
@@ -27,7 +27,7 @@ local function getPersistentDataFromPlugin(plugin)
 	if not pluginSession then
 		-- Make a new session
 		pluginSession = {
-			keymap = nil,
+			keymap = {},
 			data = nil,
 			settings = nil,
 		}
@@ -35,9 +35,8 @@ local function getPersistentDataFromPlugin(plugin)
 	end
 
 	-- Save keymap
-	local context = plugin:getContext()
-	if context then
-		pluginSession.keymap = context:serializeKeybinds()
+	for _, context in ipairs(plugin:getContexts()) do
+		pluginSession.keymap[context.CONTEXT_NAME] = context:serializeKeybinds()
 	end
 
 	-- Save settings
@@ -82,8 +81,13 @@ local function loadWithSessionData(plugin, sessionData)
 	if sessionData then
 		-- Existing data loaded
 		-- Call it, even if it's nil
-		if sessionData.keymap then
-			plugin:getContext():addChangedKeybinds(sessionData.keymap)
+		for contextName, keyData in pairs(sessionData.keymap) do
+			for _, otherContext in ipairs(plugin:getContexts()) do
+				if otherContext.CONTEXT_NAME == contextName then
+					-- Matched the name to the keymap
+					otherContext:addChangedKeybinds(keyData)
+				end
+			end
 		end
 
 		if sessionData.settings then
@@ -105,12 +109,13 @@ local function loadWithSessionData(plugin, sessionData)
 	else
 		-- No data, return whatever the plugin has
 		plugin:setSessionData()
-		local context = plugin:getContext()
-		if context then
+		for _, context in ipairs(plugin:getContexts()) do
 			context:addChangedKeybinds(nil)
 		end
+
 		data[plugin.TYPE] = {
-			data = plugin:getSessionData()
+			data = plugin:getSessionData(),
+			keymap = {},
 		}
 	end
 	SessionsModule.pluginDataLoaded:trigger(plugin)
@@ -126,7 +131,6 @@ function SessionsModule.load()
 	end
 
 	alreadyLoaded = {}
-	print(#Plugin.plugins)
 	for _, plugin in ipairs(Plugin.plugins) do
 		local sessionData = data[plugin.TYPE]
 		loadWithSessionData(plugin, sessionData)

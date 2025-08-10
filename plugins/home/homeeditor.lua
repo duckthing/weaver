@@ -25,7 +25,6 @@ function HomeEditor:onExit()
 end
 
 function HomeEditor:setSessionData()
-	print("loaded")
 	if GlobalConfig.firstLaunch then
 		self.container:showIntroduction()
 	else

@@ -63,8 +63,13 @@ function CelTimelines:new(rules)
 end
 
 function CelTimelines:updateScroll()
-	self.scrollX = math.max(0, math.min(self.scrollX, #self.sprite.frames * celSize - self.w))
-	self.scrollY = math.max(0, math.min(self.scrollY, #self.sprite.layers * celSize - self.h))
+	if self.sprite then
+		self.scrollX = math.max(0, math.min(self.scrollX, #self.sprite.frames * celSize - self.w))
+		self.scrollY = math.max(0, math.min(self.scrollY, #self.sprite.layers * celSize - self.h))
+	else
+		self.scrollX, self.scrollY =
+			0, 0
+	end
 	self.scrollChanged:trigger(self.scrollX, self.scrollY)
 	self:recalculateBoundaries()
 end

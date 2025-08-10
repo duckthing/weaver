@@ -45,8 +45,14 @@ function SettingsWindow:new(rules, plugin, context)
 	self.vscroll = vscroll
 
 	for _, plugin in ipairs(Plugin.plugins) do
-		self:addEditorSettings(plugin)
+		if plugin._initialized then
+			self:addEditorSettings(plugin)
+		end
 	end
+
+	Plugin.pluginInitialized:addAction(function(newPlugin)
+		self:addEditorSettings(newPlugin)
+	end)
 
 	self:addChild(vscroll)
 end

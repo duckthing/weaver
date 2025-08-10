@@ -23,7 +23,6 @@ SpritePlugin.TYPE = "sprite"
 
 function SpritePlugin:new()
 	SpritePlugin.super.new(self)
-	print("created")
 end
 
 ---@type IntegerProperty
@@ -97,12 +96,9 @@ SpriteEditor:setSourcePlugin(p)
 local se = SpriteEditor:assignAsDefault(rules)
 
 SpriteGlobals.SpritePlugin = p
-print(#Plugin.plugins)
 
-function SpritePlugin:getContext()
-	print("omg")
-	print(se:getContext())
-	return se:getContext()
+function SpritePlugin:getContexts()
+	return {se:getContext()}
 end
 
 p:initialize()

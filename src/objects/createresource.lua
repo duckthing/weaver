@@ -25,7 +25,6 @@ end
 Plugin.pluginInitialized:addAction(function(newPlugin)
 	local inspectables = newPlugin:getCreateInspectables()
 	for _, c in ipairs(inspectables) do
-		print(c.OBJECT_NAME or newPlugin.TYPE)
 		createTemplates[#createTemplates+1] = {
 			name = c.OBJECT_NAME or newPlugin.TYPE,
 			value = c,
