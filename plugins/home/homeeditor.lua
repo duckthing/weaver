@@ -2,13 +2,11 @@ local Status = require "src.global.status"
 local Editor = require "src.data.editor"
 local HomeWindow = require "plugins.home.homewindow"
 local HomeStatus = require "plugins.home.homestatus"
+local ConfigGlobals = require "plugins.home.configglobals"
 
 ---@class HomeEditor: Editor
 local HomeEditor = Editor:extend()
 HomeEditor.TYPE = "home"
-
----@type GlobalConfig
-local GlobalConfig
 
 function HomeEditor:new(rules)
 	HomeEditor.super.new(self, rules)

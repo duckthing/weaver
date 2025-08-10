@@ -25,14 +25,44 @@ function Plugin:initialize()
 	Plugin.pluginInitialized:trigger(self)
 end
 
+local EMPTY_ARR = {}
+
+---Returns an array of Contexts that are used in this Plugin
+---@return Context[]
+function Plugin:getContexts()
+	return EMPTY_ARR
+end
+
+---Returns an array of Inspectables responsible for creating resources
+---@return Inspectable[]
+function Plugin:getCreateInspectables()
+	return EMPTY_ARR
+end
+
+---Returns an array of Inspectables responsible for saving
+---@return SaveTemplate[]
+function Plugin:getSaveInspectables()
+	return EMPTY_ARR
+end
+
+---Returns an array of Inspectables responsible for creating resources
+---@return ImporterTemplate[]
+function Plugin:getImportInspectables()
+	return EMPTY_ARR
+end
+
+---Returns an array of Inspectables responsible for creating resources
+---@return ExporterTemplate[]
+function Plugin:getExportInspectables()
+	return EMPTY_ARR
+end
+
 function Plugin:onExit()
 end
 
 function Plugin:onEnter()
 end
 
----@type Property[]
-local EMPTY_ARR = {}
 
 ---Returns an array of Properties
 ---@return Property[]

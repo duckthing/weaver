@@ -9,6 +9,7 @@ local LabelButton = require "ui.components.button.labelbutton"
 local Contexts = require "src.global.contexts"
 local Handler = require "src.global.handler"
 local Info = require "src.meta"
+local ConfigGlobals = require "plugins.home.configglobals"
 
 local isWindows = love.system.getOS() == "Windows"
 
@@ -40,7 +41,7 @@ function HomeWindow:showIntroduction()
 			:addHeight(Plan.content(Plan.pixel(0)))
 	)
 	title:setFont(Fonts.getDefaultFont(32))
-	title:setText(("Welcome to Weaver %d"):format(Info.VERSION))
+	title:setText(("Welcome to Weaver %s"):format(Info.VERSION))
 
 	---@type LabelButton
 	local docButton = LabelButton(
@@ -151,9 +152,9 @@ function HomeWindow:showRecents(data)
 		local arr
 
 		if i == 1 then
-			arr = HomeWindow.GlobalConfig.recentItems
+			arr = ConfigGlobals.GlobalConfig.recentItems
 		else
-			arr = HomeWindow.GlobalConfig.recentProjects
+			arr = ConfigGlobals.GlobalConfig.recentProjects
 		end
 
 		if not arr then goto continue end

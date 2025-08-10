@@ -6,7 +6,6 @@ local Resources = require "src.global.resources"
 local Sprite = require "plugins.sprite.spriteresource"
 local Palettes = require "src.global.palettes"
 local CreateSprite = require "plugins.sprite.objects.createsprite"
-local ImportSprite = require "plugins.sprite.objects.importsprite"
 local ExportSprite = require "plugins.sprite.objects.exportsprite"
 local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
@@ -206,14 +205,6 @@ function SpriteEditor:removeActionsFromResource()
 		self.oldSprite.modified.valueChanged:removeAction(self._modifiedAction)
 		self._modifiedAction = nil
 	end
-end
-
-function SpriteEditor:getCreateInspectable()
-	return CreateSprite()
-end
-
-function SpriteEditor:getImportInspectable()
-	return ImportSprite()
 end
 
 function SpriteEditor:getContext()

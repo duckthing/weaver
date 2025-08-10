@@ -4,6 +4,7 @@ local Plan = require "lib.plan"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
 local Modal = require "src.global.modal"
+local ConfigGlobals = require "plugins.home.configglobals"
 
 local LabelProperty = require "src.properties.label"
 local ButtonProperty = require "src.properties.button"
@@ -108,6 +109,10 @@ function GlobalConfig:new()
 	GlobalConfig.super.new(self)
 	---@type GlobalContext
 	self.context = GlobalContext()
+
+	self.contexts = {
+		self.context
+	}
 end
 
 function GlobalConfig:getContext()
@@ -161,12 +166,20 @@ function GlobalConfig:getSettings()
 	}
 end
 
-function GlobalConfig:getCreateInspectable()
-	return CreateProject()
+function GlobalConfig:getCreateInspectables()
+	return {CreateProject()}
 end
 
-local rules = Plan.RuleFactory.full()
-HomeEditor:assignAsDefault(rules)
-SettingsEditor:assignAsDefault(rules)
+local g = GlobalConfig()
+ConfigGlobals.GlobalConfig = g
 
-return GlobalConfig()
+local rules = Plan.RuleFactory.full()
+
+local he = HomeEditor:assignAsDefault(rules)
+local se = SettingsEditor:assignAsDefault(rules)
+
+he:setSourcePlugin(g)
+se:setSourcePlugin(g)
+
+g:initialize()
+return g

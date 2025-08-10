@@ -192,10 +192,12 @@ end
 
 ---Assigns this Editor as the default for its types
 ---@param rules Plan.Rules
+---@return Editor
 function Editor:assignAsDefault(rules)
 	---@type Editor
 	local editor = self(rules)
 	Editor.defaultEditors[editor.TYPE] = editor
+	return editor
 end
 
 ---Returns the best Editor for editing the Resource

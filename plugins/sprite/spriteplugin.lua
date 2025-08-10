@@ -11,11 +11,10 @@ local StringProperty = require "src.properties.string"
 local EnumProperty = require "src.properties.enum"
 local ColorSelectionProperty = require "src.properties.colorselection"
 
-local HomeEditor = require "plugins.home.homeeditor"
-local SettingsEditor = require "plugins.settings.settingseditor"
-local KeysEditor = require "plugins.keys.keyeditor"
-
-local CreateProject = require "src.objects.createproject"
+local CreateSprite = require "plugins.sprite.objects.createsprite"
+local SaveSprite = require "plugins.sprite.objects.savesprite"
+local ImportSprite = require "plugins.sprite.objects.importsprite"
+local ExportSprite = require "plugins.sprite.objects.exportsprite"
 
 ---@class SpritePlugin: Plugin
 local SpritePlugin = Plugin:extend()
@@ -61,6 +60,22 @@ SpritePlugin.checkerboardSecondary = ColorSelectionProperty(
 )
 	:setKey("checkerboardSecondary")
 
+function SpritePlugin:getCreateInspectables()
+	return {CreateSprite()}
+end
+
+function SpritePlugin:getSaveInspectables()
+	return {SaveSprite()}
+end
+
+function SpritePlugin:getImportInspectables()
+	return {ImportSprite()}
+end
+
+function SpritePlugin:getExportInspectables()
+	return {ExportSprite()}
+end
+
 local settings = {
 	SpritePlugin.maxUndo,
 	SpritePlugin.defaultPalette,
@@ -74,11 +89,19 @@ function SpritePlugin:getSettings()
 	return settings
 end
 
+---@type SpritePlugin
 local p = SpritePlugin()
 local rules = Plan.RuleFactory.full()
 SpriteEditor:setSourcePlugin(p)
-SpriteEditor:assignAsDefault(rules)
+local se = SpriteEditor:assignAsDefault(rules)
 
 print(#Plugin.plugins)
 
+function SpritePlugin:getContext()
+	print("omg")
+	print(se:getContext())
+	return se:getContext()
+end
+
+p:initialize()
 return p
