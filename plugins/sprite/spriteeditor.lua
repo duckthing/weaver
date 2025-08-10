@@ -11,6 +11,7 @@ local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
 local Handler = require "src.global.handler"
 local SpriteFormats = require "plugins.sprite.formats.spriteformats"
+local SpriteGlobals = require "plugins.sprite.spriteglobals"
 
 ---@type SpritePlugin
 local SpritePlugin
@@ -160,7 +161,7 @@ function SpriteEditor:onEnter()
 		if resource.TYPE == "sprite" then
 			---@cast resource Sprite
 			updateTitle(resource)
-			resource.undoStack.maxSize = SpriteEditor.maxUndo:get()
+			resource.undoStack.maxSize = SpriteGlobals.SpritePlugin.maxUndo:get()
 
 			local oldResource = self.oldSprite
 			if oldResource ~= resource then

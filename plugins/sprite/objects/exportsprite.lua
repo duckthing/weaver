@@ -9,6 +9,7 @@ local BoolProperty = require "src.properties.bool"
 local PngFormat = require "plugins.sprite.formats.spritepng"
 local SpriteTool = require "plugins.sprite.tools.spritetool"
 local State = require "src.global.state"
+local SpriteGlobals = require "plugins.sprite.spriteglobals"
 
 ---@class ExportSprite: ExporterTemplate
 local ExportSprite = ExporterTemplate:extend()
@@ -38,7 +39,7 @@ function ExportSprite:new(sprite)
 	---@type FilePathProperty
 	self.dataPath = FilePathProperty(self, "Data Path", State.getAssetDirectory()..sprite.name:get())
 	self.dataPath:setPathMode("write")
-	self.dataPath:addFilter(SpriteEditor.defaultDataExtension:getValue(), true)
+	self.dataPath:addFilter(SpriteGlobals.SpritePlugin.defaultDataExtension:getValue(), true)
 	self.dataPath:addFilter("lua")
 	self.dataPath:addFilter("json")
 

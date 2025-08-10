@@ -4,6 +4,7 @@ local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
 local Modal = require "src.global.modal"
 local SpriteEditor = require "plugins.sprite.spriteeditor"
+local SpriteGlobals = require "plugins.sprite.spriteglobals"
 
 local BoolProperty = require "src.properties.bool"
 local IntegerProperty = require "src.properties.integer"
@@ -95,6 +96,7 @@ local rules = Plan.RuleFactory.full()
 SpriteEditor:setSourcePlugin(p)
 local se = SpriteEditor:assignAsDefault(rules)
 
+SpriteGlobals.SpritePlugin = p
 print(#Plugin.plugins)
 
 function SpritePlugin:getContext()
