@@ -5,6 +5,7 @@ local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
 local Modal = require "src.global.modal"
 local ConfigGlobals = require "plugins.home.configglobals"
+local Meta = require "src.meta"
 
 local LabelProperty = require "src.properties.label"
 local ButtonProperty = require "src.properties.button"
@@ -57,6 +58,16 @@ GlobalConfig.viewAppLicense = ButtonProperty(GlobalConfig, "View App License",
 GlobalConfig.viewThirdPartyLicenses = ButtonProperty(GlobalConfig, "View Third-Party Licenses",
 	function(button)
 		Contexts.raiseAction("show_third_party_licenses")
+	end
+)
+GlobalConfig.resetKeybindsToDefault = ButtonProperty(GlobalConfig, "Reset Keybinds (if broken/missing)",
+	function(button)
+		for _, plugin in ipairs(Plugin.plugins) do
+			for _, context in ipairs(plugin:getContexts()) do
+				context:addChangedKeybinds(nil)
+			end
+		end
+		button:setLabel("Done!")
 	end
 )
 GlobalConfig.firstLaunch = true
@@ -128,6 +139,7 @@ function GlobalConfig:getSessionData()
 		maximized = love.window.isMaximized(),
 		windowW = windowW,
 		windowH = windowH,
+		fromVersion = Meta.VERSION_NUMBER,
 	}
 end
 
@@ -160,6 +172,7 @@ function GlobalConfig:getSettings()
 		-- GlobalConfig.editKeybinds,
 		GlobalConfig.viewThirdPartyLicenses,
 		GlobalConfig.viewAppLicense,
+		GlobalConfig.resetKeybindsToDefault,
 	}
 end
 

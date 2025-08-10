@@ -81,13 +81,9 @@ local function loadWithSessionData(plugin, sessionData)
 	if sessionData then
 		-- Existing data loaded
 		-- Call it, even if it's nil
-		for contextName, keyData in pairs(sessionData.keymap) do
-			for _, otherContext in ipairs(plugin:getContexts()) do
-				if otherContext.CONTEXT_NAME == contextName then
-					-- Matched the name to the keymap
-					otherContext:addChangedKeybinds(keyData)
-				end
-			end
+		for _, context in ipairs(plugin:getContexts()) do
+			-- Matched the name to the keymap
+			context:addChangedKeybinds(sessionData.keymap[context.CONTEXT_NAME])
 		end
 
 		if sessionData.settings then

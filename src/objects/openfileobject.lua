@@ -15,8 +15,7 @@ function OpenFileObject:new()
 
 	-- Adds supported file extensions
 	for _, plugin in ipairs(Plugin.plugins) do
-		local i = plugin:getImportInspectable()
-		if i then
+		for _, i in ipairs(plugin:getImportInspectables()) do
 			local extensions = i:getSupportedExtensions()
 			if extensions then
 				for _, extension in ipairs(extensions) do
