@@ -1,4 +1,4 @@
-local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
 local SpriteWindow = require "plugins.sprite.spritewindow"
 local SpriteStatus = require "plugins.sprite.spritestatus"
 local Status = require "src.global.status"
@@ -6,23 +6,20 @@ local Resources = require "src.global.resources"
 local Sprite = require "plugins.sprite.spriteresource"
 local Palettes = require "src.global.palettes"
 local CreateSprite = require "plugins.sprite.objects.createsprite"
-local ImportSprite = require "plugins.sprite.objects.importsprite"
 local ExportSprite = require "plugins.sprite.objects.exportsprite"
 local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
 local Handler = require "src.global.handler"
 local SpriteFormats = require "plugins.sprite.formats.spriteformats"
+local SpriteGlobals = require "plugins.sprite.spriteglobals"
 
-local IntegerProperty = require "src.properties.integer"
-local StringProperty = require "src.properties.string"
-local EnumProperty = require "src.properties.enum"
-local BoolProperty = require "src.properties.bool"
-local ColorSelectionProperty = require "src.properties.colorselection"
+---@type SpritePlugin
+local SpritePlugin
 
 Handler.addFormat(SpriteFormats)
 
----@class SpriteEditor: Plugin
-local SpriteEditor = Plugin:extend()
+---@class SpriteEditor: Editor
+local SpriteEditor = Editor:extend()
 SpriteEditor.TYPE = "sprite"
 
 Sprite.setEditor(SpriteEditor)
@@ -103,7 +100,7 @@ function SpriteEditor:new(rules)
 	self.context = parentContext:asReference()
 	self.context["%editor"] = self
 	---@type SpriteEditor.Window
-	self.container = SpriteWindow(rules, self, self.context)
+	self.container = SpriteWindow(rules, SpritePlugin, self.context)
 	---@type SpriteStatus
 	self.statusContext = SpriteStatus()
 	self.statusContext:setEditor(self)
@@ -116,7 +113,7 @@ function SpriteEditor.getDefaultPalette()
 	---@type Palette
 	local palette
 	-- Find the default palette
-	local paletteName = SpriteEditor.defaultPalette:get()
+	local paletteName = SpritePlugin.defaultPalette:get()
 
 	---@type Palette
 	if paletteName ~= "" then
@@ -164,7 +161,7 @@ function SpriteEditor:onEnter()
 		if resource.TYPE == "sprite" then
 			---@cast resource Sprite
 			updateTitle(resource)
-			resource.undoStack.maxSize = SpriteEditor.maxUndo:get()
+			resource.undoStack.maxSize = SpriteGlobals.SpritePlugin.maxUndo:get()
 
 			local oldResource = self.oldSprite
 			if oldResource ~= resource then
@@ -211,65 +208,14 @@ function SpriteEditor:removeActionsFromResource()
 	end
 end
 
-function SpriteEditor:getCreateInspectable()
-	return CreateSprite()
-end
-
-function SpriteEditor:getImportInspectable()
-	return ImportSprite()
-end
-
 function SpriteEditor:getContext()
 	return self.context
 end
 
----@type IntegerProperty
-SpriteEditor.maxUndo = IntegerProperty(SpriteEditor, "Undo History Limit", 50)
-	:setKey("maxUndo")
-SpriteEditor.maxUndo:getRange()
-	:setMin(0)
----@type StringProperty
-SpriteEditor.defaultPalette = StringProperty(SpriteEditor, "Default Palette Name", "")
-	:setKey("defaultPalette")
----@type EnumProperty
-SpriteEditor.defaultDataExtension = EnumProperty(SpriteEditor, "Default Data Extension", ".lua")
-	:setKey("defaultDataExtension")
-SpriteEditor.defaultDataExtension:setOptions({
-	{
-		name = "*.lua",
-		value = "lua",
-	},
-	{
-		name = "*.json",
-		value = "json",
-	}
-})
----@type BoolProperty
-SpriteEditor.useOldLayout = BoolProperty(SpriteEditor, "Use Old Layout", false)
-	:setKey("useOldLayout")
----@type ColorSelectionProperty
-SpriteEditor.checkerboardPrimary = ColorSelectionProperty(
-	SpriteEditor, "Checkerboard Primary Color", {0.65, 0.65, 0.65}
-)
-	:setKey("checkerboardPrimary")
----@type ColorSelectionProperty
-SpriteEditor.checkerboardSecondary = ColorSelectionProperty(
-	SpriteEditor, "Checkerboard Secondary Color", {0.45, 0.45, 0.5}
-)
-	:setKey("checkerboardSecondary")
-
-local settings = {
-	SpriteEditor.maxUndo,
-	SpriteEditor.defaultPalette,
-	SpriteEditor.defaultDataExtension,
-	SpriteEditor.useOldLayout,
-	SpriteEditor.checkerboardPrimary,
-	SpriteEditor.checkerboardSecondary,
-}
-
-function SpriteEditor:getSettings()
-	return settings
+---@param plugin SpritePlugin
+function SpriteEditor:setSourcePlugin(plugin)
+	SpriteEditor.super.setSourcePlugin(self, plugin)
+	SpritePlugin = plugin
 end
 
-SpriteEditor:assignAsDefault()
 return SpriteEditor

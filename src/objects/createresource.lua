@@ -12,8 +12,8 @@ CreateResource.CLASS_NAME = "CreateResource"
 ---@type EnumProperty.Option[]
 local createTemplates = {}
 for _, plugin in ipairs(Plugin.plugins) do
-	local c = plugin:getCreateInspectable()
-	if c then
+	local inspectables = plugin:getCreateInspectables()
+	for _, c in ipairs(inspectables) do
 		createTemplates[#createTemplates+1] = {
 			name = c.OBJECT_NAME or plugin.TYPE,
 			value = c,
@@ -23,8 +23,8 @@ end
 
 ---@param newPlugin Plugin
 Plugin.pluginInitialized:addAction(function(newPlugin)
-	local c = newPlugin:getCreateInspectable()
-	if c then
+	local inspectables = newPlugin:getCreateInspectables()
+	for _, c in ipairs(inspectables) do
 		createTemplates[#createTemplates+1] = {
 			name = c.OBJECT_NAME or newPlugin.TYPE,
 			value = c,

@@ -1,7 +1,10 @@
 local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
+local Plan = require "lib.plan"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
 local Modal = require "src.global.modal"
+local ConfigGlobals = require "plugins.home.configglobals"
 
 local LabelProperty = require "src.properties.label"
 local ButtonProperty = require "src.properties.button"
@@ -9,6 +12,10 @@ local BoolProperty = require "src.properties.bool"
 local NumberProperty = require "src.properties.number"
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
+
+local HomeEditor = require "plugins.home.homeeditor"
+local SettingsEditor = require "plugins.settings.settingseditor"
+local KeysEditor = require "plugins.keys.keyeditor"
 
 local CreateProject = require "src.objects.createproject"
 
@@ -102,10 +109,10 @@ function GlobalConfig:new()
 	GlobalConfig.super.new(self)
 	---@type GlobalContext
 	self.context = GlobalContext()
-end
 
-function GlobalConfig:getContext()
-	return self.context
+	self.contexts = {
+		self.context
+	}
 end
 
 function GlobalConfig:getSessionData()
@@ -137,6 +144,8 @@ function GlobalConfig:setSessionData(data)
 			end
 		end
 	end
+
+	Editor.defaultEditors.home:setSessionData(data)
 end
 
 function GlobalConfig:getSettings()
@@ -153,9 +162,24 @@ function GlobalConfig:getSettings()
 	}
 end
 
-function GlobalConfig:getCreateInspectable()
-	return CreateProject()
+function GlobalConfig:getCreateInspectables()
+	return {CreateProject()}
 end
 
-GlobalConfig:assignAsDefault()
-return GlobalConfig
+function GlobalConfig:getContexts()
+	return self.contexts
+end
+
+local g = GlobalConfig()
+ConfigGlobals.GlobalConfig = g
+
+local rules = Plan.RuleFactory.full()
+
+local he = HomeEditor:assignAsDefault(rules)
+local se = SettingsEditor:assignAsDefault(rules)
+
+he:setSourcePlugin(g)
+se:setSourcePlugin(g)
+
+g:initialize()
+return g

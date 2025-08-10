@@ -35,12 +35,15 @@ local SpriteResource = require "plugins.sprite.spriteresource"
 local ProjectFormat = require "src.formats.projectformat"
 local Contexts = require "src.global.contexts"
 local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
 local Flux = require "lib.flux"
 local Status = require "src.global.status"
 
 local Handler = require "src.global.handler"
 local GplFormat = require "src.formats.gpl"
 local WgfFormat = require "src.formats.wgf"
+
+local SpritePlugin = require "plugins.sprite.spriteplugin"
 
 Handler.addFormat(GplFormat)
 Handler.addFormat(WgfFormat)
@@ -56,9 +59,9 @@ function love.load()
 	-- The GlobalContext
 	---@type GlobalContext
 	---@diagnostic disable-next-line: assign-type-mismatch
-	local globalContext = Plugin.defaultEditors.global:getContext()
+	local globalContext = GlobalConfig:getContexts()[1]
 	globalContext.uiRoot = uiRoot
-	Plugin.setGlobalContext(globalContext)
+	Editor.setGlobalContext(globalContext)
 	Contexts.pushContext(globalContext)
 
 	-- The Previewer, which relies on the GlobalContext being set

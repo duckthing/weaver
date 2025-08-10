@@ -1,11 +1,11 @@
 local Status = require "src.global.status"
-local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
 local HomeWindow = require "plugins.home.homewindow"
 local HomeStatus = require "plugins.home.homestatus"
-local GlobalConfig = require "src.global.config"
+local ConfigGlobals = require "plugins.home.configglobals"
 
----@class HomeEditor: Plugin
-local HomeEditor = Plugin:extend()
+---@class HomeEditor: Editor
+local HomeEditor = Editor:extend()
 HomeEditor.TYPE = "home"
 
 function HomeEditor:new(rules)
@@ -32,5 +32,11 @@ function HomeEditor:setSessionData()
 	end
 end
 
-HomeEditor:assignAsDefault()
+---@param plugin GlobalConfig
+function HomeEditor:setSourcePlugin(plugin)
+	HomeEditor.super.setSourcePlugin(self, plugin)
+	GlobalConfig = plugin
+	self.container.GlobalConfig = plugin
+end
+
 return HomeEditor

@@ -1,9 +1,9 @@
-local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
 local Resources = require "src.global.resources"
 local KeyWindow = require "plugins.keys.keywindow"
 
----@class KeyEditor: Plugin
-local KeyEditor = Plugin:extend()
+---@class KeyEditor: Editor
+local KeyEditor = Editor:extend()
 KeyEditor.TYPE = "key"
 
 function KeyEditor:new(rules)
