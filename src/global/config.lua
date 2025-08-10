@@ -40,6 +40,7 @@ GlobalConfig.pixelFont = BoolProperty(GlobalConfig, "Use Pixel Font", false)
 	:setKey("pixelFont")
 ---@type BoolProperty
 GlobalConfig.restoreWindowSize = BoolProperty(GlobalConfig, "Restore Window Size on Launch", true)
+	:setKey("restoreWindowSize")
 ---@type StringProperty
 GlobalConfig.defaultResource = StringProperty(GlobalConfig, "Default Resource to Create", "Sprite")
 	:setKey("defaultResource")
