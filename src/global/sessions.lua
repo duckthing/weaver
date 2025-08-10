@@ -126,6 +126,7 @@ function SessionsModule.load()
 	end
 
 	alreadyLoaded = {}
+	print(#Plugin.plugins)
 	for _, plugin in ipairs(Plugin.plugins) do
 		local sessionData = data[plugin.TYPE]
 		loadWithSessionData(plugin, sessionData)

@@ -1,9 +1,9 @@
-local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
 local Resources = require "src.global.resources"
 local SettingsWindow = require "plugins.settings.settingswindow"
 
----@class SettingsEditor: Plugin
-local SettingsEditor = Plugin:extend()
+---@class SettingsEditor: Editor
+local SettingsEditor = Editor:extend()
 SettingsEditor.TYPE = "settings"
 
 function SettingsEditor:new(rules)
@@ -32,5 +32,4 @@ function SettingsEditor:onExit()
 	end
 end
 
-SettingsEditor:assignAsDefault()
 return SettingsEditor

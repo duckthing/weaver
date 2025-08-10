@@ -1,4 +1,6 @@
 local Plugin = require "src.data.plugin"
+local Editor = require "src.data.editor"
+local Plan = require "lib.plan"
 local GlobalContext = require "src.objects.globalcontext"
 local Contexts = require "src.global.contexts"
 local Modal = require "src.global.modal"
@@ -9,6 +11,10 @@ local BoolProperty = require "src.properties.bool"
 local NumberProperty = require "src.properties.number"
 local IntegerProperty = require "src.properties.integer"
 local StringProperty = require "src.properties.string"
+
+local HomeEditor = require "plugins.home.homeeditor"
+local SettingsEditor = require "plugins.settings.settingseditor"
+local KeysEditor = require "plugins.keys.keyeditor"
 
 local CreateProject = require "src.objects.createproject"
 
@@ -137,6 +143,8 @@ function GlobalConfig:setSessionData(data)
 			end
 		end
 	end
+
+	Editor.defaultEditors.home:setSessionData(data)
 end
 
 function GlobalConfig:getSettings()
@@ -157,5 +165,8 @@ function GlobalConfig:getCreateInspectable()
 	return CreateProject()
 end
 
-GlobalConfig:assignAsDefault()
-return GlobalConfig
+local rules = Plan.RuleFactory.full()
+HomeEditor:assignAsDefault(rules)
+SettingsEditor:assignAsDefault(rules)
+
+return GlobalConfig()

@@ -3,6 +3,7 @@ local Plan = require "lib.plan"
 local Tabline = require "ui.main.tabline"
 local Toolbar = require "ui.main.toolbar"
 local StatusBar = require "ui.main.statusbar"
+local Editor = require "src.data.editor"
 
 -- These are required so that they are loaded
 local Plugin = require "src.data.plugin"
@@ -68,7 +69,7 @@ function Previewer:new(r)
 
 	---@param selectedResource Resource
 	Resources.onResourceSelected:addAction(function (selectedResource)
-		local bestEditor = Plugin.getDefaultEditor(selectedResource)
+		local bestEditor = Editor.getDefaultEditor(selectedResource)
 		local currentEditor = self.currentEditor
 		-- If the editor plugin is different, switch
 		if bestEditor ~= currentEditor then

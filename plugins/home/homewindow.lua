@@ -7,7 +7,6 @@ local VScroll = require "ui.components.containers.box.vscroll"
 local Label = require "ui.components.text.label"
 local LabelButton = require "ui.components.button.labelbutton"
 local Contexts = require "src.global.contexts"
-local GlobalConfig = require "src.global.config"
 local Handler = require "src.global.handler"
 local Info = require "src.meta"
 
@@ -15,6 +14,8 @@ local isWindows = love.system.getOS() == "Windows"
 
 ---@class HomeEditor.Window: Plan.Container
 local HomeWindow = Plan.Container:extend()
+---@type GlobalConfig
+HomeWindow.GlobalConfig = nil
 
 function HomeWindow:new(rules)
 	HomeWindow.super.new(self, rules)
@@ -150,9 +151,9 @@ function HomeWindow:showRecents(data)
 		local arr
 
 		if i == 1 then
-			arr = GlobalConfig.recentItems
+			arr = HomeWindow.GlobalConfig.recentItems
 		else
-			arr = GlobalConfig.recentProjects
+			arr = HomeWindow.GlobalConfig.recentProjects
 		end
 
 		if not arr then goto continue end
