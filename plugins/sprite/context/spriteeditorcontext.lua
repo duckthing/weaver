@@ -1001,7 +1001,7 @@ local actions = {
 		end
 	),
 	set_brush_to_selection_mask = Action(
-		"Set Brush to Selection Shape Mask",
+		"New Brush Mask from Selection Shape",
 		function(_, _, _, context)
 			---@type Sprite?
 			local sprite = context.sprite
@@ -1017,7 +1017,7 @@ local actions = {
 		end
 	),
 	set_brush_to_selection_color = Action(
-		"Set Brush to Selection Image Color",
+		"New Brush Image from Selection",
 		function(_, _, _, context)
 			---@type Sprite?
 			local sprite = context.sprite
