@@ -78,6 +78,7 @@ function love.load()
 	love.window.setIcon(love.image.newImageData("assets/icon_small.png"))
 
 	-- Load any bundled plugins automatically
+	-- TODO: Add permissions for loading things
 	---@param folder string
 	for _, folder in ipairs(love.filesystem.getDirectoryItems("plugins/")) do
 		local dir = ("plugins/%s"):format(folder)
