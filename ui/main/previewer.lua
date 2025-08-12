@@ -5,13 +5,6 @@ local Toolbar = require "ui.main.toolbar"
 local StatusBar = require "ui.main.statusbar"
 local Editor = require "src.data.editor"
 
--- These are required so that they are loaded
-local Plugin = require "src.data.plugin"
-local HomeEditor = require "plugins.home.homeeditor"
-local SpriteEditor = require "plugins.sprite.spriteeditor"
-local SettingsEditor = require "plugins.settings.settingseditor"
-local KeyEditor = require "plugins.keys.keyeditor"
-
 ---@class Previewer: Plan.Container
 local Previewer = Plan.Container:extend()
 Previewer.CLASS_NAME = "Previewer"

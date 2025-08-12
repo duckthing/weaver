@@ -9,14 +9,10 @@ local CreateSprite = require "plugins.sprite.objects.createsprite"
 local ExportSprite = require "plugins.sprite.objects.exportsprite"
 local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
-local Handler = require "src.global.handler"
-local SpriteFormats = require "plugins.sprite.formats.spriteformats"
 local SpriteGlobals = require "plugins.sprite.spriteglobals"
 
 ---@type SpritePlugin
 local SpritePlugin
-
-Handler.addFormat(SpriteFormats)
 
 ---@class SpriteEditor: Editor
 local SpriteEditor = Editor:extend()

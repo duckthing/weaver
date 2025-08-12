@@ -29,6 +29,7 @@ end
 -- local STRING_MAGIC_NUMBER = fromhex("501ACE00") -- "Solace00" (RIP)
 local STRING_MAGIC_NUMBER = fromhex("3EA7E400") -- "Weaver00"
 
+---@type {[Resource.Type]: Resource}
 local typeToResource = {}
 
 local function deepPrint(t, name, depth)
@@ -109,14 +110,15 @@ function WgfFormat:import(path, file)
 		headerTable = buf:decode()
 	end
 
-	if headerTable == nil then
-		return false, "Header was not found"
+	if type(headerTable) ~= "table" then
+		return false, ("Header was an unexpected type (%s)"):format(type(headerTable))
 	end
+	---@cast headerTable table
 
 	local ResourceType = typeToResource[headerTable.type]
 	if not ResourceType then
 		file:close()
-		return false, "Type not found"
+		return false, ("Resource type '%s' was not found; did you forget to enable a plugin?"):format(headerTable.type)
 	end
 
 	-- Read the rest of the file, and let the ResourceType handle it

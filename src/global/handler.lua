@@ -2,7 +2,6 @@ local nativefs = require "lib.nativefs"
 local Path = require "lib.path"
 local Status = require "src.global.status"
 local SaveObject = require "src.objects.saveobject"
-local Modal = require "src.global.modal"
 
 local Handler = {}
 

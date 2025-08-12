@@ -31,7 +31,6 @@ local Plan = require "lib.plan"
 local Modal = require "src.global.modal"
 local Resources = require "src.global.resources"
 local Palettes = require "src.global.palettes"
-local SpriteResource = require "plugins.sprite.spriteresource"
 local ProjectFormat = require "src.formats.projectformat"
 local Contexts = require "src.global.contexts"
 local Plugin = require "src.data.plugin"
@@ -42,8 +41,6 @@ local Status = require "src.global.status"
 local Handler = require "src.global.handler"
 local GplFormat = require "src.formats.gpl"
 local WgfFormat = require "src.formats.wgf"
-
-local SpritePlugin = require "plugins.sprite.spriteplugin"
 
 Handler.addFormat(GplFormat)
 Handler.addFormat(WgfFormat)
@@ -79,6 +76,24 @@ function love.load()
 
 	-- Icon
 	love.window.setIcon(love.image.newImageData("assets/icon_small.png"))
+
+	-- Load any bundled plugins automatically
+	---@param folder string
+	for _, folder in ipairs(love.filesystem.getDirectoryItems("plugins/")) do
+		local dir = ("plugins/%s"):format(folder)
+		if love.filesystem.getInfo(dir, "directory") then
+			-- Valid directory
+			---@param file string
+			for _, file in ipairs(love.filesystem.getDirectoryItems(dir)) do
+				local fullPath = ("%s/%s"):format(dir, file)
+				if file:find("plugin*%.lua") and love.filesystem.getInfo(fullPath) then
+					require(fullPath:gsub("/", "."):gsub("%.lua", ""))
+					goto nextFolder
+				end
+			end
+		end
+		::nextFolder::
+	end
 end
 
 function love.update(dt)

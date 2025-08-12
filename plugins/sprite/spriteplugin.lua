@@ -17,6 +17,10 @@ local SaveSprite = require "plugins.sprite.objects.savesprite"
 local ImportSprite = require "plugins.sprite.objects.importsprite"
 local ExportSprite = require "plugins.sprite.objects.exportsprite"
 
+local Handler = require "src.global.handler"
+local SpriteFormats = require "plugins.sprite.formats.spriteformats"
+Handler.addFormat(SpriteFormats)
+
 ---@class SpritePlugin: Plugin
 local SpritePlugin = Plugin:extend()
 SpritePlugin.TYPE = "sprite"
