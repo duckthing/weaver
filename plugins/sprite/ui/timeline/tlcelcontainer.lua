@@ -63,6 +63,7 @@ function CelTimelines:new(rules)
 end
 
 function CelTimelines:updateScroll()
+	-- TODO: Creating a sprite with settings open makes this check necessary, find out why
 	if self.sprite then
 		self.scrollX = math.max(0, math.min(self.scrollX, #self.sprite.frames * celSize - self.w))
 		self.scrollY = math.max(0, math.min(self.scrollY, #self.sprite.layers * celSize - self.h))
