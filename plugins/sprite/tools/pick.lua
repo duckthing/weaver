@@ -34,6 +34,7 @@ function Pick:startPress(imageX, imageY)
 	if not sprite then return end
 	if imageX < 0 or imageX >= sprite.width or imageY < 0 or imageY >= sprite.height then return end
 
+	SpriteTool.drawing = true
 	local sameLayer = Pick.sameLayer:get()
 	local event =
 		SpriteTool.primaryPressed and Pick.primaryColorSelected
@@ -96,8 +97,10 @@ function Pick:startPress(imageX, imageY)
 			event:trigger(r, g, b, a)
 		end
 	end
+end
 
-	PencilTool:selectTool()
+function Pick:stopPress()
+	SpriteTool.drawing = false
 end
 
 ---@type LabelProperty

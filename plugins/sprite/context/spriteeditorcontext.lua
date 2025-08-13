@@ -37,11 +37,15 @@ local actions = {
 				local wasDrawing = SpriteTool.drawing
 				if wasDrawing then
 					SpriteTool.currentTool:stopPress(SpriteTool.lastX, SpriteTool.lastY)
+					-- TODO: This pops the group from the Canvas after pressing a button
+					-- Make it more pretty?
+					sprite.undoStack:popGroup()
 				end
 
 				sprite.undoStack:undo()
 
 				if wasDrawing then
+					sprite.undoStack:pushGroup()
 					SpriteTool.currentTool:startPress(SpriteTool.lastX, SpriteTool.lastY)
 				end
 			end
