@@ -28,6 +28,12 @@ function LCSplit:updateSplit(...)
 	self.splitChanged:trigger(self.splitPosition)
 end
 
+local tableRules = Plan.Rules.new()
+	:addX(Plan.pixel(5))
+	:addY(Plan.pixel(60))
+	:addWidth(Plan.max(10))
+	:addHeight(Plan.max(60))
+
 local actionsRules = Plan.Rules.new()
 	:addX(Plan.pixel(0))
 	:addY(Plan.pixel(5))
@@ -39,6 +45,11 @@ function AnimContainer:new(rules)
 	self._clipMode = "clip"
 	---@type Timeline.Actions
 	self.timelineActions = AnimActions(actionsRules)
+
+	---@type Timeline.LCSplit
+	self.layerTable = LCSplit(tableRules, self.layerContainer, self.celContainer)
+	self.layerTable.splitPosition = 208
+	self.layerTable.resizeMode = "keepfirst"
 
 	self:addChild(self.timelineActions)
 end
