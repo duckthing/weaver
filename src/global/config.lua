@@ -19,6 +19,7 @@ local SettingsEditor = require "plugins.settings.settingseditor"
 local KeysEditor = require "plugins.keys.keyeditor"
 
 local CreateProject = require "src.objects.createproject"
+local ImportProject = require "src.objects.importproject"
 
 ---@class GlobalConfig: Plugin
 local GlobalConfig = Plugin:extend()
@@ -183,6 +184,10 @@ end
 
 function GlobalConfig:getCreateInspectables()
 	return {CreateProject()}
+end
+
+function GlobalConfig:getImportInspectables()
+	return {ImportProject()}
 end
 
 function GlobalConfig:getContexts()

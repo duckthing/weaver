@@ -21,7 +21,7 @@ function ImporterTemplate:onPathSet()
 	Modal.pushInspector(self)
 end
 
----Returns an array of supported file extensions (such as ".wgf", ".png")
+---Returns an array of supported file extensions (such as "wgf", "png", without the dot)
 ---@return string[]?
 function ImporterTemplate:getSupportedExtensions()
 	return nil
