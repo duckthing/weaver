@@ -59,7 +59,7 @@ end
 ---@return boolean success
 ---@return Sprite.Animation.TrackPoint[]? point
 function AnimationTrack:insertPoint(atTime, type, data)
-	local index = -1
+	local index = 0
 
 	for i = 1, #self.points do
 		local point = self.points[i]
@@ -82,7 +82,12 @@ function AnimationTrack:insertPoint(atTime, type, data)
 		end
 	end
 
-	if index ~= -1 then
+	if #self.points == 0 then
+		-- In case there aren't any points yet
+		index = 1
+	end
+
+	if index > 0 then
 		-- Found an index to insert at
 		---@type Sprite.Animation.TrackPoint
 		local point = {

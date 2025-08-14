@@ -9,6 +9,7 @@ local VSplit = require "ui.components.containers.split.vsplit"
 local Canvas = require "plugins.sprite.ui.canvas"
 local PaletteSidebar = require "plugins.sprite.ui.palette.palettecontainer"
 local Timeline = require "plugins.sprite.ui.timeline.timelinecontainer"
+local AnimContainer = require "plugins.sprite.ui.anim.animcontainer"
 local ToolDrawer = require "plugins.sprite.ui.tooldrawer"
 local HInspector = require "ui.main.hinspector"
 local VInspector = require "ui.main.vinspector"
@@ -33,12 +34,12 @@ end
 local SpriteWindow = Plan.Container:extend()
 
 ---@param rules Plan.Rules
----@param editor SpriteEditor
+---@param plugin SpritePlugin
 ---@param context SpriteEditor.Context
-function SpriteWindow:new(rules, editor, context)
+function SpriteWindow:new(rules, plugin, context)
 	SpriteWindow.super.new(self, rules)
-	---@type SpriteEditor
-	self.editor = editor
+	---@type SpritePlugin
+	self.editor = plugin
 
 	---@type SpriteCanvas
 	local canvas = Canvas(Plan.RuleFactory.full())
@@ -55,8 +56,8 @@ function SpriteWindow:new(rules, editor, context)
 	self.drawerUI = drawer
 
 	canvas.minH = 40
-	Canvas.checkerboardPrimary = editor.checkerboardPrimary:getColor()
-	Canvas.checkerboardSecondary = editor.checkerboardSecondary:getColor()
+	Canvas.checkerboardPrimary = plugin.checkerboardPrimary:getColor()
+	Canvas.checkerboardSecondary = plugin.checkerboardSecondary:getColor()
 
 	if useOldLayout then
 		palette.paletteColors.colorSize = 20
@@ -94,8 +95,16 @@ function SpriteWindow:new(rules, editor, context)
 		local inspector = VInspector(Plan.RuleFactory.full())
 		drawer.padding = 5
 
+		---@type AnimContainer
+		local animContainer = AnimContainer(Plan.RuleFactory.full())
+
+		---@type VSplit
+		local vsplit1 = VSplit(Plan.RuleFactory.full(), timeline, animContainer)
+		vsplit1.resizeMode = "keepsecond"
+		vsplit1:setSize(100)
+
 		---@type HSplit
-		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, timeline)
+		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, vsplit1)
 		hsplit1.resizeMode = "keepsecond"
 		hsplit1:setSize(112)
 
@@ -110,11 +119,11 @@ function SpriteWindow:new(rules, editor, context)
 		hsplit3:setSize(213)
 
 		---@type VSplit
-		local vsplit1 = VSplit(Plan.RuleFactory.full(), hsplit1, hsplit3)
-		vsplit1.resizeMode = "keepsecond"
-		vsplit1:setSize(190)
+		local vsplit2 = VSplit(Plan.RuleFactory.full(), hsplit1, hsplit3)
+		vsplit2.resizeMode = "keepsecond"
+		vsplit2:setSize(190)
 
-		self:addChild(vsplit1)
+		self:addChild(vsplit2)
 	end
 
 	---@param newResource Resource
