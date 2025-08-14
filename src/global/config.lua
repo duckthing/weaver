@@ -153,7 +153,12 @@ function GlobalConfig:setSessionData(data)
 			if data.maximized then
 				love.window.maximize()
 			else
-				love.window.setMode(data.windowW or DEFAULT_WINDOW_WIDTH, data.windowH or DEFAULT_WINDOW_HEIGHT, {resizable = true})
+				local desktopW, desktopH = love.window.getDesktopDimensions()
+				love.window.setMode(
+					math.min(data.windowW or DEFAULT_WINDOW_WIDTH, desktopW),
+					math.min(data.windowH or DEFAULT_WINDOW_HEIGHT, desktopH),
+					{resizable = true}
+				)
 			end
 		end
 	end
