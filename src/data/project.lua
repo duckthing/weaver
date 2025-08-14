@@ -2,7 +2,7 @@ local Resource = require "src.data.resource"
 
 ---@class Project: Resource
 local Project = Resource:extend()
-Project.TYPE = "Project"
+Project.TYPE = "project"
 
 function Project:new()
 	Project.super.new(self)

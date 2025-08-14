@@ -15,7 +15,7 @@ local tabTexture = love.graphics.newImage("assets/tab.png")
 tabTexture:setFilter("nearest", "nearest")
 
 local tabNP = NinePatch.new(3, 1, 3, 3, 1, 3, tabTexture)
-local iconSheet = SpriteSheet.new(resourceIconTexture, 8, 1)
+local iconSheet = SpriteSheet.new(resourceIconTexture, 9, 1)
 
 local closeButtonIcon = love.graphics.newImage("assets/close_button.png")
 closeButtonIcon:setFilter("nearest", "nearest")
@@ -70,6 +70,14 @@ local labelRules = Plan.Rules.new()
 	:addWidth(Plan.max(60))
 	:addHeight(Plan.parent())
 
+local typeToIconIndex = {
+	home = 1,
+	sprite = 4,
+	project = 8,
+	settings = 9,
+}
+local NO_ICON_FOUND_INDEX = 2
+
 ---@param rules Plan.Rules
 ---@param resource Resource
 function TabButton:new(rules, resource)
@@ -84,13 +92,7 @@ function TabButton:new(rules, resource)
 	self:addChild(self.label)
 	self.selected = false
 
-	if resource.TYPE == "home" then
-		self.iconIndex = 1
-	elseif resource.TYPE == "sprite" then
-		self.iconIndex = 4
-	else
-		self.iconIndex = 2
-	end
+	self.iconIndex = typeToIconIndex[resource.TYPE] or NO_ICON_FOUND_INDEX
 
 	---@type TabButton.CloseTab
 	self.closeButton = CloseTabButton(closeTabRules, resource)
