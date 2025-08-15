@@ -48,8 +48,8 @@ function AnimContainer:new(rules)
 
 	---@type Timeline.LCSplit
 	self.layerTable = LCSplit(tableRules, self.layerContainer, self.celContainer)
-	self.layerTable.splitPosition = 208
 	self.layerTable.resizeMode = "keepfirst"
+	self.layerTable:setSize(208)
 
 	self:addChild(self.timelineActions)
 end
