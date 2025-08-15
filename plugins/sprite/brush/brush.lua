@@ -443,17 +443,8 @@ function Brush:drawOnCanvas(x, y, shaderMode, canvas)
 			y - (y - self.sourceOffsetY:get() - canvas.imageY) % bh
 		local cameraX, cameraY, scale = canvas.cameraX, canvas.cameraY, canvas.scale
 
-		local screenX, screenY = canvas:worldToScreen(
-			x - math.floor(bw * 0.5),
-			y - math.floor(bh * 0.5)
-		)
-
-		love.graphics.intersectScissor(
-			screenX + 1,
-			screenY + 1,
-			math.floor(bw * scale) - 2,
-			math.floor(bh * scale) - 2
-		)
+		local left, top = love.graphics.transformPoint(x - offsetX, y - offsetY)
+		love.graphics.intersectScissor(left, top, bw * scale, bh * scale)
 
 		--TODO: Make this draw 4 times instead of 9
 		for cx = -1, 1 do
