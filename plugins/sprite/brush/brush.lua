@@ -441,7 +441,7 @@ function Brush:drawOnCanvas(x, y, shaderMode, canvas)
 		local brushX, brushY =
 			x - (x - self.sourceOffsetX:get() - canvas.imageX) % bw,
 			y - (y - self.sourceOffsetY:get() - canvas.imageY) % bh
-		local cameraX, cameraY, scale = canvas.cameraX, canvas.cameraY, canvas.scale
+		local scale = canvas.scale
 
 		local left, top = love.graphics.transformPoint(x - offsetX, y - offsetY)
 		love.graphics.intersectScissor(left, top, bw * scale, bh * scale)
