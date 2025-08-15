@@ -2,7 +2,10 @@ local Plan = require "lib.plan"
 local Luvent = require "lib.luvent"
 
 local VSplit = require "ui.components.containers.split.vsplit"
+local CelTimelines = require "plugins.sprite.ui.anim.animsheet"
+local LayerTimelines = require "plugins.sprite.ui.anim.animtrackcontainer"
 local AnimActions = require "plugins.sprite.ui.anim.animactions"
+local TLHeader = require "plugins.sprite.ui.anim.animheader"
 
 ---@class AnimTimeline: Plan.Container
 local AnimContainer = Plan.Container:extend()
@@ -28,30 +31,81 @@ function LCSplit:updateSplit(...)
 	self.splitChanged:trigger(self.splitPosition)
 end
 
-local tableRules = Plan.Rules.new()
-	:addX(Plan.pixel(5))
-	:addY(Plan.pixel(60))
-	:addWidth(Plan.max(10))
-	:addHeight(Plan.max(60))
-
 local actionsRules = Plan.Rules.new()
 	:addX(Plan.pixel(0))
 	:addY(Plan.pixel(5))
 	:addWidth(Plan.parent())
 	:addHeight(Plan.pixel(24))
 
+local tableRules = Plan.Rules.new()
+	:addX(Plan.pixel(5))
+	:addY(Plan.pixel(60))
+	:addWidth(Plan.max(10))
+	:addHeight(Plan.max(60))
+
+local headerRules = Plan.Rules.new()
+	:addX(Plan.pixel(5))
+	:addY(Plan.pixel(34))
+	:addWidth(Plan.max(10))
+	:addHeight(Plan.pixel(26))
+
 function AnimContainer:new(rules)
 	AnimContainer.super.new(self, rules)
 	self._clipMode = "clip"
-	---@type Timeline.Actions
-	self.timelineActions = AnimActions(actionsRules)
+	self.minH = 34
+	---@type AnimTimeline.Tracks
+	self.layerContainer = LayerTimelines(Plan.RuleFactory.full())
 
-	---@type Timeline.LCSplit
+	---@type AnimTimeline.Sheet
+	self.celContainer = CelTimelines(Plan.RuleFactory.full())
+
+	---@type AnimTimeline.Header
+	self.header = TLHeader(headerRules)
+
+	---@type AnimTimeline.Actions
+	self.animActions = AnimActions(actionsRules)
+
+	---@type AnimTimeline.LCSplit
 	self.layerTable = LCSplit(tableRules, self.layerContainer, self.celContainer)
 	self.layerTable.resizeMode = "keepfirst"
 	self.layerTable:setSize(208)
 
-	self:addChild(self.timelineActions)
+	---@type Sprite?
+	self.activeSprite = nil
+	---@type SpriteState?
+	self.spriteState = nil
+
+	---@type string?
+	self._layerChangedAction = nil
+	---@type string?
+	self._frameChangedAction = nil
+
+	self:addChild(self.header)
+	self:addChild(self.animActions)
+	self:addChild(self.layerTable)
+
+	self.layerContainer.scrollChanged:addAction(function(posY)
+		self.celContainer.scrollY = posY
+		self.celContainer:recalculateBoundaries()
+		self.header:recalculateBoundaries()
+	end)
+
+	self.celContainer.scrollChanged:addAction(function(posX, posY)
+		self.layerContainer.targetOffset = posY
+		self.layerContainer:refresh()
+		self.header.scrollX = posX
+		self.header:recalculateBoundaries()
+	end)
+
+	self.layerTable.splitChanged:addAction(function(splitX)
+		self.header.splitX = splitX
+		self.header:refresh()
+	end)
+
+	self.header.scrollChanged:addAction(function(posX)
+		self.celContainer.scrollX = posX
+		self.celContainer:recalculateBoundaries()
+	end)
 end
 
 function AnimContainer:draw()
@@ -62,6 +116,79 @@ function AnimContainer:draw()
 	love.graphics.rectangle("fill", self.x, self.y, self.w, self.h)
 	AnimContainer.super.draw(self)
 	love.graphics.setScissor(ox, oy, ow, oh)
+end
+
+---@param sprite Sprite
+function AnimContainer:onSpriteSelected(sprite)
+	self.layerContainer:onSpriteSelected(sprite)
+	self.celContainer:onSpriteSelected(sprite)
+	self.header:onSpriteSelected(sprite)
+	self.activeSprite = sprite
+
+	local state = sprite.spriteState
+	self.spriteState = state
+	self.header.splitX = self.layerTable.splitPosition
+	self.header:recalculateBoundaries()
+
+	self._layerChangedAction = state.layer.valueChanged:addAction(function(property, value)
+		local layer = self.activeSprite.layers[value]
+		self:onLayerSelected(layer)
+	end)
+
+	self._frameChangedAction = state.frame.valueChanged:addAction(function(property, value)
+		local frame = self.activeSprite.frames[value]
+		self:onFrameSelected(frame)
+	end)
+end
+
+function AnimContainer:onSpriteDeselected()
+	self.layerContainer:onSpriteDeselected()
+	self.celContainer:onSpriteDeselected()
+	self.header:onSpriteDeselected()
+
+	---@type SpriteState
+	local oldState = self.spriteState
+	if self._layerChangedAction then
+		oldState.layer.valueChanged:removeAction(self._layerChangedAction)
+		self._layerChangedAction = nil
+	end
+
+	if self._frameChangedAction then
+		oldState.frame.valueChanged:removeAction(self._frameChangedAction)
+		self._frameChangedAction = nil
+	end
+
+	self.activeSprite = nil
+	self.spriteState = nil
+end
+
+---@param selectedLayer Sprite.Layer
+function AnimContainer:onLayerSelected(selectedLayer)
+	self.layerContainer:onLayerSelected(selectedLayer)
+	self.celContainer:onLayerSelected(selectedLayer)
+end
+
+---@param selectedFrame Sprite.Frame
+function AnimContainer:onFrameSelected(selectedFrame)
+	self.celContainer:onFrameSelected(selectedFrame)
+end
+
+-- (Receive bubble) Select layer
+---@param sourceElement Plan.Container
+---@param selectedLayer Sprite.Layer
+---@return false
+function AnimContainer:_bSelectLayer(sourceElement, selectedLayer)
+	self.spriteState.layer:set(selectedLayer.index)
+	return false
+end
+
+-- (Receive bubble) Select frame
+---@param sourceElement Plan.Container
+---@param selectedFrame Sprite.Frame
+---@return false
+function AnimContainer:_bSelectFrame(sourceElement, selectedFrame)
+	self.spriteState.frame:set(selectedFrame.index)
+	return false
 end
 
 return AnimContainer

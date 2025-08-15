@@ -13,8 +13,8 @@ local backgroundNP = NinePatch.new(2, 1, 2, 2, 1, 2, backgroundTexture)
 
 local ibeamCursor = love.mouse.getSystemCursor("ibeam")
 
----@class Timeline.LayerLabel: Timeline.Button
-local LayerEdit = BaseButton:extend()
+---@class AnimTimeline.TrackLabel: Timeline.Button
+local TrackLabel = BaseButton:extend()
 
 ---@type Action[]
 local layerActions = {
@@ -39,8 +39,8 @@ local lineEditRules = Plan.Rules.new()
 	:addWidth(Plan.max(4))
 	:addHeight(Plan.parent())
 
-LayerEdit.scale = 2
----@param self Timeline.LayerLabel
+TrackLabel.scale = 2
+---@param self AnimTimeline.TrackLabel
 local function selectLayer(self)
 	self:bubble("_bSelectLayer", self.layer)
 end
@@ -48,8 +48,8 @@ end
 ---@param rules Plan.Rules
 ---@param sprite Sprite
 ---@param layer Sprite.Layer
-function LayerEdit:new(rules, sprite, layer)
-	LayerEdit.super.new(self, rules, selectLayer, 2)
+function TrackLabel:new(rules, sprite, layer)
+	TrackLabel.super.new(self, rules, selectLayer, 2)
 	self._passMode = "pass"
 	self.sprite = sprite
 	self.layer = layer
@@ -79,8 +79,8 @@ function LayerEdit:new(rules, sprite, layer)
 	context = newContext
 end
 
-function LayerEdit:refresh()
-	LayerEdit.super.refresh(self)
+function TrackLabel:refresh()
+	TrackLabel.super.refresh(self)
 	if not self.editingName then
 		self._passMode = "sink"
 		self.lineEdit._passMode = "pass"
@@ -90,7 +90,7 @@ function LayerEdit:refresh()
 	end
 end
 
-function LayerEdit:mousepressed(x, y, button, isTouch, pressCount)
+function TrackLabel:mousepressed(x, y, button, isTouch, pressCount)
 	if pressCount > 1 and (button == 1 or button == 2) and not self.editingName and self.selected then
 		-- Left clicked twice or more
 		self.editingName = true
@@ -100,20 +100,20 @@ function LayerEdit:mousepressed(x, y, button, isTouch, pressCount)
 		self:mousereleased(x, y, button)
 		self.lineEdit:mousepressed(x, y, button, isTouch, pressCount)
 	else
-		LayerEdit.super.mousepressed(self, x, y, button, isTouch, pressCount)
+		TrackLabel.super.mousepressed(self, x, y, button, isTouch, pressCount)
 	end
 end
 
-function LayerEdit:mousereleased(x, y, button)
+function TrackLabel:mousereleased(x, y, button)
 	if button == 2 then
 		self:onClick()
 		Modal.pushMenu(x, y, layerActions, self, context)
 	else
-		LayerEdit.super.mousereleased(self, x, y, button)
+		TrackLabel.super.mousereleased(self, x, y, button)
 	end
 end
 
-function LayerEdit:lineEditUnfocused(_, text)
+function TrackLabel:lineEditUnfocused(_, text)
 	self.editingName = false
 	self.sprite.undoStack:commit(
 		RenameLayerCommand(self.sprite, self.layer, text)
@@ -121,7 +121,7 @@ function LayerEdit:lineEditUnfocused(_, text)
 	love.mouse.setCursor()
 end
 
-function LayerEdit:draw()
+function TrackLabel:draw()
 	if self.editingName then
 		love.graphics.setColor(0.12, 0.12, 0.15)
 	elseif self.pressing then
@@ -142,7 +142,7 @@ function LayerEdit:draw()
 		end
 	end
 	backgroundNP:draw(self.x, self.y, self.w, self.h, self.scale)
-	LayerEdit.super.draw(self)
+	TrackLabel.super.draw(self)
 end
 
-return LayerEdit
+return TrackLabel

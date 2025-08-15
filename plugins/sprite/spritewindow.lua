@@ -95,8 +95,9 @@ function SpriteWindow:new(rules, plugin, context)
 		local inspector = VInspector(Plan.RuleFactory.full())
 		drawer.padding = 5
 
-		---@type AnimContainer
+		---@type AnimTimeline
 		local animContainer = AnimContainer(Plan.RuleFactory.full())
+		self.animContainer = animContainer
 
 		---@type VSplit
 		local vsplit1 = VSplit(Plan.RuleFactory.full(), timeline, animContainer)
@@ -166,6 +167,10 @@ function SpriteWindow:new(rules, plugin, context)
 
 			canvas:onSpriteSelected(selectedResource)
 			timeline:onSpriteSelected(selectedResource)
+
+			if self.animContainer then
+				self.animContainer:onSpriteSelected(selectedResource)
+			end
 		end
 	end)
 
@@ -196,6 +201,10 @@ function SpriteWindow:new(rules, plugin, context)
 
 			canvas:onSpriteDeselected(deselectedResource)
 			timeline:onSpriteDeselected()
+
+			if self.animContainer then
+				self.animContainer:onSpriteDeselected()
+			end
 		end
 	end)
 

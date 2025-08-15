@@ -2,7 +2,7 @@ local Plan = require "lib.plan"
 local Luvent = require "lib.luvent"
 local VScroll = require "ui.components.containers.box.vscroll"
 
-local LayerTimeline = require "plugins.sprite.ui.timeline.tllayerbutton"
+local TrackButton = require "plugins.sprite.ui.anim.animtrackbutton"
 
 local timelineRules = Plan.Rules.new()
 	:addX(Plan.pixel(0))
@@ -10,11 +10,11 @@ local timelineRules = Plan.Rules.new()
 	:addWidth(Plan.parent())
 	:addHeight(Plan.pixel(26))
 
----@class Timeline.Layers: VScroll
-local LayerContainer = VScroll:extend()
+---@class AnimTimeline.Tracks: VScroll
+local TrackContainer = VScroll:extend()
 
-function LayerContainer:new(rules)
-	LayerContainer.super.new(self, rules)
+function TrackContainer:new(rules)
+	TrackContainer.super.new(self, rules)
 	self.allowScrolling = true
 	self.scrollSpeed = 26
 	self.minW = 78
@@ -24,17 +24,17 @@ function LayerContainer:new(rules)
 end
 
 ---@param sprite Sprite
-function LayerContainer:onSpriteSelected(sprite)
+function TrackContainer:onSpriteSelected(sprite)
 	local selectedLayer = sprite.layers[sprite.spriteState.layer:get()]
 	for _, layer in ipairs(sprite.layers) do
-		---@type Timeline.Layer
-		local layerLabel = LayerTimeline(timelineRules, sprite, layer)
-		layerLabel.tlLayerLabel.selected = layer == selectedLayer
+		---@type AnimTimeline.TrackButton
+		local layerLabel = TrackButton(timelineRules, sprite, layer)
+		layerLabel.animTrackLabel.selected = layer == selectedLayer
 		self:addChild(layerLabel)
 	end
 
 	self._layerInsertedAction = sprite.layerInserted:addAction(function(buf, newLayer, index)
-		self:addChild(LayerTimeline(timelineRules, sprite, newLayer), index)
+		self:addChild(TrackButton(timelineRules, sprite, newLayer), index)
 	end)
 
 	self._layerMovedAction = sprite.layerMoved:addAction(function(s, iLayer, i, jLayer, j)
@@ -50,7 +50,7 @@ function LayerContainer:onSpriteSelected(sprite)
 	self.sprite = sprite
 end
 
-function LayerContainer:onSpriteDeselected()
+function TrackContainer:onSpriteDeselected()
 	self:clearChildren()
 	self.sprite.layerInserted:removeAction(self._layerInsertedAction)
 	self.sprite.layerMoved:removeAction(self._layerMovedAction)
@@ -59,17 +59,17 @@ function LayerContainer:onSpriteDeselected()
 	self.sprite = nil
 end
 
-function LayerContainer:onLayerSelected(selectedLayer)
+function TrackContainer:onLayerSelected(selectedLayer)
 	for _, layerLabel in ipairs(self.children) do
-		---@cast layerLabel Timeline.Layer
-		layerLabel.tlLayerLabel.selected = layerLabel.layer == selectedLayer
+		---@cast layerLabel AnimTimeline.TrackButton
+		layerLabel.animTrackLabel.selected = layerLabel.layer == selectedLayer
 	end
 end
 
-function LayerContainer:wheelmoved(...)
+function TrackContainer:wheelmoved(...)
 	---@diagnostic disable-next-line
-	LayerContainer.super.wheelmoved(self, ...)
+	TrackContainer.super.wheelmoved(self, ...)
 	self.scrollChanged:trigger(self.offset)
 end
 
-return LayerContainer
+return TrackContainer

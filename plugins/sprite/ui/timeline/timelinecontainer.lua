@@ -123,8 +123,8 @@ function TimelineContainer:onSpriteSelected(sprite)
 	self.layerContainer:onSpriteSelected(sprite)
 	self.celContainer:onSpriteSelected(sprite)
 	self.header:onSpriteSelected(sprite)
-	self.timelineActions:onSpriteSelected(sprite)
 	self.activeSprite = sprite
+
 	local state = sprite.spriteState
 	self.spriteState = state
 	self.header.splitX = self.layerTable.splitPosition
@@ -145,7 +145,6 @@ function TimelineContainer:onSpriteDeselected()
 	self.layerContainer:onSpriteDeselected()
 	self.celContainer:onSpriteDeselected()
 	self.header:onSpriteDeselected()
-	self.timelineActions:onSpriteDeselected()
 
 	---@type SpriteState
 	local oldState = self.spriteState

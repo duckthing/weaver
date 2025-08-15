@@ -24,12 +24,6 @@ local containerRules = Plan.Rules.new()
 	:addWidth(Plan.keep())
 	:addHeight(Plan.parent())
 
-local dropdownRules = Plan.Rules.new()
-	:addX(Plan.keep())
-	:addY(Plan.pixel(0))
-	:addWidth(Plan.keep())
-	:addHeight(Plan.parent())
-
 ---@class Timeline.ActionButton: IconButton
 local TLActionButton = IconButton:extend()
 
@@ -116,15 +110,6 @@ function TimelineActions:new(rules)
 	-- self.animationDropdown = animationDropdown
 	self:addChild(layerControls)
 	self:addChild(playerControls)
-end
-
----@param sprite Sprite
-function TimelineActions:onSpriteSelected(sprite)
-	-- self.animationDropdown:bindToProperty(sprite.spriteState.currentAnimation)
-end
-
-function TimelineActions:onSpriteDeselected()
-	-- self.animationDropdown:bindToProperty()
 end
 
 return TimelineActions
