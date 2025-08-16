@@ -79,6 +79,14 @@ function EnumProperty:setValue(value)
 	end
 end
 
+---Sets the index of this EnumProperty
+---@param index integer
+function EnumProperty:setIndex(index)
+	if index > 0 and index < #self.options then
+		self:set(self.options[math.max(1, math.min(index, #self.options))])
+	end
+end
+
 ---Returns the _Option_
 ---@return EnumProperty.Option
 function EnumProperty:get()
@@ -89,6 +97,12 @@ end
 ---@return any
 function EnumProperty:getValue()
 	return (self.value and self.value.value)
+end
+
+---Returns the index of the selected Option
+---@return integer index
+function EnumProperty:getIndex()
+	return self.index
 end
 
 function EnumProperty:getVElement()

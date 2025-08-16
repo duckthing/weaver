@@ -8,6 +8,7 @@ local SaveSprite = require "plugins.sprite.objects.savesprite"
 local UndoStack = require "src.data.undostack"
 local ResizeCommand = require "plugins.sprite.commands.resizecommand"
 local Blend = require "plugins.sprite.common.blend"
+local SpriteAnimation = require "plugins.sprite.data.animation"
 
 local Palettes = require "src.global.palettes"
 local WgfFormat = require "src.formats.wgf"
@@ -290,19 +291,29 @@ function Sprite:new(width, height, name, palette)
 	self.saveTemplate = SaveSprite(self)
 	---@type UndoStack
 	self.undoStack = UndoStack()
+	---@type Sprite.Animation[]
+	self.animations = {}
 
-	self.layerCreated = Luvent.newEvent()
-	self.layerInserted = Luvent.newEvent()
-	self.frameCreated = Luvent.newEvent()
-	self.celCreated = Luvent.newEvent()
-	self.celIndexEdited = Luvent.newEvent()
-	self.layerMoved = Luvent.newEvent()
-	self.frameMoved = Luvent.newEvent()
-	self.layerInserted = Luvent.newEvent()
-	self.frameInserted = Luvent.newEvent()
-	self.layerRemoved = Luvent.newEvent()
-	self.frameRemoved = Luvent.newEvent()
-	self.spriteResized = Luvent.newEvent()
+	do
+		-- All events
+		self.layerCreated = Luvent.newEvent()
+		self.layerInserted = Luvent.newEvent()
+		self.layerMoved = Luvent.newEvent()
+		self.layerRemoved = Luvent.newEvent()
+
+		self.frameCreated = Luvent.newEvent()
+		self.frameInserted = Luvent.newEvent()
+		self.frameMoved = Luvent.newEvent()
+		self.frameRemoved = Luvent.newEvent()
+
+		self.animationCreated = Luvent.newEvent()
+		self.animationInserted = Luvent.newEvent()
+		self.animationRemoved = Luvent.newEvent()
+
+		self.celCreated = Luvent.newEvent()
+		self.celIndexEdited = Luvent.newEvent()
+		self.spriteResized = Luvent.newEvent()
+	end
 
 	self:createLayer()
 	self:createFrame()
@@ -369,6 +380,23 @@ function Sprite:createFrame(insertAt)
 	self:insertFrame(newFrameIndex, newFrame)
 
 	return newFrame, newFrameIndex
+end
+
+---Creates a new Animation
+---@param insertAt integer?
+---@return Sprite.Animation: newAnimation
+---@return integer: newAnimationIndex
+function Sprite:createAnimation(insertAt)
+	local newAnimationIndex = (insertAt and math.max(1, math.min(insertAt, #self.animations + 1)))
+						or #self.animations + 1
+	---@type Sprite.Animation
+	local newAnimation = SpriteAnimation(self, newAnimationIndex)
+
+	-- Trigger the events
+	self.animationCreated:trigger(self, newAnimation, newAnimationIndex)
+	self:insertAnimation(newAnimationIndex, newAnimation)
+
+	return newAnimation, newAnimationIndex
 end
 
 ---Clones a cel, and returns it. Returns nil if the index doesn't exist.
@@ -537,6 +565,10 @@ function Sprite:insertFrame(insertAt, existingFrame)
 	return newFrameIndex
 end
 
+---Inserts an EXISTING layer. You may be looking for Sprite:createLayer().
+---@param insertAt integer
+---@param existingLayer Sprite.Layer
+---@return integer newLayerIndex
 function Sprite:insertLayer(insertAt, existingLayer)
 	local newLayerIndex = (insertAt and math.max(1, math.min(insertAt, #self.layers + 1)))
 						or #self.layers + 1
@@ -550,6 +582,45 @@ function Sprite:insertLayer(insertAt, existingLayer)
 
 	-- Trigger the events
 	self.layerInserted:trigger(self, existingLayer, newLayerIndex)
+	return newLayerIndex
+end
+
+---Inserts an EXISTING animation. You may be looking for Sprite:createAnimation().
+---@param insertAt integer
+---@param existingAnimation Sprite.Animation
+---@return integer newAnimationIndex
+function Sprite:insertAnimation(insertAt, existingAnimation)
+	local newAnimationIndex = (insertAt and math.max(1, math.min(insertAt, #self.animations + 1)))
+						or #self.animations + 1
+	-- Insert into the animations array
+	table.insert(self.animations, newAnimationIndex, existingAnimation)
+
+	-- Trigger the events
+	self.animationInserted:trigger(self, existingAnimation, newAnimationIndex)
+	return newAnimationIndex
+end
+
+---Removes an animation and fires the animation removed event
+---@param animationI integer
+---@return boolean success
+function Sprite:removeAnimation(animationI)
+	-- Only do it if there's more than 1 Animation
+	if #self.animations <= 1 then return false end
+	local animation = self.animations[animationI]
+	if animation then
+		-- Remove the Animation
+		table.remove(self.animations, animationI)
+
+		-- Change the cel indices
+		for _, layer in ipairs(self.layers) do
+			table.remove(layer.celIndices, animationI)
+		end
+
+		-- Trigger the animation events
+		self.animationRemoved:trigger(self, animation, animationI)
+		return true
+	end
+	return false
 end
 
 ---Removes a frame and fires the frame removed event

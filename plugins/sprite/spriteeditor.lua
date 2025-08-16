@@ -88,6 +88,17 @@ local spriteToolbarActions = {
 			actions.move_frame_right,
 		}
 	},
+	{
+		name = "Animation",
+		items = {
+			actions.new_animation,
+			actions.clone_animation,
+			actions.delete_animation,
+			actions.new_track,
+			actions.clone_track,
+			actions.delete_track,
+		}
+	},
 }
 
 function SpriteEditor:new(rules)

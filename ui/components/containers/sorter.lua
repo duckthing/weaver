@@ -33,9 +33,9 @@ function SorterContainer:sort()
 		-- The sort function can return true to tell the parent that it changed
 		-- TODO: Find a better way than sorting twice
 		self._sorting = true
-		self:_sortFunction()
+		self._gotBubbleWhileSorting = self:_sortFunction() or self._gotBubbleWhileSorting
 		self._sorting = false
-		self._gotBubbleWhileSorting = false
+		-- self._gotBubbleWhileSorting = false
 		self:bubble("_bubbleSizeChanged")
 	end
 end

@@ -294,6 +294,92 @@ local actions = {
 			end
 		end
 	),
+	new_animation = Action(
+		"Add Animation",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+				local animationProperty = sprite.spriteState.currentAnimation
+				local newAnimationIndex = animationProperty:getIndex() + 1
+				local layer = sprite:createAnimation(newAnimationIndex)
+				-- local insertCommand = InsertLayerCommand(sprite, true, layer)
+				-- sprite.undoStack:commitWithoutPerforming(insertCommand)
+				animationProperty:setIndex(newAnimationIndex)
+			end
+		end
+	),
+	clone_animation = Action(
+		"Clone Animation",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
+	delete_animation = Action(
+		"Delete Animation",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+				local animationProperty = sprite.spriteState.currentAnimation
+				local animation = animationProperty:get()
+				if animation ~= nil then
+					-- Not the empty "All" animation
+					-- local insertCommand = InsertLayerCommand(sprite, true, layer)
+					-- sprite.undoStack:commitWithoutPerforming(insertCommand)
+					sprite:removeAnimation(animationProperty:getIndex())
+				end
+			end
+		end
+	),
+	inspect_animation = Action(
+		"Inspect Animation",
+		function (_, _, _, context)
+			---@type Sprite
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
+	new_track = Action(
+		"Add Track",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
+	clone_track = Action(
+		"Clone Track",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
+	delete_track = Action(
+		"Delete Track",
+		function(_, _, _, context)
+			---@type Sprite?
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
+	inspect_track = Action(
+		"Inspect Track",
+		function (_, _, _, context)
+			---@type Sprite
+			local sprite = context.sprite
+			if sprite then
+			end
+		end
+	),
 	merge_layer_down = Action(
 		"Merge Layer Down",
 		function(_, _, _, context)

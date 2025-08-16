@@ -68,13 +68,15 @@ function TimelineActions:new(rules)
 	self.justify = "end"
 	self.padding = 4
 
-	local addFrameButton = TLActionButton(buttonRules, "new_frame", iconSpriteSheet, 16, 2)
-	local removeFrameButton = TLActionButton(buttonRules, "delete_frame", iconSpriteSheet, 17, 2)
-	local cloneFrameButton = TLActionButton(buttonRules, "clone_frame", iconSpriteSheet, 18, 2)
+	---@type DropdownButton
+	local animationDropdown = DropdownButton(dropdownRules)
+	local addFrameButton = TLActionButton(buttonRules, "new_track", iconSpriteSheet, 16, 2)
+	local removeFrameButton = TLActionButton(buttonRules, "delete_track", iconSpriteSheet, 17, 2)
+	local cloneFrameButton = TLActionButton(buttonRules, "clone_track", iconSpriteSheet, 18, 2)
 
 	---@type HFlex
 	local playerControls = HFlex(containerRules)
-	-- playerControls:addChild(animationDropdown)
+	playerControls:addChild(animationDropdown)
 	playerControls:addChild(addFrameButton)
 	playerControls:addChild(removeFrameButton)
 	playerControls:addChild(cloneFrameButton)
@@ -82,8 +84,17 @@ function TimelineActions:new(rules)
 	playerControls.padding = 0
 	playerControls.getDesiredDimensions = containersGetDesiredWidth
 
-	-- self.animationDropdown = animationDropdown
+	self.animationDropdown = animationDropdown
 	self:addChild(playerControls)
+end
+
+---@param sprite Sprite
+function TimelineActions:onSpriteSelected(sprite)
+	self.animationDropdown:bindToProperty(sprite.spriteState.currentAnimation)
+end
+
+function TimelineActions:onSpriteDeselected()
+	self.animationDropdown:bindToProperty()
 end
 
 return TimelineActions

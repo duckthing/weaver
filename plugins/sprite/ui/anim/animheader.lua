@@ -29,7 +29,7 @@ local buttonRules = Plan.Rules.new()
 	:addHeight(Plan.parent())
 
 ---@type Action[]
-local frameMenuItems = {
+local trackMenuItems = {
 	Action(
 		"Properties",
 		function (action, source, presenter, context)
@@ -37,18 +37,6 @@ local frameMenuItems = {
 		end
 	),
 }
-
-local function setAllVisiblity()
-	Contexts.raiseAction("toggle_all_layer_visible")
-end
-
-local function setAllLocked()
-	Contexts.raiseAction("toggle_all_layer_lock")
-end
-
-local function setAllLinked()
-	Contexts.raiseAction("toggle_all_layer_link")
-end
 
 ---@param self AnimTimeline.TrackLabel
 local function moveFrameLeft(self)
@@ -78,17 +66,17 @@ function AnimHeader:new(rules)
 	self.pressCount = 1
 	self.scrollChanged = Luvent.newEvent()
 
-	local visiblityButton = AnimIconButton(buttonRules, setAllVisiblity, iconSpriteSheet, 1, 2)
-	local lockButton = AnimIconButton(buttonRules, setAllLocked, iconSpriteSheet, 4, 2)
-	local linkButton = AnimIconButton(buttonRules, setAllLinked, iconSpriteSheet, 7, 2)
+	-- local visiblityButton = AnimIconButton(buttonRules, setAllVisiblity, iconSpriteSheet, 1, 2)
+	-- local lockButton = AnimIconButton(buttonRules, setAllLocked, iconSpriteSheet, 4, 2)
+	-- local linkButton = AnimIconButton(buttonRules, setAllLinked, iconSpriteSheet, 7, 2)
 	-- local addFrameButton = TLIconButton(buttonRules, addFrame, iconSpriteSheet, 16, 2)
 	-- local removeFrameButton = TLIconButton(buttonRules, emptyFunc, iconSpriteSheet, 17, 2)
 	-- local cloneFrameButton = TLIconButton(buttonRules, emptyFunc, iconSpriteSheet, 18, 2)
 	local moveLeftButton = AnimIconButton(buttonRules, moveFrameLeft, iconSpriteSheet, 19, 2)
 	local moveRightButton = AnimIconButton(buttonRules, moveFrameRight, iconSpriteSheet, 20, 2)
-	self:addChild(visiblityButton)
-	self:addChild(lockButton)
-	self:addChild(linkButton)
+	-- self:addChild(visiblityButton)
+	-- self:addChild(lockButton)
+	-- self:addChild(linkButton)
 	-- self:addChild(addFrameButton)
 	-- self:addChild(removeFrameButton)
 	-- self:addChild(cloneFrameButton)
@@ -155,7 +143,7 @@ function AnimHeader:mousereleased(mx, my, button)
 				end
 			elseif button == 2 then
 				self:bubble("_bSelectFrame", frame)
-				Modal.pushMenu(mx, my, frameMenuItems, frame, Contexts.contextStack[#Contexts.contextStack])
+				Modal.pushMenu(mx, my, trackMenuItems, frame, Contexts.contextStack[#Contexts.contextStack])
 			end
 		end
 	end
@@ -189,11 +177,11 @@ function AnimHeader:onSpriteSelected(sprite)
 
 	-- Add right click actions
 	local actions = self.spriteState.context:getActions()
-	if #frameMenuItems == 1 then
-		table.insert(frameMenuItems, 1, actions.new_frame)
-		table.insert(frameMenuItems, 2, actions.clone_frame)
-		table.insert(frameMenuItems, 3, actions.clone_linked_frame)
-		table.insert(frameMenuItems, 4, actions.delete_frame)
+	if #trackMenuItems == 1 then
+		table.insert(trackMenuItems, 1, actions.new_frame)
+		table.insert(trackMenuItems, 2, actions.clone_frame)
+		table.insert(trackMenuItems, 3, actions.clone_linked_frame)
+		table.insert(trackMenuItems, 4, actions.delete_frame)
 	end
 
 	for _, child in ipairs(self.children) do

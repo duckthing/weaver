@@ -91,14 +91,18 @@ function SpriteState:new(sprite, context)
 	self.frame = IntegerProperty(self, "Frame", 1)
 	---@type IntegerProperty
 	self.layer = IntegerProperty(self, "Layer", 1)
-	---@type EnumProperty
-	self.currentAnimation = EnumProperty(self, "Animation", nil)
-	self.currentAnimation:setOptions({
+
+	---@type EnumProperty.Option[]
+	local animOptions = {
 		{
 			value = nil,
-			name = "All",
+			name = "None"
 		},
-	})
+	}
+
+	---@type EnumProperty
+	self.currentAnimation = EnumProperty(self, "Animation", nil)
+	self.currentAnimation:setOptions(animOptions)
 
 	---@type ColorRamp
 	self.colorRamp = ColorRamp()
@@ -148,6 +152,21 @@ function SpriteState:new(sprite, context)
 	sprite.palette.valueChanged:addAction(function(property, value)
 		self.primaryColorSelection:setPalette(value)
 		self.secondaryColorSelection:setPalette(value)
+	end)
+
+	sprite.animationInserted:addAction(function(s, animation, index)
+		table.insert(animOptions, index + 1, {
+			name = animation.name:get(),
+			value = animation
+		})
+
+		self.currentAnimation:setIndex(index + 1)
+	end)
+
+	sprite.animationRemoved:addAction(function(s, animation, index)
+		table.remove(animOptions, index + 1)
+
+		self.currentAnimation:setIndex(index + 1)
 	end)
 end
 

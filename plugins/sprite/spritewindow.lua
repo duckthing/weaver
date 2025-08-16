@@ -38,8 +38,6 @@ local SpriteWindow = Plan.Container:extend()
 ---@param context SpriteEditor.Context
 function SpriteWindow:new(rules, plugin, context)
 	SpriteWindow.super.new(self, rules)
-	---@type SpritePlugin
-	self.editor = plugin
 
 	---@type SpriteCanvas
 	local canvas = Canvas(Plan.RuleFactory.full())

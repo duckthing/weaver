@@ -2,8 +2,8 @@ local Plan = require "lib.plan"
 local Luvent = require "lib.luvent"
 
 local VSplit = require "ui.components.containers.split.vsplit"
-local CelTimelines = require "plugins.sprite.ui.anim.animsheet"
-local LayerTimelines = require "plugins.sprite.ui.anim.animtrackcontainer"
+local AnimSheet = require "plugins.sprite.ui.anim.animsheet"
+local TrackContainer = require "plugins.sprite.ui.anim.animtrackcontainer"
 local AnimActions = require "plugins.sprite.ui.anim.animactions"
 local TLHeader = require "plugins.sprite.ui.anim.animheader"
 
@@ -54,10 +54,10 @@ function AnimContainer:new(rules)
 	self._clipMode = "clip"
 	self.minH = 34
 	---@type AnimTimeline.Tracks
-	self.layerContainer = LayerTimelines(Plan.RuleFactory.full())
+	self.trackContainer = TrackContainer(Plan.RuleFactory.full())
 
 	---@type AnimTimeline.Sheet
-	self.celContainer = CelTimelines(Plan.RuleFactory.full())
+	self.animSheet = AnimSheet(Plan.RuleFactory.full())
 
 	---@type AnimTimeline.Header
 	self.header = TLHeader(headerRules)
@@ -66,9 +66,9 @@ function AnimContainer:new(rules)
 	self.animActions = AnimActions(actionsRules)
 
 	---@type AnimTimeline.LCSplit
-	self.layerTable = LCSplit(tableRules, self.layerContainer, self.celContainer)
-	self.layerTable.resizeMode = "keepfirst"
-	self.layerTable:setSize(208)
+	self.trackTable = LCSplit(tableRules, self.trackContainer, self.animSheet)
+	self.trackTable.resizeMode = "keepfirst"
+	self.trackTable:setSize(208)
 
 	---@type Sprite?
 	self.activeSprite = nil
@@ -82,29 +82,29 @@ function AnimContainer:new(rules)
 
 	self:addChild(self.header)
 	self:addChild(self.animActions)
-	self:addChild(self.layerTable)
+	self:addChild(self.trackTable)
 
-	self.layerContainer.scrollChanged:addAction(function(posY)
-		self.celContainer.scrollY = posY
-		self.celContainer:recalculateBoundaries()
+	self.trackContainer.scrollChanged:addAction(function(posY)
+		self.animSheet.scrollY = posY
+		self.animSheet:recalculateBoundaries()
 		self.header:recalculateBoundaries()
 	end)
 
-	self.celContainer.scrollChanged:addAction(function(posX, posY)
-		self.layerContainer.targetOffset = posY
-		self.layerContainer:refresh()
+	self.animSheet.scrollChanged:addAction(function(posX, posY)
+		self.trackContainer.targetOffset = posY
+		self.trackContainer:refresh()
 		self.header.scrollX = posX
 		self.header:recalculateBoundaries()
 	end)
 
-	self.layerTable.splitChanged:addAction(function(splitX)
+	self.trackTable.splitChanged:addAction(function(splitX)
 		self.header.splitX = splitX
 		self.header:refresh()
 	end)
 
 	self.header.scrollChanged:addAction(function(posX)
-		self.celContainer.scrollX = posX
-		self.celContainer:recalculateBoundaries()
+		self.animSheet.scrollX = posX
+		self.animSheet:recalculateBoundaries()
 	end)
 end
 
@@ -120,14 +120,16 @@ end
 
 ---@param sprite Sprite
 function AnimContainer:onSpriteSelected(sprite)
-	self.layerContainer:onSpriteSelected(sprite)
-	self.celContainer:onSpriteSelected(sprite)
+	self.trackContainer:onSpriteSelected(sprite)
+	self.animSheet:onSpriteSelected(sprite)
 	self.header:onSpriteSelected(sprite)
+	self.animActions:onSpriteSelected(sprite)
+
 	self.activeSprite = sprite
 
 	local state = sprite.spriteState
 	self.spriteState = state
-	self.header.splitX = self.layerTable.splitPosition
+	self.header.splitX = self.trackTable.splitPosition
 	self.header:recalculateBoundaries()
 
 	self._layerChangedAction = state.layer.valueChanged:addAction(function(property, value)
@@ -142,9 +144,10 @@ function AnimContainer:onSpriteSelected(sprite)
 end
 
 function AnimContainer:onSpriteDeselected()
-	self.layerContainer:onSpriteDeselected()
-	self.celContainer:onSpriteDeselected()
+	self.trackContainer:onSpriteDeselected()
+	self.animSheet:onSpriteDeselected()
 	self.header:onSpriteDeselected()
+	self.animActions:onSpriteDeselected()
 
 	---@type SpriteState
 	local oldState = self.spriteState
@@ -164,13 +167,13 @@ end
 
 ---@param selectedLayer Sprite.Layer
 function AnimContainer:onLayerSelected(selectedLayer)
-	self.layerContainer:onLayerSelected(selectedLayer)
-	self.celContainer:onLayerSelected(selectedLayer)
+	self.trackContainer:onLayerSelected(selectedLayer)
+	self.animSheet:onLayerSelected(selectedLayer)
 end
 
 ---@param selectedFrame Sprite.Frame
 function AnimContainer:onFrameSelected(selectedFrame)
-	self.celContainer:onFrameSelected(selectedFrame)
+	self.animSheet:onFrameSelected(selectedFrame)
 end
 
 -- (Receive bubble) Select layer
