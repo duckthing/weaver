@@ -1412,24 +1412,24 @@ function PlanRoot:draw()
 	local lastModal = self.context.modals[#self.context.modals]
 	lastModal = (lastModal and lastModal.modaldraw and lastModal) or nil
 
-	if true then
+	-- Switch to the scaled canvas, if we have to
+	if self.scaled then
 		love.graphics.setCanvas(self.canvas)
 		love.graphics.clear()
 		love.graphics.push("all")
+	end
 
-		self.root:draw()
-		if lastModal then
-			lastModal:modaldraw()
-		end
+	-- Draw the contents
+	self.root:draw()
+	if lastModal then
+		lastModal:modaldraw()
+	end
 
+	-- Switch out, if we were scaled
+	if self.scaled then
 		love.graphics.pop()
 		love.graphics.setCanvas()
 		love.graphics.draw(self.canvas, 0, 0, 0, self.scale, self.scale)
-	--[[ else
-		self.root:draw()
-		if lastModal then
-			lastModal:modaldraw()
-		end --]]
 	end
 end
 
