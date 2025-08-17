@@ -155,18 +155,17 @@ function SpriteState:new(sprite, context)
 	end)
 
 	sprite.animationInserted:addAction(function(s, animation, index)
+		-- Add 1 to the index, since we have a "none" option
 		table.insert(animOptions, index + 1, {
 			name = animation.name:get(),
 			value = animation
 		})
-
 		self.currentAnimation:setIndex(index + 1)
 	end)
 
 	sprite.animationRemoved:addAction(function(s, animation, index)
 		table.remove(animOptions, index + 1)
-
-		self.currentAnimation:setIndex(index + 1)
+		self.currentAnimation:onOptionsChanged()
 	end)
 end
 

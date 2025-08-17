@@ -330,7 +330,7 @@ local actions = {
 					-- Not the empty "All" animation
 					-- local insertCommand = InsertLayerCommand(sprite, true, layer)
 					-- sprite.undoStack:commitWithoutPerforming(insertCommand)
-					sprite:removeAnimation(animationProperty:getIndex())
+					sprite:removeAnimation(animationProperty:getIndex() - 1)
 				end
 			end
 		end

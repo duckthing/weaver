@@ -61,7 +61,7 @@ end
 ---Sets the VALUE of this EnumProperty, which will search each option's value
 ---@param value any
 function EnumProperty:setValue(value)
-	if self.value == value then return end
+	if self.value.value == value then return end
 	if #self.options == 0 then
 		-- No options yet
 		self._defaultValue = value
@@ -73,7 +73,7 @@ function EnumProperty:setValue(value)
 		if self.options[i].value == value then
 			self.value = option
 			self.index = i
-			self.valueChanged:trigger(self, value)
+			self.valueChanged:trigger(self, option)
 			return
 		end
 	end
@@ -82,8 +82,13 @@ end
 ---Sets the index of this EnumProperty
 ---@param index integer
 function EnumProperty:setIndex(index)
-	if index > 0 and index < #self.options then
-		self:set(self.options[math.max(1, math.min(index, #self.options))])
+	index = math.max(1, math.min(index, #self.options))
+	if self.index == index then return end
+	local option = self.options[index]
+	if option then
+		self.value = option
+		self.index = index
+		self.valueChanged:trigger(self, option)
 	end
 end
 
@@ -103,6 +108,11 @@ end
 ---@return integer index
 function EnumProperty:getIndex()
 	return self.index
+end
+
+---Call this method when the options change, so the currently selected value can be reset
+function EnumProperty:onOptionsChanged()
+	self:setIndex(self.index)
 end
 
 function EnumProperty:getVElement()

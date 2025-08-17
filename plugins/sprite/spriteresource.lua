@@ -604,17 +604,12 @@ end
 ---@param animationI integer
 ---@return boolean success
 function Sprite:removeAnimation(animationI)
-	-- Only do it if there's more than 1 Animation
-	if #self.animations <= 1 then return false end
+	-- Only do it if there's more than 0 animations
+	if #self.animations <= 0 then return false end
 	local animation = self.animations[animationI]
 	if animation then
-		-- Remove the Animation
+		-- Remove the animation
 		table.remove(self.animations, animationI)
-
-		-- Change the cel indices
-		for _, layer in ipairs(self.layers) do
-			table.remove(layer.celIndices, animationI)
-		end
 
 		-- Trigger the animation events
 		self.animationRemoved:trigger(self, animation, animationI)
