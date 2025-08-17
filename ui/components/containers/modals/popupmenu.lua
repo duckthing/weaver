@@ -46,6 +46,8 @@ function PopupMenu:new(rules, items, source, context)
 	self.name = "Menu"
 	---@type Action[]
 	self.items = items or {}
+	---@type integer
+	self.hoveredIndex = 0
 
 	self.itemSelected = Luvent.newEvent()
 	self._minWidth = padding * 2
@@ -78,8 +80,7 @@ function PopupMenu:setItems(items, source, context)
 	self._minWidth = largestWidth + padding * 2
 	self._minHeight = math.max(0, #items - 1) * margin + padding * 2 + #items * defaultFont:getHeight()
 	self.items = items
-	---@type integer
-	self.hoveredIndex = 4
+	self.hoveredIndex = 0
 	self.hovering = false
 end
 

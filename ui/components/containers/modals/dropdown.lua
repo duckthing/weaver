@@ -45,6 +45,8 @@ function Dropdown:new(rules, property, minWidth)
 	Dropdown.super.new(self, rules)
 	---@type EnumProperty.Option[]
 	self.items = property.options
+	---@type integer
+	self.hoveredIndex = 0
 
 	self._minWidth = padding * 2
 	self._minHeight = padding * 2
@@ -81,8 +83,7 @@ function Dropdown:setItems(items)
 	self._minWidth = largestWidth + padding * 2
 	self._minHeight = math.max(0, #items - 1) * margin + padding * 2 + #items * defaultFont:getHeight()
 	self.items = items
-	---@type integer
-	self.hoveredIndex = 4
+	self.hoveredIndex = 0
 	self.hovering = false
 end
 
