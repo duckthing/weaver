@@ -315,6 +315,16 @@ local actions = {
 			---@type Sprite?
 			local sprite = context.sprite
 			if sprite then
+				local animationProperty = sprite.spriteState.currentAnimation
+				---@type Sprite.Animation
+				local animation = animationProperty:getValue()
+				if animation ~= nil then
+					local clonedAnim = animation:clone()
+					sprite:insertAnimation(animationProperty:getIndex() - 1, clonedAnim)
+					-- local insertCommand = InsertLayerCommand(sprite, true, layer)
+					-- sprite.undoStack:commitWithoutPerforming(insertCommand)
+					animationProperty:setIndex(animationProperty:getIndex() + 1)
+				end
 			end
 		end
 	),
@@ -325,7 +335,8 @@ local actions = {
 			local sprite = context.sprite
 			if sprite then
 				local animationProperty = sprite.spriteState.currentAnimation
-				local animation = animationProperty:get()
+				---@type Sprite.Animation
+				local animation = animationProperty:getValue()
 				if animation ~= nil then
 					-- Not the empty "All" animation
 					-- local insertCommand = InsertLayerCommand(sprite, true, layer)

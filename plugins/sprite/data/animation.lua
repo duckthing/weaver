@@ -103,4 +103,15 @@ function AnimationTrack:insertPoint(atTime, type, data)
 	return false, nil
 end
 
+---Clones this Animation and returns a new Animation
+---@return Sprite.Animation newAnimation
+function Animation:clone()
+	---@type Sprite.Animation
+	local anim = Animation(self.sprite)
+	anim.name:set(self.name:get())
+
+	-- TODO: Finish cloning for animations
+	return anim
+end
+
 return Animation
