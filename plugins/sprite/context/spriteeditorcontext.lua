@@ -302,8 +302,8 @@ local actions = {
 			if sprite then
 				local animationProperty = sprite.spriteState.currentAnimation
 				local newAnimationIndex = animationProperty:getIndex() + 1
-				local layer = sprite:createAnimation(newAnimationIndex)
-				-- local insertCommand = InsertLayerCommand(sprite, true, layer)
+				local animation = sprite:createAnimation(newAnimationIndex)
+				-- local insertCommand = InsertLayerCommand(sprite, true, animation)
 				-- sprite.undoStack:commitWithoutPerforming(insertCommand)
 				animationProperty:setIndex(newAnimationIndex)
 			end

@@ -99,8 +99,8 @@ function SpriteWindow:new(rules, plugin, context)
 
 		---@type VSplit
 		local vsplit1 = VSplit(Plan.RuleFactory.full(), timeline, animContainer)
-		vsplit1.resizeMode = "keepsecond"
-		vsplit1:setSize(100)
+		vsplit1.resizeMode = "factor"
+		vsplit1:setSize(50)
 
 		---@type HSplit
 		local hsplit1 = HSplit(Plan.RuleFactory.full(), canvas, vsplit1)
