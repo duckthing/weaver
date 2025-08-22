@@ -28,7 +28,6 @@ function ImportSprite:new()
 end
 
 local extensions = {
-	"wgf",
 	"png",
 }
 function ImportSprite:getSupportedExtensions()
@@ -52,7 +51,9 @@ function ImportSprite:import()
 	local path = self.path:get() -- /path/to/sprite.png
 	---@type string
 	local extension = Path.ext(path) or "" -- png
-	if extension == "wgf" then return Handler.importAndHandle(path) end
+	if extension == "wgf" then
+		return true, Handler.importAndHandle(path)
+	end
 
 	local info = nativefs.getInfo(path, "file")
 	if info then

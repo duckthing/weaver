@@ -11,6 +11,7 @@ local Luvent = require "lib.luvent"
 
 ---@class Palette: Object
 local Palette = Object:extend()
+Palette.CLASS_NAME = "Palette"
 ---@type {[string]: Palette.Importer} # Key is the file extension
 Palette.importers = {}
 

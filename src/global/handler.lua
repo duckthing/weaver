@@ -15,12 +15,29 @@ local objectsToExporters = {}
 ---Adds a format to the global handler
 ---@param format Format
 function Handler.addFormat(format)
+	-- TODO: Allow settings multiple importers/exporters for one extension
 	for _, extension in ipairs(format.IMPORT_EXTENSIONS) do
-		extensionsToImporters[extension] = format
+		if not extensionsToImporters[extension] then
+			-- No existing importer found, don't overwrite
+			extensionsToImporters[extension] = format
+		else
+			-- Warn about existing importer found
+			print(("[WARN] Setting %s as an importer for %s, but %s exists")
+				:format(format.FORMAT_NAME, extension, extensionsToImporters[extension].FORMAT_NAME)
+			)
+		end
 	end
 
 	for _, object in ipairs(format.EXPORT_FOR_TYPES) do
-		objectsToExporters[object] = format
+		if not objectsToExporters[object] then
+			-- No existing exporter found, don't overwrite
+			objectsToExporters[object] = format
+		else
+			-- Warn about existing exporter found
+			print(("[WARN] Setting %s as an importer for %s, but %s exists")
+				:format(format.FORMAT_NAME, tostring(object), tostring(objectsToExporters[object]))
+			)
+		end
 	end
 end
 

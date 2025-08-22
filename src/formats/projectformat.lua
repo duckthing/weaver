@@ -10,7 +10,7 @@ local State = require "src.global.state"
 local ProjectFormat = Format:extend()
 ProjectFormat.FORMAT_NAME = "ProjectFormat"
 ProjectFormat.IMPORT_EXTENSIONS = {"wproj"}
-ProjectFormat.EXPORT_FOR_TYPES = {Palette}
+ProjectFormat.EXPORT_FOR_TYPES = {Project}
 
 ---@param path string
 ---@param file love.File
