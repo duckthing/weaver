@@ -6,13 +6,8 @@ local StringProperty = require "src.properties.string"
 ---@class Sprite.Animation: Inspectable
 local Animation = Inspectable:extend()
 
----@alias Sprite.Animation.TrackPoint.Type
----| "marker"
----| "frame"
-
 ---@class Sprite.Animation.TrackPoint
 ---@field atTime number
----@field type Sprite.Animation.TrackPoint.Type
 ---@field data any
 
 ---@class Sprite.Animation.Track: Object
@@ -39,41 +34,38 @@ function Animation:createTrack()
 end
 
 ---@param sprite Sprite
-function AnimationTrack:new(sprite)
+---@param type string
+function AnimationTrack:new(sprite, type)
 	AnimationTrack.super.new(self)
 	self.sprite = sprite
 	---@type StringProperty
 	self.name = StringProperty(self, "Name", "New Track")
 	---@type Sprite.Animation.TrackPoint[]
 	self.points = {}
+	---@type string
+	self.type = type
 
 	self.pointInserted = Luvent.newEvent()
 	self.pointChanged = Luvent.newEvent()
 	self.pointRemoved = Luvent.newEvent()
 end
 
----Inserts a new Point at the specified time. If there's a type that matches at that Point, it will be replaced.
+---Inserts a new Point at the specified time. If there's an existing Point, we overwrite the data it has.
 ---@param atTime number
----@param type Sprite.Animation.TrackPoint.Type
 ---@param data any
 ---@return boolean success
 ---@return Sprite.Animation.TrackPoint[]? point
-function AnimationTrack:insertPoint(atTime, type, data)
+function AnimationTrack:insertPoint(atTime, data)
 	local index = 0
 
+	-- First, pick the index where the point should be inserted
 	for i = 1, #self.points do
 		local point = self.points[i]
 		if point.atTime == atTime then
-			-- Same time, insert/overwrite at this point
-			if point.type == type then
-				-- Also same type, overwrite
-				point.data = data
-				self.pointChanged:trigger(self, point)
-				return true, point
-			else
-				-- Different type, insert
-				index = i
-			end
+			-- Same time, overwrite this point with the new data
+			point.data = data
+			self.pointChanged:trigger(self, point)
+			return true, point
 		elseif point.atTime < atTime then
 			-- Insert before this point
 			-- (Picking this index will push it forward)
@@ -92,7 +84,6 @@ function AnimationTrack:insertPoint(atTime, type, data)
 		---@type Sprite.Animation.TrackPoint
 		local point = {
 			atTime = atTime,
-			type = type,
 			data = data,
 		}
 		table.insert(self.points, index, point)
