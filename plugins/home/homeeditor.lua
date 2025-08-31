@@ -3,6 +3,7 @@ local Editor = require "src.data.editor"
 local HomeWindow = require "plugins.home.homewindow"
 local HomeStatus = require "plugins.home.homestatus"
 local ConfigGlobals = require "plugins.home.configglobals"
+local Info = require "src.meta"
 
 ---@class HomeEditor: Editor
 local HomeEditor = Editor:extend()
@@ -17,7 +18,7 @@ end
 
 function HomeEditor:onEnter()
 	Status.changeContext(self.statusContext)
-	love.window.setTitle("Weaver")
+	love.window.setTitle(("Weaver %s"):format(Info.VERSION))
 end
 
 function HomeEditor:onExit()

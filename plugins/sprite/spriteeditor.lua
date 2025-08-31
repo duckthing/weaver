@@ -10,6 +10,7 @@ local ExportSprite = require "plugins.sprite.objects.exportsprite"
 local SpriteEditorContext = require "plugins.sprite.context.spriteeditorcontext"
 local Contexts = require "src.global.contexts"
 local SpriteGlobals = require "plugins.sprite.spriteglobals"
+local Info = require "src.meta"
 
 ---@type SpritePlugin
 local SpritePlugin
@@ -144,10 +145,10 @@ end
 local function updateTitle(sprite)
 	local name = sprite.name:get()
 	if sprite.modified:get() then
-		love.window.setTitle(("*%s - Weaver"):format(name))
+		love.window.setTitle(("*%s - Weaver %s"):format(name, Info.VERSION))
 	else
 		-- Not modified
-		love.window.setTitle(("%s - Weaver"):format(name))
+		love.window.setTitle(("%s - Weaver %s"):format(name, Info.VERSION))
 	end
 end
 
