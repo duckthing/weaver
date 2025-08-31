@@ -194,6 +194,8 @@ function TLHeader:onSpriteSelected(sprite)
 		table.insert(frameMenuItems, 2, actions.clone_frame)
 		table.insert(frameMenuItems, 3, actions.clone_linked_frame)
 		table.insert(frameMenuItems, 4, actions.delete_frame)
+		table.insert(frameMenuItems, 5, actions.move_frame_left)
+		table.insert(frameMenuItems, 6, actions.move_frame_right)
 	end
 
 	for _, child in ipairs(self.children) do

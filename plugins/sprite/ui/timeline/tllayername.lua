@@ -68,9 +68,12 @@ function LayerEdit:new(rules, sprite, layer)
 	local newContext = sprite.spriteState.context
 	if context == nil then
 		local actions = newContext:getActions()
-		layerActions[1] = actions.clone_layer
-		layerActions[2] = actions.delete_layer
-		layerActions[3] = actions.merge_layer_down
+		layerActions[1] = actions.new_layer
+		layerActions[2] = actions.clone_layer
+		layerActions[3] = actions.delete_layer
+		layerActions[4] = actions.move_layer_up
+		layerActions[5] = actions.move_layer_down
+		layerActions[6] = actions.merge_layer_down
 
 		for i = 1, #extraActions do
 			layerActions[#layerActions+1] = extraActions[i]

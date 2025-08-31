@@ -262,8 +262,8 @@ function CelTimelines:onSpriteSelected(sprite)
 	self.spriteState = sprite.spriteState
 
 	local actions = self.spriteState.context:getActions()
-	celActions[1] = actions.delete_cel
-	celActions[2] = actions.unlink_cel
+	celActions[1] = actions.unlink_cel
+	celActions[2] = actions.delete_cel
 
 	self.shouldUpdateSB = true
 
