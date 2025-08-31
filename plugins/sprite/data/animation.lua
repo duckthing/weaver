@@ -1,7 +1,9 @@
 local Object = require "lib.classic"
 local Luvent = require "lib.luvent"
 local Inspectable = require "src.properties.inspectable"
+
 local StringProperty = require "src.properties.string"
+local NumberProperty = require "src.properties.number"
 
 ---@class Sprite.Animation: Inspectable
 local Animation = Inspectable:extend()
@@ -21,6 +23,8 @@ function Animation:new(sprite)
 	self.name = StringProperty(self, "Name", "New Animation")
 	---@type Sprite.Animation.Track[]
 	self.tracks = {AnimationTrack(sprite)}
+	---@type NumberProperty
+	self.duration = NumberProperty(self, "Duration", 1)
 
 	self.trackInserted = Luvent.newEvent()
 	self.trackRemoved = Luvent.newEvent()
@@ -28,14 +32,15 @@ end
 
 function Animation:createTrack()
 	---@type Sprite.Animation.Track
-	local newTrack = AnimationTrack(self.sprite)
+	local newTrack = AnimationTrack(self.sprite, self)
 	self.tracks[#self.tracks+1] = newTrack
 	self.trackInserted:trigger(self, newTrack)
 end
 
 ---@param sprite Sprite
+---@param animation Sprite.Animation
 ---@param type string
-function AnimationTrack:new(sprite, type)
+function AnimationTrack:new(sprite, animation, type)
 	AnimationTrack.super.new(self)
 	self.sprite = sprite
 	---@type StringProperty
@@ -44,6 +49,8 @@ function AnimationTrack:new(sprite, type)
 	self.points = {}
 	---@type string
 	self.type = type
+	---@type Sprite.Animation
+	self.parentAnimation = animation
 
 	self.pointInserted = Luvent.newEvent()
 	self.pointChanged = Luvent.newEvent()
@@ -56,9 +63,10 @@ end
 ---@return boolean success
 ---@return Sprite.Animation.TrackPoint[]? point
 function AnimationTrack:insertPoint(atTime, data)
-	local index = 0
+	atTime = math.max(0, atTime) -- allow atTime to be later than the max duration
 
 	-- First, pick the index where the point should be inserted
+	local index = 0
 	for i = 1, #self.points do
 		local point = self.points[i]
 		if point.atTime == atTime then
