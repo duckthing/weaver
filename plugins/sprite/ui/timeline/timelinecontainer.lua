@@ -52,11 +52,11 @@ local headerRules = Plan.Rules.new()
 function TimelineContainer:new(rules)
 	TimelineContainer.super.new(self, rules)
 	self._clipMode = "clip"
-	self.minW =
+	--[[ self.minW =
 		(38 *			-- The size of each action bar button
 			(5 + 8)		-- The amount of buttons
 		)
-		+ 12			-- The padding
+		+ 12			-- The padding --]]
 	self.minH = 34
 	---@type Timeline.Layers
 	self.layerContainer = LayerTimelines(Plan.RuleFactory.full())

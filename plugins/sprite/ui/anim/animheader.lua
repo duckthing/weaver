@@ -38,7 +38,7 @@ local trackMenuItems = {
 	),
 }
 
----@param self AnimTimeline.TrackLabel
+--[[ ---@param self AnimTimeline.TrackLabel
 local function moveFrameLeft(self)
 	Contexts.raiseAction("move_frame_left")
 end
@@ -46,7 +46,7 @@ end
 ---@param self AnimTimeline.TrackLabel
 local function moveFrameRight(self)
 	Contexts.raiseAction("move_frame_right")
-end
+end --]]
 
 local celSize = 26
 function AnimHeader:new(rules)
@@ -72,16 +72,16 @@ function AnimHeader:new(rules)
 	-- local addFrameButton = TLIconButton(buttonRules, addFrame, iconSpriteSheet, 16, 2)
 	-- local removeFrameButton = TLIconButton(buttonRules, emptyFunc, iconSpriteSheet, 17, 2)
 	-- local cloneFrameButton = TLIconButton(buttonRules, emptyFunc, iconSpriteSheet, 18, 2)
-	local moveLeftButton = AnimIconButton(buttonRules, moveFrameLeft, iconSpriteSheet, 19, 2)
-	local moveRightButton = AnimIconButton(buttonRules, moveFrameRight, iconSpriteSheet, 20, 2)
+	--[[ local moveLeftButton = AnimIconButton(buttonRules, moveFrameLeft, iconSpriteSheet, 19, 2)
+	local moveRightButton = AnimIconButton(buttonRules, moveFrameRight, iconSpriteSheet, 20, 2) --]]
 	-- self:addChild(visiblityButton)
 	-- self:addChild(lockButton)
 	-- self:addChild(linkButton)
 	-- self:addChild(addFrameButton)
 	-- self:addChild(removeFrameButton)
 	-- self:addChild(cloneFrameButton)
-	self:addChild(moveLeftButton)
-	self:addChild(moveRightButton)
+	--[[ self:addChild(moveLeftButton)
+	self:addChild(moveRightButton) --]]
 end
 
 function AnimHeader:recalculateBoundaries()
@@ -229,54 +229,30 @@ function AnimHeader:draw()
 	love.graphics.intersectScissor(self.x + self.splitX, self.y, self.w - self.splitX, self.h)
 	local startX = self.x + self.splitX - self.scrollX
 	local textYStart = (self.h - defaultFont:getHeight()) * 0.5
-	local activeFrameIndex = state.frame:get()
-	local hoveringFrameIndex = self.hoveringFrameIndex
-	local pressingFrameIndex = self.pressingFrameIndex
-	local hovering = self.hovering
-	local pressing = self.pressing
 
-	love.graphics.setFont(defaultFont)
-	for x = self._lowerX, math.min(#sprite.frames, self._upperX) do
-		if x == activeFrameIndex then
-			love.graphics.setColor(0.3, 0.3, 0.5)
-		else
-			if hovering and x == hoveringFrameIndex then
-				if pressing then
-					if x == pressingFrameIndex then
-						-- Is pressing the same thing originally
-						love.graphics.setColor(0.1, 0.1, 0.2)
-					end
-				else
-					-- Just hovering, not pressing anything
-					love.graphics.setColor(0.25, 0.25, 0.5)
-				end
-			else
-				-- Nothing
-				love.graphics.setColor(0.2, 0.2, 0.4)
-			end
-		end
+	local MAJOR_STEP = 50
+	local animScale = state.animationScale:get()
+	local stepSize = MAJOR_STEP * animScale
 
-		if hovering and x == hoveringFrameIndex then
-			if pressing and x == pressingFrameIndex then
-				-- Is pressing the same thing originally
-				love.graphics.setColor(0.1, 0.1, 0.2)
-			else
-				-- Just hovering, not pressing anything
-				love.graphics.setColor(0.45, 0.45, 0.5)
-			end
-		end
+	---@type Sprite.Animation?
+	local currentAnimation = state.currentAnimation:getValue()
+	if currentAnimation then
+		local duration = currentAnimation.duration:get()
+		local w, h = self.w, self.h
 
-		local cx, cy = startX + (x - 1) * celSize, self.y
-		backgroundNP:draw(cx, cy, celSize, celSize, 2)
-		love.graphics.setColor(1, 1, 1)
-		---@type string
-		local string
-		if x < 10 then
-			string = tostring(x)
-		else
-			string = ("%02d"):format(x % 100)
+		local tickHeight = h * 0.25
+		local tickStart = h - tickHeight
+
+		for i = 0, math.ceil(duration) do
+			local cx, cy =
+				startX + i * stepSize,
+				self.y
+			love.graphics.setColor(0.8, 0.8, 0.8, 1)
+			love.graphics.print(tostring(i), startX + i * stepSize, cy + textYStart)
+
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.rectangle("fill", cx - 1, cy + tickStart, 2, tickHeight)
 		end
-		love.graphics.print(string, cx + (celSize - defaultFont:getWidth(string)) * 0.5, cy + textYStart)
 	end
 
 	-- Reset the scissor

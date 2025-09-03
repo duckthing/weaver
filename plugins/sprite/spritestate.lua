@@ -5,6 +5,7 @@ local ColorRamp = require "plugins.sprite.data.colorramp"
 local Inspectable = require "src.properties.inspectable"
 local BoolProperty = require "src.properties.bool"
 local IntegerProperty = require "src.properties.integer"
+local NumberProperty = require "src.properties.number"
 local ColorSelectionProperty = require "src.properties.colorselection"
 local EnumProperty = require "src.properties.enum"
 local GridOptions = require "plugins.sprite.objects.gridoptions"
@@ -100,9 +101,21 @@ function SpriteState:new(sprite, context)
 		},
 	}
 
+	for i = 1, #sprite.animations do
+		animOptions[#animOptions+1] = {
+			value = sprite.animations[i],
+			name = sprite.animations[i].name:get()
+		}
+	end
+
 	---@type EnumProperty
-	self.currentAnimation = EnumProperty(self, "Animation", nil)
+	self.currentAnimation = EnumProperty(self, "Animation", sprite.animations[#sprite.animations])
 	self.currentAnimation:setOptions(animOptions)
+	---@type NumberProperty
+	self.animationScale = NumberProperty(self, "Animation Zoom", 1)
+	self.animationScale:getRange()
+		:setMin(0.1)
+		:setMax(10)
 
 	---@type ColorRamp
 	self.colorRamp = ColorRamp()

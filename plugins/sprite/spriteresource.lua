@@ -317,6 +317,7 @@ function Sprite:new(width, height, name, palette)
 
 	self:createLayer()
 	self:createFrame()
+	self:createAnimation()
 
 	-- Update the "modified" property
 	self.lastSavedIndex = self.undoStack.index + self.undoStack.totalShifted
