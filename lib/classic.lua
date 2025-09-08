@@ -16,6 +16,9 @@ Object.__index = Object
 function Object:new(...)
 end
 
+---@generic T: Object
+---@param self T
+---@return T
 function Object:extend()
 	local cls = {}
 	for k, v in pairs(self) do
