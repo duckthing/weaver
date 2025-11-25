@@ -1,6 +1,6 @@
 local Info = {
-	VERSION = "v2025.8.2a",
-	VERSION_NUMBER = 20250802,
+	VERSION = "v2025.8.3a",
+	VERSION_NUMBER = 20250803,
 }
 
 if not love.filesystem.isFused() then

@@ -16,6 +16,13 @@ local objectsToExporters = {}
 ---@param format Format
 function Handler.addFormat(format)
 	for _, extension in ipairs(format.IMPORT_EXTENSIONS) do
+		if extensionsToImporters[extension] then
+			print(("[WARN] Importer for '%s' already exists; overriding '%s' with '%s'"):format(
+				extension,
+				extensionsToImporters[extension].FORMAT_NAME,
+				format.FORMAT_NAME
+			))
+		end
 		extensionsToImporters[extension] = format
 	end
 

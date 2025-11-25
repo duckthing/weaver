@@ -28,7 +28,8 @@ function ImportSprite:new()
 end
 
 local extensions = {
-	"wgf",
+	-- Added "wgf" will prevent importing
+	-- "wgf",
 	"png",
 }
 function ImportSprite:getSupportedExtensions()
