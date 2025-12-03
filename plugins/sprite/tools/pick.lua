@@ -27,14 +27,17 @@ function Pick:draw(imageX, imageY, currLayerIndex)
 	end
 end
 
----@param imageX integer
----@param imageY integer
 function Pick:startPress(imageX, imageY)
+	SpriteTool.drawing = true
+end
+
+function Pick:stopPress(imageX, imageY)
+	if not SpriteTool.drawing then return end
+	SpriteTool.drawing = false
 	local sprite = SpriteTool.sprite
 	if not sprite then return end
 	if imageX < 0 or imageX >= sprite.width or imageY < 0 or imageY >= sprite.height then return end
 
-	SpriteTool.drawing = true
 	local sameLayer = Pick.sameLayer:get()
 	local event =
 		SpriteTool.primaryPressed and Pick.primaryColorSelected
@@ -87,6 +90,7 @@ function Pick:startPress(imageX, imageY)
 	local spriteState = sprite.spriteState
 	local bitmask = spriteState.bitmask
 
+	-- TODO: Bitmask check is too late?
 	if bitmask._active then
 		-- Check the selection
 		local selectionCel = spriteState.selectionCel
@@ -97,10 +101,6 @@ function Pick:startPress(imageX, imageY)
 			event:trigger(r, g, b, a)
 		end
 	end
-end
-
-function Pick:stopPress()
-	SpriteTool.drawing = false
 end
 
 ---@type LabelProperty
